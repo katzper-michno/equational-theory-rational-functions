@@ -3,9 +3,9 @@ import Lax149335Proofs.GeneralCompleteness.Groups
 /-!
 # Section 7: completeness for all rational terms
 
-The proofs of Lemmas 7.2–7.5, Corollary 7.6 and the provable simplification theorem. The
+The proofs of Lemmas 7.2–7.5, Corollary 7.6 and Theorem 7.7. The
 proof of Lemma 7.4 uses Lemma 7.5; Corollary 7.6 uses Lemmas 5.5, 5.6, 6.1, 7.2, 7.3 and
-7.4; and the provable simplification theorem uses Lemma 7.3, together with the
+7.4; and Theorem 7.7 uses Lemma 7.3, together with the
 grouplift-drop factorisation of the appendix.
 -/
 

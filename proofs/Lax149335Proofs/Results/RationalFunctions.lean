@@ -6,7 +6,7 @@ import Lax149335Proofs.EquationalTheory.Soundness
 # Section 2: rational functions and simple rational terms
 
 The proofs of Theorem 2.6, Claim 2.7, Corollary 2.8 and Theorem 2.9. As the paper explains,
-Theorem 2.9 is a consequence of the provable simplification theorem of Section 7.
+Theorem 2.9 is a consequence of Theorem 7.7 (provable simplification).
 -/
 
 set_option autoImplicit false
@@ -55,7 +55,7 @@ theorem decidable_equivalence :
 ---
 conclusion: Lax149335.Simplification.simplification_of_rational_terms
 ---
-By the provable simplification theorem, there is a surjective term `π` after which both
+By Theorem 7.7 (provable simplification), there is a surjective term `π` after which both
 terms are provably equivalent to simple rational terms of the compositional syntax. By
 soundness, the denotation of `π` is surjective, and the denotations of the two compositions
 are those of simple rational terms, which are simple rational functions.

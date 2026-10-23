@@ -67,12 +67,12 @@ the results whose statements the annotated proof uses.
 | Theorem 2.6 (conjugacy completeness) | `ConjugacyCompleteness` | |
 | Claim 2.7 | `SynchronisedLengths` | |
 | Corollary 2.8 (decidability) | `DecidableEquivalence` | |
-| Theorem 2.9 (simplification of rational terms) | `Simplification` | provable simplification |
+| Theorem 2.9 (simplification of rational terms) | `Simplification` | 7.7 |
 | Definition 3.1, Figure 1 (rational terms) | `Terms` | |
 | Theorem 3.2 (expressive completeness) | `ExpressiveCompleteness` | *open* |
 | derived terms, Definition 5.1 (values) | `DerivedTerms` | |
 | the axioms, the bundle term | `EquationalTheory` | |
-| Theorem 4.1 (finite axiomatisation) | `FiniteAxiomatisation` | 5.5, 5.6, 6.1, provable simplification |
+| Theorem 4.1 (finite axiomatisation) | `FiniteAxiomatisation` | 5.5, 5.6, 6.1, 7.7 |
 | Lemma 5.2 | `ValueConcatenation` | |
 | Lemma 5.3 | `ValueNormalisation` | |
 | Definition 5.4 | `InjectiveTerms` | |
@@ -92,7 +92,7 @@ the results whose statements the annotated proof uses.
 | Lemma 7.4 | `LiftDropFactorisation` | 7.5 |
 | Lemma 7.5 (exchange) | `Exchange` | |
 | Corollary 7.6 | `AperiodicCompleteness` | 5.5, 5.6, 6.1, 7.2, 7.3, 7.4 |
-| Theorem (provable simplification of rational terms) | `ProvableSimplification` | 7.3 |
+| Theorem 7.7 (provable simplification of rational terms) | `ProvableSimplification` | 7.3 |
 
 ## Formalisation choices
 

@@ -1,0 +1,78 @@
+# Builds and validates the Lean formalisation with the Lax CLI: the same checks that
+# `lax submit` runs (compilation of both packages, namespaces, frontmatter, axioms, and
+# that every annotated proof matches its statement).
+#
+# Runs only when the Lean submission changes; changes to other files (e.g. the paper's
+# LaTeX sources) do not trigger it.
+
+name: Lax build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "concepts/**"
+      - "proofs/**"
+      - "manifest.yaml"
+      - "abstract.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".github/workflows/lax-build.yml"
+  pull_request:
+    paths:
+      - "concepts/**"
+      - "proofs/**"
+      - "manifest.yaml"
+      - "abstract.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".github/workflows/lax-build.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  LAX_VERSION: "0.1.51"
+  LAX_DISABLE_UPDATE_CHECK: "1"
+
+jobs:
+  lax-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install the Lax CLI
+        run: npm install -g "lax-archive@${LAX_VERSION}"
+
+      # The Lean toolchain and the prebuilt mathlib of the archive environment.
+      - name: Cache Lean toolchain and mathlib
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.elan
+            ~/.lax/warm
+          key: lax-env-${{ runner.os }}-${{ env.LAX_VERSION }}-${{ hashFiles('concepts/lean-toolchain', 'concepts/lakefile.toml', 'proofs/lakefile.toml') }}
+
+      # Build artefacts of the two packages, so that only changed modules are rebuilt.
+      - name: Cache package builds
+        uses: actions/cache@v4
+        with:
+          path: |
+            concepts/.lake/build
+            proofs/.lake/build
+          key: lax-build-${{ runner.os }}-${{ hashFiles('concepts/**/*.lean', 'proofs/**/*.lean', '**/lakefile.toml', '**/lean-toolchain') }}
+          restore-keys: |
+            lax-build-${{ runner.os }}-
+
+      - name: Provision Lean and mathlib
+        run: lax doctor --no-color
+
+      - name: Build and validate the submission
+        run: lax build --no-color

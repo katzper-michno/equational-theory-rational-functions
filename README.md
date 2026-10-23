@@ -46,6 +46,9 @@ lax serve      # previews the submission's pages locally
 
 Alternatively, run `lake build` in `concepts/` and then in `proofs/`.
 
+The GitHub Action `.github/workflows/lax-build.yml` runs `lax build` on pushes to `main` and
+on pull requests that change the Lean submission.
+
 ## Status
 
 Every definition and result of the main part of the paper is formalised, and every result

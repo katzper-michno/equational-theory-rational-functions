@@ -7,6 +7,8 @@ authors:
   - name: "Mikołaj Bojańczyk"
   - name: "Kacper Lewandowski"
   - name: "Katzper Michno"
+  - name: "Aristotle (Harmonic)"
+  - name: "Claude Opus 5.5 (Anthropic)"
 bibEntries:
   - |
     @unpublished{BojanczykLewandowskiMichno2026,

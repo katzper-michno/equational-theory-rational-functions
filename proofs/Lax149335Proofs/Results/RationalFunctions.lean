@@ -58,7 +58,8 @@ conclusion: Lax149335.Simplification.simplification_of_rational_terms
 By Theorem 7.7 (provable simplification), there is a surjective term `π` after which both
 terms are provably equivalent to simple rational terms of the compositional syntax. By
 soundness, the denotation of `π` is surjective, and the denotations of the two compositions
-are those of simple rational terms, which are simple rational functions.
+are those of simple rational terms of the compositional syntax, which are represented by
+simple rational terms of Definition 2.5.
 -/
 theorem simplification_of_rational_terms :
     type_of% @Lax149335.Simplification.simplification_of_rational_terms := by

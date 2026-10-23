@@ -1,4 +1,4 @@
-import Lax149335.SimpleRationalTerms
+import Lax149335.SimpleRationalWithinSyntax
 
 /-!
 ---
@@ -29,7 +29,7 @@ $A_1 + (A_2 + \cdots + A_n)$ is `sumTyOf A₁ [A₂, …, Aₙ]`.
 namespace Lax149335.GuardedTerms
 
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
-  Lax149335.SimpleRationalTerms
+  Lax149335.SimpleRationalWithinSyntax
 
 /-- **Definition 6.3.** `f : A → B*` is `k`-guarded if it is constant, or of the form
 `u · h · v` for values `u`, `v` of length `k` and a simple rational term `h`. -/

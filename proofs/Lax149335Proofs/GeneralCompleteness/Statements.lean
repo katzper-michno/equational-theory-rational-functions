@@ -384,7 +384,7 @@ are lists over a finite alphabet are provably equal.  This is the consequence of
 and Lemma 6.1 that is noted in the paper right after Lemma 7.3. -/
 theorem drop_completeness_of (h55 : type_of% @Lax149335.Cancellation.cancel)
     (h61 : type_of% @Lax149335.SimpleCompleteness.completeness_simple)
-    (h73 : type_of% @Lax149335.JointSimplification.drops_to_simple)
+    (h73 : type_of% @Lax149335.DropsJointSimplification.drops_to_simple)
     {A B : Ty} (hB : Ty.IsFinAlph B) (d₁ d₂ : Term A B⋆)
     (h₁ : IsDrop d₁) (h₂ : IsDrop d₂) (h : d₁.den = d₂.den) : d₁ ≡ₜ d₂ := by
   obtain ⟨C, l, π, -, -, hlπ, -, ⟨f', hf'simple, hf'⟩, ⟨g', hg'simple, hg'⟩⟩ :=
@@ -406,7 +406,7 @@ theorem completeness_aperiodic_of (h55 : type_of% @Lax149335.Cancellation.cancel
     (h56 : type_of% @Lax149335.StringRepresentations.exists_injective_binary_encoding)
     (h61 : type_of% @Lax149335.SimpleCompleteness.completeness_simple)
     (h72 : type_of% @Lax149335.LiftInverses.lift_iso)
-    (h73 : type_of% @Lax149335.JointSimplification.drops_to_simple)
+    (h73 : type_of% @Lax149335.DropsJointSimplification.drops_to_simple)
     (h74 : type_of% @Lax149335.LiftDropFactorisation.lift_drop_factorisation)
     {A B : Ty} (f g : Term A B)
     (hf : IsAperiodic f) (hg : IsAperiodic g) (h : f.den = g.den) : f ≡ₜ g := by

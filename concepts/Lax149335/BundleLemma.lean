@@ -1,4 +1,4 @@
-import Lax149335.InjectiveTerms
+import Lax149335.InjectiveSurjectiveTerms
 
 /-!
 ---
@@ -23,7 +23,7 @@ sizes $k + 1$ can be chosen independently of the type $A$.
 namespace Lax149335.BundleLemma
 
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
-  Lax149335.InjectiveTerms
+  Lax149335.InjectiveSurjectiveTerms
 
 /-- **Lemma 6.7.** For every `N` there is a `k ≥ N` such that, for every type `A`, the
 concatenation map `(A^{k+1})* × A^{<k+1} ↣ A*` is an isomorphism. -/

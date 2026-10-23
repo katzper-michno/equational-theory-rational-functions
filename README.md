@@ -63,7 +63,7 @@ the results whose statements the annotated proof uses.
 | --- | --- | --- |
 | Definitions 2.2, 2.4 (types, finite alphabets) | `Types` | |
 | Definitions 2.1, 2.3 (rational functions) | `RationalFunctions` | |
-| Definition 2.5 (simple rational functions) | `SimpleRationalFunctions` | |
+| Definition 2.5 (simple rational terms) | `SimpleRationalTerms` | |
 | Theorem 2.6 (conjugacy completeness) | `ConjugacyCompleteness` | |
 | Claim 2.7 | `SynchronisedLengths` | |
 | Corollary 2.8 (decidability) | `DecidableEquivalence` | |
@@ -75,10 +75,10 @@ the results whose statements the annotated proof uses.
 | Theorem 4.1 (finite axiomatisation) | `FiniteAxiomatisation` | 5.5, 5.6, 6.1, 7.7 |
 | Lemma 5.2 | `ValueConcatenation` | |
 | Lemma 5.3 | `ValueNormalisation` | |
-| Definition 5.4 | `InjectiveTerms` | |
+| Definition 5.4 (injective, surjective, isomorphic terms) | `InjectiveSurjectiveTerms` | |
 | Lemma 5.5 | `Cancellation` | |
 | Lemma 5.6 | `StringRepresentations` | |
-| simple rational terms as rational terms, conjugacy | `SimpleRationalTerms` | |
+| simple rational terms within the compositional syntax, conjugacy | `SimpleRationalWithinSyntax` | |
 | Lemma 6.1 | `SimpleCompleteness` | 5.5, 6.2, 6.4, 6.5, 6.7 |
 | Lemma 6.2 | `ConjugacyRule` | |
 | Definition 6.3 | `GuardedTerms` | |
@@ -88,7 +88,7 @@ the results whose statements the annotated proof uses.
 | Lemma 6.7 (bundles) | `BundleLemma` | 5.6 |
 | Definition 7.1, Table 1 (lifts and drops) | `LiftsAndDrops` | |
 | Lemma 7.2 | `LiftInverses` | |
-| Lemma 7.3 | `JointSimplification` | |
+| Lemma 7.3 (provable simplification of drops) | `DropsJointSimplification` | |
 | Lemma 7.4 | `LiftDropFactorisation` | 7.5 |
 | Lemma 7.5 (exchange) | `Exchange` | |
 | Corollary 7.6 | `AperiodicCompleteness` | 5.5, 5.6, 6.1, 7.2, 7.3, 7.4 |

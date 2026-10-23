@@ -1,4 +1,4 @@
-import Lax149335.InjectiveTerms
+import Lax149335.InjectiveSurjectiveTerms
 
 /-!
 ---
@@ -18,7 +18,7 @@ $$
 
 namespace Lax149335.Cancellation
 
-open Lax149335.Types Lax149335.Terms Lax149335.EquationalTheory Lax149335.InjectiveTerms
+open Lax149335.Types Lax149335.Terms Lax149335.EquationalTheory Lax149335.InjectiveSurjectiveTerms
 
 /-- **Lemma 5.5.** Injective terms can be cancelled on the right and surjective terms on
 the left. -/

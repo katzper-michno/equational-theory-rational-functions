@@ -1,4 +1,4 @@
-import Lax149335.SimpleRationalFunctions
+import Lax149335.SimpleRationalTerms
 
 /-!
 ---
@@ -24,7 +24,7 @@ components $(f_i, w_i)$ are given as a list (`HomList`).
 
 namespace Lax149335.SynchronisedLengths
 
-open Lax149335.Types Lax149335.SimpleRationalFunctions
+open Lax149335.Types Lax149335.SimpleRationalTerms
 
 namespace SimpleTerm
 
@@ -61,8 +61,8 @@ open SimpleTerm
 `v₀ · (hom g₁ · v₁) ⊙ ⋯ ⊙ (hom gₙ · vₙ)` define the same function, then `fᵢ` and `gᵢ` produce
 outputs of the same length on every input. -/
 axiom claim_same_lengths {Bs : Type} {As : List Ty} (F G : HomList Bs As) (w₀ v₀ : List Bs) :
-    (SimpleRationalFunctions.SimpleTerm.pre w₀ F.term).den =
-      (SimpleRationalFunctions.SimpleTerm.pre v₀ G.term).den →
+    (SimpleRationalTerms.SimpleTerm.pre w₀ F.term).den =
+      (SimpleRationalTerms.SimpleTerm.pre v₀ G.term).den →
     F.SameLengths G
 
 end Lax149335.SynchronisedLengths

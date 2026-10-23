@@ -21,7 +21,7 @@ The notions are called `ProvablyInjective`, `ProvablySurjective` and `ProvableIs
 distinguish them from injectivity and surjectivity of the denotation.
 -/
 
-namespace Lax149335.InjectiveTerms
+namespace Lax149335.InjectiveSurjectiveTerms
 
 open Lax149335.Types Lax149335.Terms Lax149335.EquationalTheory
 
@@ -38,4 +38,4 @@ def ProvablySurjective {A B : Ty} (f : Term A B) : Prop :=
 def ProvableIso {A B : Ty} (f : Term A B) : Prop :=
   ∃ f' : Term B A, (f ⨟ f') ≡ₜ Term.id A ∧ (f' ⨟ f) ≡ₜ Term.id B
 
-end Lax149335.InjectiveTerms
+end Lax149335.InjectiveSurjectiveTerms

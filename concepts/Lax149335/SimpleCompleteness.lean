@@ -1,4 +1,4 @@
-import Lax149335.SimpleRationalTerms
+import Lax149335.SimpleRationalWithinSyntax
 
 /-!
 ---
@@ -19,7 +19,7 @@ $$
 namespace Lax149335.SimpleCompleteness
 
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
-  Lax149335.EquationalTheory Lax149335.SimpleRationalTerms
+  Lax149335.EquationalTheory Lax149335.SimpleRationalWithinSyntax
 
 /-- **Lemma 6.1.** The completeness rule and the conjugacy rule for simple rational terms. -/
 axiom completeness_simple {A B : Ty} (hB : Ty.IsFinAlph B) (f g : Term A B⋆)

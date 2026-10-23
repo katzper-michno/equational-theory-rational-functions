@@ -1,4 +1,4 @@
-import Lax149335.SimpleRationalFunctions
+import Lax149335.SimpleRationalTerms
 
 /-!
 ---
@@ -28,7 +28,7 @@ rational term is evaluated on an input in polynomial time.
 
 namespace Lax149335.DecidableEquivalence
 
-open Lax149335.Types Lax149335.SimpleRationalFunctions
+open Lax149335.Types Lax149335.SimpleRationalTerms
 
 /-- The test inputs `T(A)` of a type. -/
 def testInputs : (A : Ty) → List ⟦A⟧

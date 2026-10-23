@@ -1,4 +1,4 @@
-import Lax149335.SimpleRationalTerms
+import Lax149335.SimpleRationalWithinSyntax
 
 /-!
 ---

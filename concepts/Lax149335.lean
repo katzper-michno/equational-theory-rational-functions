@@ -1,6 +1,6 @@
 import Lax149335.Types
 import Lax149335.RationalFunctions
-import Lax149335.SimpleRationalFunctions
+import Lax149335.SimpleRationalTerms
 import Lax149335.ConjugacyCompleteness
 import Lax149335.SynchronisedLengths
 import Lax149335.DecidableEquivalence
@@ -12,10 +12,10 @@ import Lax149335.EquationalTheory
 import Lax149335.FiniteAxiomatisation
 import Lax149335.ValueConcatenation
 import Lax149335.ValueNormalisation
-import Lax149335.InjectiveTerms
+import Lax149335.InjectiveSurjectiveTerms
 import Lax149335.Cancellation
 import Lax149335.StringRepresentations
-import Lax149335.SimpleRationalTerms
+import Lax149335.SimpleRationalWithinSyntax
 import Lax149335.SimpleCompleteness
 import Lax149335.ConjugacyRule
 import Lax149335.GuardedTerms
@@ -25,7 +25,7 @@ import Lax149335.EmptySummands
 import Lax149335.BundleLemma
 import Lax149335.LiftsAndDrops
 import Lax149335.LiftInverses
-import Lax149335.JointSimplification
+import Lax149335.DropsJointSimplification
 import Lax149335.LiftDropFactorisation
 import Lax149335.Exchange
 import Lax149335.AperiodicCompleteness

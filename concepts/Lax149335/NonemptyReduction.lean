@@ -19,7 +19,7 @@ most $D$. The assumption that $B$ is a finite alphabet is not needed.
 namespace Lax149335.NonemptyReduction
 
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
-  Lax149335.EquationalTheory Lax149335.SimpleRationalTerms Lax149335.GuardedTerms
+  Lax149335.EquationalTheory Lax149335.SimpleRationalWithinSyntax Lax149335.GuardedTerms
 
 /-- **Lemma 6.5.** The conjugacy rule for co-pairings of `k`-guarded terms follows from the
 conjugacy rule for co-pairings of `k`-guarded nonempty terms. -/

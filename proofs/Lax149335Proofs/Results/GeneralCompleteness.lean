@@ -29,14 +29,14 @@ theorem lift_iso : type_of% @Lax149335.LiftInverses.lift_iso :=
 
 /--
 ---
-conclusion: Lax149335.JointSimplification.drops_to_simple
+conclusion: Lax149335.DropsJointSimplification.drops_to_simple
 ---
 By a syntactic analysis of drops: drops with co-product, product and list codomains are
 normalised, the normal forms of two drops are brought to a common shape by a common lift,
 and a drop of that shape into the lists over a finite alphabet is provably equivalent to a
 simple rational term.
 -/
-theorem drops_to_simple : type_of% @Lax149335.JointSimplification.drops_to_simple :=
+theorem drops_to_simple : type_of% @Lax149335.DropsJointSimplification.drops_to_simple :=
   @Lax149335Proofs.drops_to_simple
 
 /--
@@ -77,7 +77,7 @@ theorem completeness_aperiodic :
   @Lax149335Proofs.completeness_aperiodic_of Lax149335.Cancellation.cancel
     Lax149335.StringRepresentations.exists_injective_binary_encoding
     Lax149335.SimpleCompleteness.completeness_simple Lax149335.LiftInverses.lift_iso
-    Lax149335.JointSimplification.drops_to_simple
+    Lax149335.DropsJointSimplification.drops_to_simple
     Lax149335.LiftDropFactorisation.lift_drop_factorisation
 
 /--
@@ -97,7 +97,7 @@ theorem provable_simplification :
   obtain ⟨D, mu, pi, d₁, d₂, hmupi, hd₁, hd₂, hf, hg⟩ :=
     Lax149335Proofs.common_grouplift_drop_normalisation f g
   obtain ⟨C, l, π, -, -, hlπ, -, ⟨f', hf's, hf'⟩, ⟨g', hg's, hg'⟩⟩ :=
-    Lax149335.JointSimplification.drops_to_simple ⟨n, rfl⟩ d₁ d₂ hd₁ hd₂
+    Lax149335.DropsJointSimplification.drops_to_simple ⟨n, rfl⟩ d₁ d₂ hd₁ hd₂
   refine ⟨C, π ⨟ pi, ⟨mu ⨟ l, ?_⟩, ⟨f', hf's, ?_⟩, ⟨g', hg's, ?_⟩⟩
   · calc ((mu ⨟ l) ⨟ (π ⨟ pi)) ≡ₜ (mu ⨟ (l ⨟ (π ⨟ pi))) := PEq.comp_assoc _ _ _
       _ ≡ₜ (mu ⨟ ((l ⨟ π) ⨟ pi)) := PEq.compR _ (PEq.symm (PEq.comp_assoc _ _ _))

@@ -1,63 +1,70 @@
-import Lax149335.EquationalTheory
+import Lax149335.Types
 
 /-!
 ---
-title: Simple rational terms and conjugacy
+title: Simple rational terms
 type: definition
 ---
-The definition of simple rational terms (Definition 2.5) is meaningful in the compositional
-syntax of Section 3: the *simple rational terms* with outputs in $B^*$ are the rational terms
-built from the empty list $[\,] : 1 \to B^*$ using co-pairing $\langle f_1, f_2 \rangle$,
-concatenation $f_1 \odot f_2$, the homomorphism combinator $\mathrm{hom}\, f$, and
-prepending and appending a value, $w \cdot f$ and $f \cdot w$, where $w : 1 \to B^*$.
+**Definition 2.5 (Simple rational terms).** Let $B$ be a finite alphabet. The *simple
+rational terms* with outputs in $B^*$ are the terms generated from the term
+$[] : 1 \to B^*$, which produces the empty string, by the following combinators:
 
-For two rational terms $f, g : A \to B^*$ and a value $w : 1 \to B^*$, Section 6 considers
-three conjugacy relations, in increasing order of strength:
+- *co-pairing*: for $f_1 : A_1 \to B^*$ and $f_2 : A_2 \to B^*$, the term
+  $\langle f_1, f_2 \rangle : A_1 + A_2 \to B^*$ that applies $f_1$ or $f_2$ depending on
+  the summand;
+- *concatenation*: for $f_1 : A_1 \to B^*$ and $f_2 : A_2 \to B^*$, the term
+  $f_1 \odot f_2 : A_1 \times A_2 \to B^*$ that maps $(a_1, a_2)$ to $f_1(a_1)\,f_2(a_2)$;
+- *homomorphism*: for $f : A \to B^*$, the term $\mathrm{hom}\, f : A^* \to B^*$ that maps
+  $[a_1, \ldots, a_n]$ to $f(a_1) \cdots f(a_n)$;
+- *constants*: for $f : A \to B^*$ and a string $w \in B^*$, the terms $w \cdot f$ and
+  $f \cdot w$, which prepend or append $w$ to the output.
 
-1. $f$ and $g$ are *denotationally $w$-conjugate* if
-   $[\![ f \cdot w ]\!] = [\![ w \cdot g ]\!]$;
-2. $f$ and $g$ are *provably $w$-conjugate* if $f \cdot w \equiv w \cdot g$;
-3. $f$ and $g$ are *syntactically $w$-conjugate* if $f = w \cdot h$ and $g = h \cdot w$ for
-   some term $h$.
+A function is *represented* by a simple rational term if it is the function that the term
+defines.
 
-The *length* of a list value $w$ is the length of the list it produces.
+# Formalization notes
+
+The output alphabet is an arbitrary Lean type `Bs`; the statements that need it to be
+finite say so.
 -/
 
 namespace Lax149335.SimpleRationalTerms
 
-open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
-  Lax149335.EquationalTheory
+open Lax149335.Types
 
-/-- Simple rational terms with outputs in `B*`, in the syntax of rational terms. -/
-inductive IsSimple (B : Ty) : {A : Ty} → Term A B⋆ → Prop
-  /-- The empty function `[] : 1 → B*`. -/
-  | nil : IsSimple B (nilT B)
-  /-- Co-pairing. -/
-  | either {A₁ A₂ : Ty} {f₁ : Term A₁ B⋆} {f₂ : Term A₂ B⋆} :
-      IsSimple B f₁ → IsSimple B f₂ → IsSimple B (Term.either f₁ f₂)
-  /-- Concatenation of two functions. -/
-  | fdot {A₁ A₂ : Ty} {f₁ : Term A₁ B⋆} {f₂ : Term A₂ B⋆} :
-      IsSimple B f₁ → IsSimple B f₂ → IsSimple B (f₁ ⊙ f₂)
-  /-- The homomorphism combinator. -/
-  | hom {A : Ty} {f : Term A B⋆} : IsSimple B f → IsSimple B (homT f)
-  /-- Prepending a value. -/
-  | dotL {A : Ty} {f : Term A B⋆} (w : Value B⋆) : IsSimple B f → IsSimple B (Term.dotL w f)
-  /-- Appending a value. -/
-  | dotR {A : Ty} {f : Term A B⋆} (w : Value B⋆) : IsSimple B f → IsSimple B (Term.dotR f w)
+/-- Simple rational terms `A → Bs*`. -/
+inductive SimpleTerm (Bs : Type) : Ty → Type
+  /-- The term `[] : 1 → Bs*` with empty output. -/
+  | empty : SimpleTerm Bs Ty.unit
+  /-- Co-pairing `⟨f₁, f₂⟩ : A₁ + A₂ → Bs*`. -/
+  | either {A₁ A₂ : Ty} : SimpleTerm Bs A₁ → SimpleTerm Bs A₂ → SimpleTerm Bs (A₁ ⊕' A₂)
+  /-- Concatenation `f₁ ⊙ f₂ : A₁ × A₂ → Bs*`. -/
+  | conc {A₁ A₂ : Ty} : SimpleTerm Bs A₁ → SimpleTerm Bs A₂ → SimpleTerm Bs (A₁ ⊗ A₂)
+  /-- Homomorphism `hom f : A* → Bs*`. -/
+  | hom {A : Ty} : SimpleTerm Bs A → SimpleTerm Bs A⋆
+  /-- Prepending a string constant, `w · f`. -/
+  | pre {A : Ty} : List Bs → SimpleTerm Bs A → SimpleTerm Bs A
+  /-- Appending a string constant, `f · w`. -/
+  | post {A : Ty} : SimpleTerm Bs A → List Bs → SimpleTerm Bs A
 
-/-- The length of a list value. -/
-def valLength {B : Ty} (w : Value B⋆) : ℕ := List.length (w.den ())
+namespace SimpleTerm
 
-/-- `f` and `g` are denotationally `w`-conjugate: `⟦f · w⟧ = ⟦w · g⟧`. -/
-def DenConjugate {A B : Ty} (w : Value B⋆) (f g : Term A B⋆) : Prop :=
-  (dotR f w).den = (dotL w g).den
+variable {Bs : Type}
 
-/-- `f` and `g` are provably `w`-conjugate: `f · w ≡ w · g`. -/
-def ProvConjugate {A B : Ty} (w : Value B⋆) (f g : Term A B⋆) : Prop :=
-  dotR f w ≡ₜ dotL w g
+/-- The function defined by a simple rational term. -/
+def den : {A : Ty} → SimpleTerm Bs A → ⟦A⟧ → List Bs
+  | _, .empty, _ => []
+  | _, .either f _, .inl a => den f a
+  | _, .either _ g, .inr b => den g b
+  | _, .conc f g, (a, b) => den f a ++ den g b
+  | _, .hom f, l => (l.map (den f)).flatten
+  | _, .pre w f, a => w ++ den f a
+  | _, .post f w, a => den f a ++ w
 
-/-- `f` and `g` are syntactically `w`-conjugate: `f = w · h` and `g = h · w` for some `h`. -/
-def SynConjugate {A B : Ty} (w : Value B⋆) (f g : Term A B⋆) : Prop :=
-  ∃ h : Term A B⋆, f = dotL w h ∧ g = dotR h w
+/-- A function is represented by a simple rational term if it is the function that the term
+defines. -/
+def IsSimpleFun {A : Ty} (f : ⟦A⟧ → List Bs) : Prop := ∃ t : SimpleTerm Bs A, t.den = f
+
+end SimpleTerm
 
 end Lax149335.SimpleRationalTerms

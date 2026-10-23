@@ -1,5 +1,5 @@
-import Lax149335.InjectiveTerms
-import Lax149335.SimpleRationalTerms
+import Lax149335.InjectiveSurjectiveTerms
+import Lax149335.SimpleRationalWithinSyntax
 
 /-!
 ---
@@ -18,8 +18,8 @@ the equivalences are provable.
 
 namespace Lax149335.ProvableSimplification
 
-open Lax149335.Types Lax149335.Terms Lax149335.EquationalTheory Lax149335.InjectiveTerms
-  Lax149335.SimpleRationalTerms
+open Lax149335.Types Lax149335.Terms Lax149335.EquationalTheory Lax149335.InjectiveSurjectiveTerms
+  Lax149335.SimpleRationalWithinSyntax
 
 /-- **Theorem 7.7.** Two terms `A → N*` into the
 lists over a finite alphabet become provably equivalent to simple rational terms after

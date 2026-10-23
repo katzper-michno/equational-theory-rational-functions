@@ -1,4 +1,4 @@
-import Lax149335.SimpleRationalFunctions
+import Lax149335.SimpleRationalTerms
 
 /-!
 ---
@@ -32,7 +32,7 @@ rational terms, $w, v$ are strings and $\varepsilon$ is the empty string):
 
 namespace Lax149335.ConjugacyCompleteness
 
-open Lax149335.Types Lax149335.SimpleRationalFunctions
+open Lax149335.Types Lax149335.SimpleRationalTerms
 
 namespace SimpleTerm
 

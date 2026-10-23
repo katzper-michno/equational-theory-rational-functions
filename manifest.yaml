@@ -1,0 +1,17 @@
+specVersion: "1"
+id: lax-149335
+leanVersion: "v4.33.0"
+mathlibVersion: "db584cd6d46c92f209a44c0f1c829460d327499d"
+title: "The equational theory of rational string-to-string functions"
+authors:
+  - name: "Mikołaj Bojańczyk"
+  - name: "Kacper Lewandowski"
+  - name: "Katzper Michno"
+bibEntries:
+  - |
+    @unpublished{BojanczykLewandowskiMichno2026,
+      author = {Boja{\'n}czyk, Miko{\l}aj and Lewandowski, Kacper and Michno, Katzper},
+      title  = {The equational theory of rational string-to-string functions},
+      note   = {Manuscript},
+      year   = {2026}
+    }

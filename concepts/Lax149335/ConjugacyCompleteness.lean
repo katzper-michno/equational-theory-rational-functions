@@ -5,7 +5,7 @@ import Lax149335.SimpleRationalFunctions
 title: Conjugacy completeness
 type: theorem
 ---
-**Theorem (Conjugacy completeness).** Two simple rational terms define the same function
+**Theorem 2.6 (Conjugacy completeness).** Two simple rational terms define the same function
 if and only if they are equivalent with respect to the least equivalence relation $\equiv$
 on simple rational terms that satisfies the following rules (where $f, g, h$ are simple
 rational terms, $w, v$ are strings and $\varepsilon$ is the empty string):
@@ -36,7 +36,7 @@ open Lax149335.Types Lax149335.SimpleRationalFunctions
 
 namespace SimpleTerm
 
-/-- The equivalence `≡` of simple rational terms: the least relation closed
+/-- The equivalence `≡` of simple rational terms from Theorem 2.6: the least relation closed
 under (1) congruence, (2) concatenation monoidality, (3) constants and co-pairing, (4) case
 splitting and (5) conjugacy. -/
 inductive SEq {Bs : Type} : {A : Ty} → SimpleTerm Bs A → SimpleTerm Bs A → Prop
@@ -93,7 +93,7 @@ infix:50 " ≃ₛ " => SEq
 
 end SimpleTerm
 
-/-- Two simple rational terms define the same function if and only if they
+/-- **Theorem 2.6.** Two simple rational terms define the same function if and only if they
 are equivalent. -/
 axiom conjugacy_completeness {Bs : Type} {A : Ty} (f g : SimpleTerm Bs A) :
     f.den = g.den ↔ f ≃ₛ g

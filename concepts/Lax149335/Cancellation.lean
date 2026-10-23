@@ -5,7 +5,7 @@ import Lax149335.InjectiveTerms
 title: Cancelling injective and surjective terms
 type: lemma
 ---
-For all terms $g_1, g_2 : A \to B$,
+**Lemma 5.5.** For all terms $g_1, g_2 : A \to B$,
 $$
 \begin{aligned}
 g_1 \equiv g_2 &\quad\text{iff}\quad g_1 \mathbin{;} f \equiv g_2 \mathbin{;} f
@@ -20,7 +20,7 @@ namespace Lax149335.Cancellation
 
 open Lax149335.Types Lax149335.Terms Lax149335.EquationalTheory Lax149335.InjectiveTerms
 
-/-- Injective terms can be cancelled on the right and surjective terms on
+/-- **Lemma 5.5.** Injective terms can be cancelled on the right and surjective terms on
 the left. -/
 axiom cancel {A B : Ty} (g₁ g₂ : Term A B) :
     (∀ (C : Ty) (f : Term B C), ProvablyInjective f → (g₁ ≡ₜ g₂ ↔ (g₁ ⨟ f) ≡ₜ (g₂ ⨟ f))) ∧

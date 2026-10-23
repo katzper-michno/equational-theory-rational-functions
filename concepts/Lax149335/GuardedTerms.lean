@@ -5,7 +5,7 @@ import Lax149335.SimpleRationalTerms
 title: Guarded terms
 type: definition
 ---
-Let $k \in \{1, 2, \ldots\}$. A term $f : A \to B^*$ is *$k$-guarded*
+**Definition 6.3.** Let $k \in \{1, 2, \ldots\}$. A term $f : A \to B^*$ is *$k$-guarded*
 if it is either
 
 1. *constant*: the composition of the unique term $A \to 1$ with a value; or
@@ -14,10 +14,10 @@ if it is either
 
 A term $f : A \to B^*$ is *nonempty* if it never produces the empty list.
 
-The reductions to guarded and to nonempty terms are about $n$-ary co-pairings
+The reductions of Lemmas 6.4 and 6.5 are about $n$-ary co-pairings
 $\langle f_1, \ldots, f_n \rangle : A_1 + \cdots + A_n \to B^*$ of such terms, and about the
-*nesting depth* of the list constructor in a type, on which the proof of completeness for simple
-rational terms is an induction.
+*nesting depth* of the list constructor in a type, on which the proof of Lemma 6.1 is an
+induction.
 
 # Formalization notes
 
@@ -31,7 +31,7 @@ namespace Lax149335.GuardedTerms
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
   Lax149335.SimpleRationalTerms
 
-/-- `f : A → B*` is `k`-guarded if it is constant, or of the form
+/-- **Definition 6.3.** `f : A → B*` is `k`-guarded if it is constant, or of the form
 `u · h · v` for values `u`, `v` of length `k` and a simple rational term `h`. -/
 def KGuarded (k : ℕ) (B : Ty) {A : Ty} (f : Term A B⋆) : Prop :=
   (∃ v : Value B⋆, f = toUnit A ⨟ v) ∨

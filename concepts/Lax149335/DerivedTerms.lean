@@ -5,31 +5,31 @@ import Lax149335.Terms
 title: Derived terms
 type: definition
 ---
-The following terms are derived from the atomic functions and combinators of rational
-terms. They are used to state the axioms of the equational theory and the results of the
+The following terms are derived from the atomic functions and combinators of
+Definition 3.1. They are used to state the axioms of Section 4 and the results of the
 completeness proof.
 
 - The unique term $A \to 1$, co-pairing $\langle f_1, f_2 \rangle = (f_1 + f_2) \mathbin{;}
   \mathsf{codiag}$, commutativity and associativity of co-products.
-- List notation: the empty list $[\,] : 1 \to A^*$, $\mathsf{prepend} :
+- The list notation of Section 4.6: the empty list $[\,] : 1 \to A^*$, $\mathsf{prepend} :
   A \times A^* \to A^*$, $\mathsf{append} : A^* \times A \to A^*$, $\mathsf{pure} : A \to
   A^*$, $\mathsf{binconcat} : A^* \times A^* \to A^*$, the homomorphism combinator
   $\mathrm{hom}\, f = f^* \mathbin{;} \mathsf{concat}$, and the concatenation
   $f \odot g = (f \times g) \mathbin{;} \mathsf{binconcat}$ of two terms with list outputs.
-- The inverses of distributivity, $\mathsf{undistL}$ and $\mathsf{undistR}$.
-- **Values.** A *value* is a term of type $1 \to A$. For a list value $w$,
+- The inverses of distributivity, $\mathsf{undistL}$ and $\mathsf{undistR}$ (Section 4.4).
+- **Definition 5.1 (Value).** A *value* is a term of type $1 \to A$. For a list value $w$,
   the terms $w \cdot f$ and $f \cdot w$ prepend or append the output of $w$ to the output
-  of $f$, and $\mathsf{head}_w : A^* \to A$ returns the first element of a
+  of $f$ (Section 5.2), and $\mathsf{head}_w : A^* \to A$ returns the first element of a
   list, or the output of $w$ for the empty list.
-- *Concatenation maps.* For a type constructor $F$ with one parameter, built
+- *Concatenation maps* (Section 5.1). For a type constructor $F$ with one parameter, built
   from the parameter, $1$, $\times$, $+$ and $(-)^*$, the concatenation map
   $F(A) \rightarrowtail A^*$ lists all the elements of $A$ occurring in the input, from left
   to right. Similarly for type constructors with two parameters, with outputs in
   $(A + B)^*$. In particular, $\mathsf{unsplit} : A^* \times (B \times A^*)^* \to
   (A + B)^*$ is a concatenation map.
 - The terms $\mathsf{shift} : (A \times B)^* \to 1 + A \times (B \times A)^* \times B$ and
-  $\mathsf{unshift}$, which are an atomic lift and an atomic drop.
-- The inverse $\mathsf{unpref}$ of group prefix multiplication, which maps
+  $\mathsf{unshift}$ of Table 1.
+- The inverse $\mathsf{unpref}$ of group prefix multiplication (Section 4.4), which maps
   $[(a_1, g_1), \ldots, (a_n, g_n)]$ to $[(a_1, g_0^{-1} g_1), \ldots, (a_n, g_{n-1}^{-1} g_n)]$,
   where $g_0$ is the group identity.
 
@@ -103,9 +103,9 @@ def undistR (A B C : Ty) : Term ((A ⊗ B) ⊕' (A ⊗ C)) (A ⊗ (B ⊕' C)) :=
 def undistL (A B C : Ty) : Term ((A ⊗ C) ⊕' (B ⊗ C)) ((A ⊕' B) ⊗ C) :=
   either (prodF (inl A B) (Term.id C)) (prodF (inr A B) (Term.id C))
 
--- Values and concatenation with values
+-- Values and concatenation with values (Section 5.2)
 
-/-- A value is a term of type `1 → A`. -/
+/-- **Definition 5.1 (Value).** A value is a term of type `1 → A`. -/
 abbrev Value (A : Ty) : Type := Term Ty.unit A
 
 /-- Pairing a value on the left with an arbitrary term: `(v,f) = (1,id); (v × f)`. -/
@@ -132,7 +132,7 @@ empty. -/
 def headT {A : Ty} (w : Value A) : Term A⋆ A :=
   uncons A ⨟ either w (fst A A⋆)
 
--- Concatenation maps
+-- Concatenation maps (Section 5.1)
 
 /-- Type constructors with one parameter, used to define concatenation maps. -/
 inductive TyF : Type
@@ -155,7 +155,7 @@ def TyF.app : TyF → Ty → Ty
   | .sum F G, A => (F.app A) ⊕' (G.app A)
   | .list F, A => (F.app A)⋆
 
-/-- **Concatenation maps**: the term `F(A) ↣ A*` that concatenates all the
+/-- **Concatenation maps** (Section 5.1): the term `F(A) ↣ A*` that concatenates all the
 elements of the input into a single list, defined by induction on `F`. -/
 def TyF.concatMap : (F : TyF) → (A : Ty) → Term (F.app A) A⋆
   | .param, A => pureT A
@@ -176,7 +176,7 @@ def TyF.lt : ℕ → TyF
   | (k + 1) => .sum (TyF.lt k) (TyF.pow (k + 1))
 
 /-- Type constructors with two parameters, used for the concatenation maps with values in
-`(A + B)*` that occur in the axioms about `shiftR` and in the definition of `unsplit`. -/
+`(A + B)*` that occur in Axiom 15 and in the definition of `unsplit`. -/
 inductive TyF2 : Type
   /-- The first parameter. -/
   | p1 : TyF2
@@ -215,7 +215,7 @@ concatenates all resulting lists. -/
 def unsplit (A B : Ty) : Term (A⋆ ⊗ (B ⊗ A⋆)⋆) (A ⊕' B)⋆ :=
   TyF2.concatMap (.prod (.list .p1) (.list (.prod .p2 (.list .p1)))) A B
 
--- The terms `shift` and `unshift`
+-- The terms `shift` and `unshift` of Table 1
 
 /-- The lift `shift : (A × B)* ⊸ 1 + A × (B × A)* × B`, obtained by composing `uncons`,
 `assocR` and `shiftL`. -/

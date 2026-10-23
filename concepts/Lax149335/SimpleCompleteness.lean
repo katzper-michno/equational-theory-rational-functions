@@ -5,7 +5,7 @@ import Lax149335.SimpleRationalTerms
 title: Completeness for simple rational terms
 type: lemma
 ---
-**Lemma (Completeness for simple rational terms).** For all simple rational terms
+**Lemma 6.1 (Completeness for simple rational terms).** For all simple rational terms
 $f, g : A \to B^*$, where $B$ is a finite alphabet, and every value $w : 1 \to B^*$,
 $$
 \begin{aligned}
@@ -21,7 +21,7 @@ namespace Lax149335.SimpleCompleteness
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
   Lax149335.EquationalTheory Lax149335.SimpleRationalTerms
 
-/-- The completeness rule and the conjugacy rule for simple rational terms. -/
+/-- **Lemma 6.1.** The completeness rule and the conjugacy rule for simple rational terms. -/
 axiom completeness_simple {A B : Ty} (hB : Ty.IsFinAlph B) (f g : Term A B⋆)
     (hf : IsSimple B f) (hg : IsSimple B g) (w : Value B⋆) :
     (f.den = g.den → f ≡ₜ g) ∧

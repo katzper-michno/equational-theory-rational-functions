@@ -5,44 +5,44 @@ import Lax149335.DerivedTerms
 title: The equational theory
 type: definition
 ---
-*Provable equivalence* $f \equiv g$ is an equivalence relation on rational terms of the same
-type. It is the least equivalence relation on rational terms that contains the following
-axioms and is preserved by the four combinators of rational terms (composition and
-functoriality of products, co-products and lists).
+Section 4 introduces an equivalence relation $f \equiv g$ on rational terms of the same type,
+called *provable equivalence*. It is the least equivalence relation on rational terms that
+contains the following sixteen axioms and is preserved by the four combinators of
+Definition 3.1 (composition and functoriality of products, co-products and lists).
 
-- *Category axioms:* composition is associative and the identity is neutral.
-- *Functoriality:* the combinators $\times$, $+$ and $(-)^*$ preserve identities and
-  composition.
-- *Naturality:* every atomic function except prefix multiplication is a natural
-  transformation.
-- *Isomorphisms:* ten pairs of mutually inverse terms — the units and $\mathsf{fst}$,
-  $\mathsf{snd}$; $\mathsf{assocL}$ and $\mathsf{assocR}$; $\mathsf{distL}$ and
-  $\mathsf{undistL}$; $\mathsf{distR}$ and $\mathsf{undistR}$; $\mathsf{cons}$ and
-  $\mathsf{uncons}$; $\mathsf{snoc}$ and $\mathsf{unsnoc}$; $\mathsf{split}$ and
-  $\mathsf{unsplit}$; $\mathsf{pref}$ and $\mathsf{unpref}$; $\mathsf{shiftL}$ and
-  $\mathsf{shiftR}$.
-- The unit type is terminal: any two terms $A \to 1$ are equivalent.
-- *The co-diagonal:* $\mathsf{Left} \mathbin{;} \mathsf{codiag} \equiv \mathrm{id}$,
-  $\mathsf{Right} \mathbin{;} \mathsf{codiag} \equiv \mathrm{id}$ and
-  $(\mathsf{Left} + \mathsf{Right}) \mathbin{;} \mathsf{codiag} \equiv \mathrm{id}$.
-- Mac Lane's pentagon for $\mathsf{assocL}$.
-- Mac Lane's triangle for $\mathsf{assocL}$ and the unit.
-- The notation based on $\mathsf{snoc}$ agrees with the notation based on
-  $\mathsf{cons}$: for the empty list, for singleton lists, and for concatenation.
-- $A^*$ is a monoid under $\mathsf{binconcat}$ with unit $[\,]$.
-- $\mathsf{concat}$ is a monoid homomorphism.
-- $A^*$ is a monad with unit $\mathsf{pure}$ and multiplication $\mathsf{concat}$.
-- $\mathsf{prepend}$ and $\mathsf{append}$ are expressed by $\mathsf{binconcat}$.
-- Concatenating a list of empty lists gives the empty list.
-- $\mathsf{shiftR}$ does not change the content of a list: it commutes with the
-  concatenation maps into $(A + B)^*$.
-- *The window axiom:* the bundle term
-  $\mathsf{bundle} : (2^*)^* \to (2^* \times 2^*)^* \times (1 + 2^*)$, which splits a
-  list into consecutive pairs followed by a remainder of at most one element, is undone by
-  the concatenation map: $\mathsf{bundle} \mathbin{;} \mathsf{concat} \equiv
-  \mathrm{id}$. Here $2 = 1 + 1$.
+1. *Category axioms:* composition is associative and the identity is neutral.
+2. *Functoriality:* the combinators $\times$, $+$ and $(-)^*$ preserve identities and
+   composition.
+3. *Naturality:* every atomic function except prefix multiplication is a natural
+   transformation.
+4. *Isomorphisms:* ten pairs of mutually inverse terms — the units and $\mathsf{fst}$,
+   $\mathsf{snd}$; $\mathsf{assocL}$ and $\mathsf{assocR}$; $\mathsf{distL}$ and
+   $\mathsf{undistL}$; $\mathsf{distR}$ and $\mathsf{undistR}$; $\mathsf{cons}$ and
+   $\mathsf{uncons}$; $\mathsf{snoc}$ and $\mathsf{unsnoc}$; $\mathsf{split}$ and
+   $\mathsf{unsplit}$; $\mathsf{pref}$ and $\mathsf{unpref}$; $\mathsf{shiftL}$ and
+   $\mathsf{shiftR}$.
+5. The unit type is terminal: any two terms $A \to 1$ are equivalent.
+6. *The co-diagonal:* $\mathsf{Left} \mathbin{;} \mathsf{codiag} \equiv \mathrm{id}$,
+   $\mathsf{Right} \mathbin{;} \mathsf{codiag} \equiv \mathrm{id}$ and
+   $(\mathsf{Left} + \mathsf{Right}) \mathbin{;} \mathsf{codiag} \equiv \mathrm{id}$.
+7. Mac Lane's pentagon for $\mathsf{assocL}$.
+8. Mac Lane's triangle for $\mathsf{assocL}$ and the unit.
+9. The notation based on $\mathsf{snoc}$ agrees with the notation based on
+   $\mathsf{cons}$: for the empty list, for singleton lists, and for concatenation.
+10. $A^*$ is a monoid under $\mathsf{binconcat}$ with unit $[\,]$.
+11. $\mathsf{concat}$ is a monoid homomorphism.
+12. $A^*$ is a monad with unit $\mathsf{pure}$ and multiplication $\mathsf{concat}$.
+13. $\mathsf{prepend}$ and $\mathsf{append}$ are expressed by $\mathsf{binconcat}$.
+14. Concatenating a list of empty lists gives the empty list.
+15. $\mathsf{shiftR}$ does not change the content of a list: it commutes with the
+    concatenation maps into $(A + B)^*$.
+16. *The window axiom:* the bundle term
+    $\mathsf{bundle} : (2^*)^* \to (2^* \times 2^*)^* \times (1 + 2^*)$, which splits a
+    list into consecutive pairs followed by a remainder of at most one element, is undone by
+    the concatenation map: $\mathsf{bundle} \mathbin{;} \mathsf{concat} \equiv
+    \mathrm{id}$. Here $2 = 1 + 1$.
 
-The bundle term is, for a type $A$ and a value $w : 1 \to A$, the
+The bundle term (Definition H.5) is, for a type $A$ and a value $w : 1 \to A$, the
 composition
 $$
 ((\mathrm{id}, 1) \mathbin{;} (\mathrm{id} \times \mathsf{Right}))^* \mathbin{;}
@@ -57,8 +57,8 @@ $\mathsf{Left}$. The window axiom uses it for $A = 2^*$ and $w = [\,]$.
 
 # Formalization notes
 
-Naturality of prefix multiplication is not an axiom: as observed in the paper, it is
-derivable. The axioms are listed in full in the constructors of `PEq` below.
+Naturality of prefix multiplication is not an axiom: as observed in footnote 5 of the paper,
+it is derivable. The axioms are listed in full in the constructors of `PEq` below.
 -/
 
 namespace Lax149335.EquationalTheory
@@ -94,13 +94,13 @@ copy. -/
 def bundleTag (A : Ty) : Term (A ⊗ Ty.finAlph 1) (A ⊕' A) :=
   distR A Ty.unit (Ty.finAlph 0) ⨟ either (fst A Ty.unit ⨟ inr A A) (fst A Ty.unit ⨟ inl A A)
 
-/-- **The bundle term** `A* → (A × A)* × (1 + A)`, for a type `A` and a value
+/-- **Definition H.5 (the bundle term)** `A* → (A × A)* × (1 + A)`, for a type `A` and a value
 `w : 1 → A`:
 
 `((id,1) ; (id × Right))* ; pref_{ℤ₂} ; (distR ; either (fst ; Right) (fst ; Left))* ;
 split ; shiftL ; ((head_w × id)* × (uncons ; (id + fst)))`.
 
-The window axiom says that, for `A = 2*` and `w = []`, it is a one-sided inverse
+The window axiom (Axiom 16) says that, for `A = 2*` and `w = []`, it is a one-sided inverse
 of the concatenation map `(A × A)* × (1 + A) ↣ A*`. -/
 def bundle (A : Ty) (w : Value A) : Term A⋆ ((A ⊗ A)⋆ ⊗ (Ty.unit ⊕' A)) :=
   listF (unitR A ⨟ prodF (Term.id A) (inr Ty.unit (Ty.finAlph 0))) ⨟
@@ -118,7 +118,7 @@ end Term
 open Lax149335.Terms.Term Lax149335.DerivedTerms.Term
 
 /-- Provable equality of rational terms: the least equivalence relation containing
-the axioms and stable under the combinators of the system. -/
+Axioms 1-16 of Section 4 and stable under the combinators of the system. -/
 inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
   -- rules of equational reasoning: `≡` is an equivalence relation, stable under the
   -- four combinators of the system
@@ -132,16 +132,16 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
   | congr_sumF {A₁ A₂ B₁ B₂ : Ty} {f f' : Term A₁ B₁} {g g' : Term A₂ B₂} :
       PEq f f' → PEq g g' → PEq (sumF f g) (sumF f' g')
   | congr_listF {A B : Ty} {f f' : Term A B} : PEq f f' → PEq (listF f) (listF f')
-  -- ## Category axioms
+  -- ## Axiom 1 (category axioms)
   | comp_assoc {A B C D : Ty} (f : Term A B) (g : Term B C) (h : Term C D) :
       PEq ((f ⨟ g) ⨟ h) (f ⨟ (g ⨟ h))
   | id_comp {A B : Ty} (f : Term A B) : PEq (Term.id A ⨟ f) f
   | comp_id {A B : Ty} (f : Term A B) : PEq (f ⨟ Term.id B) f
-  -- ## Functoriality, first part: the functors preserve the identity
+  -- ## Axiom 2 (functoriality), first part: the functors preserve the identity
   | prod_id (A B : Ty) : PEq (prodF (Term.id A) (Term.id B)) (Term.id (A ⊗ B))
   | sum_id (A B : Ty) : PEq (sumF (Term.id A) (Term.id B)) (Term.id (A ⊕' B))
   | list_id (A : Ty) : PEq (listF (Term.id A)) (Term.id A⋆)
-  -- ## Functoriality, second part: the functors preserve composition
+  -- ## Axiom 2 (functoriality), second part: the functors preserve composition
   | prod_comp {A₁ A₂ B₁ B₂ C₁ C₂ : Ty} (f₁ : Term A₁ B₁) (f₂ : Term A₂ B₂)
       (g₁ : Term B₁ C₁) (g₂ : Term B₂ C₂) :
       PEq (prodF f₁ f₂ ⨟ prodF g₁ g₂) (prodF (f₁ ⨟ g₁) (f₂ ⨟ g₂))
@@ -150,7 +150,7 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
       PEq (sumF f₁ f₂ ⨟ sumF g₁ g₂) (sumF (f₁ ⨟ g₁) (f₂ ⨟ g₂))
   | list_comp {A B C : Ty} (f : Term A B) (g : Term B C) :
       PEq (listF f ⨟ listF g) (listF (f ⨟ g))
-  -- ## Each atomic function is a natural transformation
+  -- ## Axiom 3 (each atomic function is a natural transformation)
   | nat_inl {A A' B B' : Ty} (f : Term A A') (g : Term B B') :
       PEq (inl A B ⨟ sumF f g) (f ⨟ inl A' B')
   | nat_inr {A A' B B' : Ty} (f : Term A A') (g : Term B B') :
@@ -193,8 +193,8 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
       PEq (prodF f (listF (prodF g f)) ⨟ shiftL A' B')
         (shiftL A B ⨟ prodF (listF (prodF f g)) f)
   -- (Naturality of the group prefix multiplication need not be postulated: it is derivable,
-  -- as observed in the paper.)
-  -- ## Ten pairs of mutually inverse functions
+  -- see footnote 5 of the paper.)
+  -- ## Axiom 4 (ten pairs of mutually inverse functions)
   | unitR_fst (A : Ty) : PEq (unitR A ⨟ fst A Ty.unit) (Term.id A)
   | fst_unitR (A : Ty) : PEq (fst A Ty.unit ⨟ unitR A) (Term.id (A ⊗ Ty.unit))
   | unitL_snd (A : Ty) : PEq (unitL A ⨟ snd Ty.unit A) (Term.id A)
@@ -223,23 +223,23 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
       PEq (unpref A G ⨟ pref A G) (Term.id ((A ⊗ Ty.finAlph n)⋆))
   | shiftL_shiftR (A B : Ty) : PEq (shiftL A B ⨟ shiftR A B) (Term.id (A ⊗ (B ⊗ A)⋆))
   | shiftR_shiftL (A B : Ty) : PEq (shiftR A B ⨟ shiftL A B) (Term.id ((A ⊗ B)⋆ ⊗ A))
-  -- ## The unit type is terminal
+  -- ## Axiom 5 (the unit type is terminal)
   | unit_unique {A : Ty} (f g : Term A Ty.unit) : PEq f g
-  -- ## The co-diagonal
+  -- ## Axiom 6 (the co-diagonal)
   | inl_codiag (A : Ty) : PEq (inl A A ⨟ codiag A) (Term.id A)
   | inr_codiag (A : Ty) : PEq (inr A A ⨟ codiag A) (Term.id A)
   | sum_inl_inr_codiag (A B : Ty) :
       PEq (sumF (inl A B) (inr A B) ⨟ codiag (A ⊕' B)) (Term.id (A ⊕' B))
-  -- ## Mac Lane's pentagon
+  -- ## Axiom 7 (Mac Lane's pentagon)
   | pentagon (A B C D : Ty) :
       PEq (prodF (Term.id A) (assocL B C D) ⨟ assocL A (B ⊗ C) D ⨟
               prodF (assocL A B C) (Term.id D))
         (assocL A B (C ⊗ D) ⨟ assocL (A ⊗ B) C D)
-  -- ## Mac Lane's triangle
+  -- ## Axiom 8 (Mac Lane's triangle)
   | triangle (A C : Ty) :
       PEq (assocL A Ty.unit C ⨟ prodF (fst A Ty.unit) (Term.id C))
         (prodF (Term.id A) (snd Ty.unit C))
-  -- ## `snoc`-based notation agrees with `cons`-based notation
+  -- ## Axiom 9 (`snoc`-based notation agrees with `cons`-based notation)
   | inl_snoc_cons (A : Ty) :
       PEq (inl Ty.unit (A⋆ ⊗ A) ⨟ snoc A) (inl Ty.unit (A ⊗ A⋆) ⨟ cons A)
   | append_nil_prepend_nil (A : Ty) :
@@ -248,7 +248,7 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
   | append_concat_prepend_concat (A : Ty) :
       PEq (prodF (pureT A⋆) (Term.id A⋆) ⨟ append A⋆ ⨟ concat A)
         (prodF (Term.id A⋆) (pureT A⋆) ⨟ prepend A⋆ ⨟ concat A)
-  -- ## `A*` is a monoid
+  -- ## Axiom 10 (`A*` is a monoid)
   | binconcat_assoc (A : Ty) :
       PEq (prodF (binconcat A) (Term.id A⋆) ⨟ binconcat A)
         (assocR A⋆ A⋆ A⋆ ⨟ prodF (Term.id A⋆) (binconcat A) ⨟ binconcat A)
@@ -256,30 +256,30 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
       PEq (unitR A⋆ ⨟ prodF (Term.id A⋆) (nilT A) ⨟ binconcat A) (Term.id A⋆)
   | binconcat_unitL (A : Ty) :
       PEq (unitL A⋆ ⨟ prodF (nilT A) (Term.id A⋆) ⨟ binconcat A) (Term.id A⋆)
-  -- ## `concat` is a monoid homomorphism
+  -- ## Axiom 11 (`concat` is a monoid homomorphism)
   | nil_concat (A : Ty) : PEq (nilT A⋆ ⨟ concat A) (nilT A)
   | binconcat_concat (A : Ty) :
       PEq (binconcat A⋆ ⨟ concat A) (prodF (concat A) (concat A) ⨟ binconcat A)
-  -- ## `A*` is a monad
+  -- ## Axiom 12 (`A*` is a monad)
   | concat_concat (A : Ty) : PEq (listF (concat A) ⨟ concat A) (concat A⋆ ⨟ concat A)
   | pure_concat (A : Ty) : PEq (pureT A⋆ ⨟ concat A) (Term.id A⋆)
   | listF_pure_concat (A : Ty) : PEq (listF (pureT A) ⨟ concat A) (Term.id A⋆)
-  -- ## The inductive structure in terms of the monoid structure
+  -- ## Axiom 13 (the inductive structure in terms of the monoid structure)
   | prepend_def (A : Ty) :
       PEq (prepend A) (prodF (pureT A) (Term.id A⋆) ⨟ binconcat A)
   | append_def (A : Ty) :
       PEq (append A) (prodF (Term.id A⋆) (pureT A) ⨟ binconcat A)
-  -- ## Concatenating a list of empty lists
+  -- ## Axiom 14 (concatenating a list of empty lists)
   | nil_map_concat (A : Ty) :
       PEq (listF (nilT A) ⨟ concat A) (toUnit Ty.unit⋆ ⨟ nilT A)
-  -- ## `shiftR` does not change the content of the list
+  -- ## Axiom 15 (`shiftR` does not change the content of the list)
   | shiftR_content (A B : Ty) :
       PEq (shiftR A B ⨟ TyF2.concatMap (.prod .p1 (.list (.prod .p2 .p1))) A B)
         (TyF2.concatMap (.prod (.list (.prod .p1 .p2)) .p1) A B)
-  -- ## The window axiom (the bundle term undoes the concatenation map of bundles
+  -- ## Axiom 16 (the window axiom: the bundle term undoes the concatenation map of bundles
   -- of size two over binary strings)
   --
-  -- The bundle term `bundle_{2*} : (2*)* → (2* × 2*)* × (1 + 2*)`,
+  -- The bundle term `bundle_{2*} : (2*)* → (2* × 2*)* × (1 + 2*)` of Definition H.5,
   -- formalised as `Term.bundle` with the value `w = []`, splits a list into bundles
   -- of two consecutive entries followed by a remainder of at most one entry.  The axiom says
   -- that this splitting is undone by the concatenation map

@@ -6,8 +6,8 @@ import Mathlib.Algebra.Group.Defs
 title: Rational terms
 type: definition
 ---
-**Definition (Rational terms).** A *rational term* $f : A \to B$ between types is an
-expression built from the following atomic functions using composition
+**Definition 3.1 (Rational terms).** A *rational term* $f : A \to B$ between types is an
+expression built from the following atomic functions (Figure 1) using composition
 $f \mathbin{;} g$ and the functoriality combinators $f \times g$, $f + g$ and $f^*$ of
 products, co-products and lists:
 
@@ -77,7 +77,8 @@ def shiftLDen {α β : Type} (a : α) : List (β × α) → List (α × β) × �
   | [] => ([], a)
   | (b₁, a₂) :: t => let p := shiftLDen a₂ t; ((a, b₁) :: p.1, p.2)
 
-/-- **Rational terms.** The expressions built from the atomic functions by composition and the functoriality combinators of products, co-products and
+/-- **Definition 3.1 (Rational terms).** The expressions built from the atomic functions of
+Figure 1 by composition and the functoriality combinators of products, co-products and
 lists. -/
 inductive Term : Ty → Ty → Type
   /-- Composition of functions. -/

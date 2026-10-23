@@ -5,7 +5,7 @@ import Lax149335.Types
 title: Simple rational functions
 type: definition
 ---
-**Definition (Simple rational functions).** Let $B$ be a finite alphabet. The *simple
+**Definition 2.5 (Simple rational functions).** Let $B$ be a finite alphabet. The *simple
 rational terms* with outputs in $B^*$ are the terms generated from the term
 $[] : 1 \to B^*$, which produces the empty string, by the following combinators:
 

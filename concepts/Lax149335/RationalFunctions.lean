@@ -11,10 +11,10 @@ $B$ is a subset of the monoid $A^* \times B^*$ defined by a regular expression: 
 are pairs of strings, and the operations are union, concatenation (componentwise) and Kleene
 star.
 
-**Definition (Rational function).** A function $f : A^* \to B^*$ is *rational* if its
+**Definition 2.1 (Rational function).** A function $f : A^* \to B^*$ is *rational* if its
 graph is a rational relation.
 
-**Definition (Rational functions on types).** A function $f : A \to B$ between types is
+**Definition 2.3 (Rational functions on types).** A function $f : A \to B$ between types is
 *rational* if there is a rational function $f' : \mathbb{8}^* \to \mathbb{8}^*$ that agrees
 with $f$ on the string representations of elements, i.e. the string representation of
 $f(a)$ is $f'$ applied to the string representation of $a$.
@@ -51,12 +51,12 @@ def RatExp.lang : RatExp α β → Set (List α × List β)
 /-- A relation between strings is rational if it is defined by a regular expression. -/
 def IsRationalRel (R : Set (List α × List β)) : Prop := ∃ e : RatExp α β, e.lang = R
 
-/-- A function `f : α* → β*` is rational if its graph is a rational
+/-- **Definition 2.1.** A function `f : α* → β*` is rational if its graph is a rational
 relation. -/
 def IsRationalFun (f : List α → List β) : Prop :=
   IsRationalRel {p : List α × List β | p.2 = f p.1}
 
-/-- A function between types is rational if, on string representations,
+/-- **Definition 2.3.** A function between types is rational if, on string representations,
 it is computed by a rational function `𝟖* → 𝟖*`. -/
 def IsRationalTypeFun {A B : Ty} (f : ⟦A⟧ → ⟦B⟧) : Prop :=
   ∃ f' : List Ty.Sym → List Ty.Sym,

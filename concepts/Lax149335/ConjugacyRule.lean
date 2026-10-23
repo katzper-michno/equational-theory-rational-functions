@@ -5,7 +5,7 @@ import Lax149335.SimpleRationalTerms
 title: The conjugacy rule for syntactic conjugates
 type: lemma
 ---
-For a simple rational term $h : A \to B^*$ and a value $w : 1 \to B^*$,
+**Lemma 6.2.** For a simple rational term $h : A \to B^*$ and a value $w : 1 \to B^*$,
 $$
 \mathrm{hom}(w \cdot h) \cdot w \;\equiv\; w \cdot \mathrm{hom}(h \cdot w).
 $$
@@ -24,7 +24,7 @@ namespace Lax149335.ConjugacyRule
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
   Lax149335.EquationalTheory
 
-/-- `hom(w · h) · w ≡ w · hom(h · w)`. -/
+/-- **Lemma 6.2.** `hom(w · h) · w ≡ w · hom(h · w)`. -/
 axiom conjugacy_of_syntactic {A B : Ty} (h : Term A B⋆) (w : Value B⋆) :
     dotR (homT (dotL w h)) w ≡ₜ dotL w (homT (dotR h w))
 

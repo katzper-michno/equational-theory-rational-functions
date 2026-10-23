@@ -3,12 +3,10 @@ import Lax149335Proofs.SimpleCompleteness.Bridge
 import Lax149335Proofs.EquationalTheory.Soundness
 
 /-!
-# Rational functions and simple rational terms
+# Section 2: rational functions and simple rational terms
 
-The proofs of the conjugacy completeness theorem, the claim on synchronised output lengths,
-the decidability of equivalence of simple rational terms, and the simplification theorem
-for rational terms. As the paper explains, the last one is a consequence of the provable
-simplification theorem.
+The proofs of Theorem 2.6, Claim 2.7, Corollary 2.8 and Theorem 2.9. As the paper explains,
+Theorem 2.9 is a consequence of the provable simplification theorem of Section 7.
 -/
 
 set_option autoImplicit false

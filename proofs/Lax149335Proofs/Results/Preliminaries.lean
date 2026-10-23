@@ -2,10 +2,9 @@ import Lax149335Proofs.Preliminaries.Overview
 import Lax149335Proofs.Appendix.Bundles.Window
 
 /-!
-# Preliminaries for the completeness proof
+# Section 5: preliminaries for the completeness proof
 
-The proofs of the laws for concatenation with values, the normalisation of values, the
-cancellation of injective and surjective terms, and the injective string representations.
+The proofs of Lemmas 5.2, 5.3, 5.5 and 5.6.
 -/
 
 set_option autoImplicit false
@@ -17,7 +16,7 @@ namespace Lax149335Proofs.Results
 ---
 conclusion: Lax149335.ValueConcatenation.value_assoc
 ---
-Each law is derived from the monoid axioms for `binconcat` and the coherence laws
+Each law is derived from the monoid axioms for `binconcat` (Axiom 10) and the coherence laws
 for products, which in turn follow from Mac Lane's pentagon and triangle.
 -/
 theorem value_assoc : type_of% @Lax149335.ValueConcatenation.value_assoc :=

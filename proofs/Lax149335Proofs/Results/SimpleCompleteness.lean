@@ -2,11 +2,11 @@ import Lax149335Proofs.SimpleCompleteness.Proof
 import Lax149335Proofs.SimpleCompleteness.ValueExtractionProof
 
 /-!
-# Completeness for simple rational terms
+# Section 6: completeness for simple rational terms
 
-The proof of completeness for simple rational terms and of the lemmas it uses: the conjugacy
-rule for syntactic conjugates, the reductions to guarded and to nonempty terms, the claim on
-empty summands, and the bundle lemma.
+The proofs of Lemma 6.1, Lemma 6.2, Lemma 6.4, Lemma 6.5, Claim 6.6 and Lemma 6.7. The proof
+of Lemma 6.1 uses Lemmas 5.5, 6.2, 6.4, 6.5 and 6.7; the proof of Lemma 6.5 uses Claim 6.6;
+and the proof of Lemma 6.7 uses the binary encodings of Lemma 5.6.
 -/
 
 set_option autoImplicit false
@@ -19,12 +19,12 @@ namespace Lax149335Proofs.Results
 conclusion: Lax149335.SimpleCompleteness.completeness_simple
 ---
 The completeness rule and the conjugacy rule are proved together by induction on the nesting
-depth of lists in the input type. The completeness rule follows the proof of the conjugacy
-completeness theorem. For the conjugacy rule with a nonempty value `w` of length `k`, the
-reductions to guarded and to nonempty terms reduce to co-pairings of `k`-guarded nonempty
-terms. After grouping the list into bundles of size at least `k` with the bundle lemma, the
-bundled terms become syntactically `w`-conjugate, by the induction hypothesis, and the
-conjugacy rule for syntactic conjugates applies. The bundle isomorphism is cancelled.
+depth of lists in the input type. The completeness rule follows the proof of Theorem 2.6.
+For the conjugacy rule with a nonempty value `w` of length `k`, Lemmas 6.4 and 6.5 reduce to
+co-pairings of `k`-guarded nonempty terms. After grouping the list into bundles of size at
+least `k` with the bundle lemma (Lemma 6.7), the bundled terms become syntactically
+`w`-conjugate, by the induction hypothesis, and Lemma 6.2 applies. The bundle isomorphism is
+cancelled with Lemma 5.5.
 -/
 theorem completeness_simple :
     type_of% @Lax149335.SimpleCompleteness.completeness_simple :=
@@ -60,7 +60,7 @@ theorem wlog_kguarded : type_of% @Lax149335.GuardedReduction.wlog_kguarded :=
 conclusion: Lax149335.NonemptyReduction.wlog_nonempty
 ---
 The input type is split into the summands on which both terms produce the empty list and the
-remaining ones; the former are removed with the claim on empty summands.
+remaining ones; the former are removed with Claim 6.6.
 -/
 theorem wlog_nonempty : type_of% @Lax149335.NonemptyReduction.wlog_nonempty :=
   @Lax149335Proofs.wlog_nonempty_of Lax149335.EmptySummands.hom_factors
@@ -69,7 +69,8 @@ theorem wlog_nonempty : type_of% @Lax149335.NonemptyReduction.wlog_nonempty :=
 ---
 conclusion: Lax149335.EmptySummands.hom_factors
 ---
-The empty case contributes nothing to the homomorphism, by the axioms about empty lists.
+The empty case contributes nothing to the homomorphism, by the axioms about empty lists
+(Axioms 10 and 14).
 -/
 theorem hom_factors : type_of% @Lax149335.EmptySummands.hom_factors :=
   @Lax149335Proofs.hom_factors
@@ -79,7 +80,7 @@ theorem hom_factors : type_of% @Lax149335.EmptySummands.hom_factors :=
 conclusion: Lax149335.BundleLemma.concatMap_bundle_iso_arbitrarily_large'
 ---
 For binary strings and bundles of size two, the window axiom provides the inverse of the
-concatenation map. Every type is a retract of the binary strings, by the injective string representations, and
+concatenation map. Every type is a retract of the binary strings, by Lemma 5.6, and
 concatenation maps are natural, which gives bundles of size two for every type. Bundles of
 bundles multiply the bundle sizes, which gives all powers of two.
 -/

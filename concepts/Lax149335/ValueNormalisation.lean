@@ -5,7 +5,7 @@ import Lax149335.EquationalTheory
 title: Normalisation of values
 type: lemma
 ---
-**Lemma (Normalisation of values).** Every value $1 \to A$ is provably equivalent to a
+**Lemma 5.3 (Normalisation of values).** Every value $1 \to A$ is provably equivalent to a
 value built from the identity on $1$ using the following constructors: $v \mathbin{;}
 \mathsf{Left}$ and $v \mathbin{;} \mathsf{Right}$ for values of co-products, $(v, w)$ for
 values of products, and $v \cdot w$, $[v]$ and $[\,]$ for values of list types.
@@ -34,7 +34,7 @@ inductive NormalValue : {A : Ty} → Value A → Prop
   /-- The empty list value `[]`. -/
   | nil {A : Ty} : NormalValue (nilT A)
 
-/-- Every value is provably equivalent to a value in normal form. -/
+/-- **Lemma 5.3.** Every value is provably equivalent to a value in normal form. -/
 axiom normalisation_of_values {A : Ty} (v : Value A) : ∃ u : Value A, NormalValue u ∧ v ≡ₜ u
 
 end Lax149335.ValueNormalisation

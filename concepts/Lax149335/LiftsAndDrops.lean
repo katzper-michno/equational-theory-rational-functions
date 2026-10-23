@@ -5,12 +5,12 @@ import Lax149335.DerivedTerms
 title: Lifts and drops
 type: definition
 ---
-**Definition (Lifts and drops).** *Lift* terms (respectively, *drop* terms) are those
-which can be obtained from the atomic lift (respectively, atomic drop) terms in the following table by
+**Definition 7.1 (Lifts and drops).** *Lift* terms (respectively, *drop* terms) are those
+which can be obtained from the atomic lift (respectively, atomic drop) terms in Table 1 by
 applying composition, as well as the functoriality combinators for co-products, products and
 lists.
 
-The atomic lift terms are
+**Table 1.** The atomic lift terms are
 $$
 \begin{gathered}
 A \xrightarrow{\mathrm{id}} A \qquad A + B \xrightarrow{\mathsf{comm}} B + A \qquad
@@ -44,7 +44,7 @@ namespace Lax149335.LiftsAndDrops
 
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
 
-/-- **Lifts.** The terms obtained from the atomic lift terms by
+/-- **Definition 7.1 (Lifts).** The terms obtained from the atomic lift terms of Table 1 by
 composition and the functoriality combinators of products, co-products and lists. -/
 inductive IsLift : {A B : Ty} → Term A B → Prop
   /-- Lifts are closed under composition. -/
@@ -82,7 +82,7 @@ inductive IsLift : {A B : Ty} → Term A B → Prop
   /-- `shift` is a prime lift. -/
   | shift (A B : Ty) : IsLift (Term.shift A B)
 
-/-- **Drops.** The terms obtained from the atomic drop terms by
+/-- **Definition 7.1 (Drops).** The terms obtained from the atomic drop terms of Table 1 by
 composition and the functoriality combinators of products, co-products and lists. -/
 inductive IsDrop : {A B : Ty} → Term A B → Prop
   /-- Drops are closed under composition. -/

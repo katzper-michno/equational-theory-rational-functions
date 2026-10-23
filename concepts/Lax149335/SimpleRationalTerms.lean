@@ -5,13 +5,13 @@ import Lax149335.EquationalTheory
 title: Simple rational terms and conjugacy
 type: definition
 ---
-The definition of simple rational terms is meaningful in the compositional syntax of
-rational terms: the *simple rational terms* with outputs in $B^*$ are the rational terms
+The definition of simple rational terms (Definition 2.5) is meaningful in the compositional
+syntax of Section 3: the *simple rational terms* with outputs in $B^*$ are the rational terms
 built from the empty list $[\,] : 1 \to B^*$ using co-pairing $\langle f_1, f_2 \rangle$,
 concatenation $f_1 \odot f_2$, the homomorphism combinator $\mathrm{hom}\, f$, and
 prepending and appending a value, $w \cdot f$ and $f \cdot w$, where $w : 1 \to B^*$.
 
-For two rational terms $f, g : A \to B^*$ and a value $w : 1 \to B^*$, there are
+For two rational terms $f, g : A \to B^*$ and a value $w : 1 \to B^*$, Section 6 considers
 three conjugacy relations, in increasing order of strength:
 
 1. $f$ and $g$ are *denotationally $w$-conjugate* if

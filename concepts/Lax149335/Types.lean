@@ -30,7 +30,7 @@ to one of these; the paper does not fix a bracketing of the sum, and any bracket
 isomorphic to the right-bracketed one.
 
 `Ty.someElem` picks a canonical element of every type; it shows that every type is
-nonempty and is used to state the decision procedure for simple rational terms.
+nonempty and is used to state the decision procedure of Corollary 2.8.
 -/
 
 namespace Lax149335.Types

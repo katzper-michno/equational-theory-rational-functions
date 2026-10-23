@@ -5,7 +5,7 @@ import Lax149335.EquationalTheory
 title: Injective, surjective and isomorphic terms
 type: definition
 ---
-A rational term $f : A \to B$ is
+**Definition 5.4.** A rational term $f : A \to B$ is
 
 - *injective* if $f \mathbin{;} f^{-1} \equiv \mathrm{id}$ for some term $f^{-1} : B \to A$;
 - *surjective* if $f^{-1} \mathbin{;} f \equiv \mathrm{id}$ for some term

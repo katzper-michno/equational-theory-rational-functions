@@ -5,7 +5,7 @@ import Lax149335.SimpleRationalFunctions
 title: Equivalence of simple rational terms is decidable
 type: corollary
 ---
-Equivalence for simple rational terms is decidable in polynomial time.
+**Corollary 2.8.** Equivalence for simple rational terms is decidable in polynomial time.
 
 # Formalization notes
 
@@ -39,7 +39,7 @@ def testInputs : (A : Ty) → List ⟦A⟧
         (testInputs A₂).map (fun b => (Ty.someElem A₁, b))
   | .list A => [] :: (testInputs A).map (fun a => [a])
 
-/-- Two simple rational terms define the same function if and only if they
+/-- **Corollary 2.8.** Two simple rational terms define the same function if and only if they
 agree on all test inputs. -/
 axiom decidable_equivalence {Bs : Type} {A : Ty} (f g : SimpleTerm Bs A) :
     f.den = g.den ↔ ∀ x ∈ testInputs A, f.den x = g.den x

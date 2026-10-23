@@ -1,12 +1,12 @@
 import Lax149335Proofs.EquationalTheory.Soundness
 
 /-!
-# The main theorem
+# Section 4: the main theorem
 
 Soundness of the axioms is proved directly. Completeness follows from the provable
-simplification theorem and completeness for simple rational terms, after reducing to binary
-string outputs with an injective string representation and cancelling the injective
-encoding and the surjective simplifying term.
+simplification theorem of Section 7 and completeness for simple rational terms
+(Lemma 6.1), after reducing to binary string outputs with Lemma 5.6 and cancelling the
+injective encoding and the surjective simplifying term with Lemma 5.5.
 -/
 
 set_option autoImplicit false
@@ -22,10 +22,10 @@ conclusion: Lax149335.FiniteAxiomatisation.finite_axiomatisation
 ---
 Soundness is checked axiom by axiom against the denotational semantics. For completeness,
 let `f, g : A → B` have the same denotation. Postcomposing with the injective binary
-encoding `enc : B → 2*`, the provable simplification theorem gives a surjective
+encoding `enc : B → 2*` of Lemma 5.6, the provable simplification theorem gives a surjective
 term `π` such that `π ; f ; enc` and `π ; g ; enc` are provably equivalent to simple
 rational terms. These have the same denotation, so they are provably equivalent by
-completeness for simple rational terms, and `π` and `enc` are cancelled.
+Lemma 6.1, and `π` and `enc` are cancelled with Lemma 5.5.
 -/
 theorem finite_axiomatisation :
     type_of% @Lax149335.FiniteAxiomatisation.finite_axiomatisation := by

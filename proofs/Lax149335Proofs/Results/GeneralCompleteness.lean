@@ -1,10 +1,12 @@
 import Lax149335Proofs.GeneralCompleteness.Groups
 
 /-!
-# Completeness for all rational terms
+# Section 7: completeness for all rational terms
 
-The proofs of the results on lifts and drops, the exchange lemma, aperiodic completeness and
-the provable simplification theorem.
+The proofs of Lemmas 7.2–7.5, Corollary 7.6 and the provable simplification theorem. The
+proof of Lemma 7.4 uses Lemma 7.5; Corollary 7.6 uses Lemmas 5.5, 5.6, 6.1, 7.2, 7.3 and
+7.4; and the provable simplification theorem uses Lemma 7.3, together with the
+grouplift-drop factorisation of the appendix.
 -/
 
 set_option autoImplicit false
@@ -65,11 +67,10 @@ theorem exchange : type_of% @Lax149335.Exchange.exchange :=
 ---
 conclusion: Lax149335.AperiodicCompleteness.completeness_aperiodic
 ---
-Reduce to binary string outputs with an injective string representation. Factorise the two
-terms as a common lift followed by drops, using the lift-drop factorisation and the fact that
-lifts are isomorphisms. The two drops have the same denotation, so they are provably
-equivalent by the provable simplification of drops and completeness for simple rational
-terms, and the common lift is cancelled.
+Reduce to binary string outputs with the encoding of Lemma 5.6 and Lemma 5.5. Factorise the
+two terms as a common lift followed by drops (Lemmas 7.4 and 7.2). The two drops have the
+same denotation, so they are provably equivalent by Lemma 7.3 and Lemma 6.1, and the common
+lift is cancelled with Lemma 5.5.
 -/
 theorem completeness_aperiodic :
     type_of% @Lax149335.AperiodicCompleteness.completeness_aperiodic :=
@@ -85,7 +86,7 @@ conclusion: Lax149335.ProvableSimplification.provable_simplification
 ---
 The grouplift-drop factorisation of the appendix gives a group-lift `α : A → C` with a
 one-sided inverse `α⁻¹`, i.e. `α ; α⁻¹ ≡ id`, such that `α⁻¹ ; f` and `α⁻¹ ; g` are provably
-equivalent to drops. By the provable simplification of drops there is a lift `σ : C → B` with inverse `σ⁻¹` such that
+equivalent to drops. By Lemma 7.3 there is a lift `σ : C → B` with inverse `σ⁻¹` such that
 `σ⁻¹` composed with these drops gives simple rational terms. The term `π = σ⁻¹ ; α⁻¹` is
 surjective, since `(α ; σ) ; π ≡ id`.
 -/

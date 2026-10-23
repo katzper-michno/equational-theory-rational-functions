@@ -11,8 +11,8 @@ $f, g : A \to N^*$, where $N$ is a finite alphabet. There is a type $B$ and a su
 rational term $\pi : B \to A$, such that $\pi \mathbin{;} f$ and $\pi \mathbin{;} g$ are
 equivalent to simple rational terms.
 
-This is a strengthening of the simplification theorem for rational terms in which the decomposition is carried out within
-the equational system: surjectivity of $\pi$ is the provable notion of surjectivity, and
+This is a strengthening of Theorem 2.9 in which the decomposition is carried out within
+the equational system: surjectivity of $\pi$ is the provable notion of Definition 5.4, and
 the equivalences are provable.
 -/
 

@@ -5,7 +5,7 @@ import Lax149335.EquationalTheory
 title: Concatenation with values
 type: lemma
 ---
-**Lemma (Concatenation with values).** For terms $f : A \to B^*$ and
+**Lemma 5.2 (Concatenation with values).** For terms $f : A \to B^*$ and
 $g : A' \to B^*$ and list values $w, v : 1 \to B^*$,
 $$
 \begin{aligned}
@@ -23,7 +23,7 @@ namespace Lax149335.ValueConcatenation
 open Lax149335.Types Lax149335.Terms Lax149335.DerivedTerms Lax149335.DerivedTerms.Term
   Lax149335.EquationalTheory
 
-/-- The associativity and unit laws for concatenation with values. -/
+/-- **Lemma 5.2.** The associativity and unit laws for concatenation with values. -/
 axiom value_assoc {A A' B : Ty} (f : Term A B⋆) (g : Term A' B⋆) (w v : Value B⋆) :
     (dotR (dotR f w) v ≡ₜ dotR f (dotL w v)) ∧
     (dotL w (dotL v f) ≡ₜ dotL (dotL w v) f) ∧

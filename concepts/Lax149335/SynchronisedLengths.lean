@@ -5,8 +5,8 @@ import Lax149335.SimpleRationalFunctions
 title: Synchronised output lengths
 type: claim
 ---
-This claim arises in the induction step for products in the proof of the conjugacy
-completeness theorem. Consider two simple rational terms with input type
+**Claim 2.7.** This claim arises in the induction step for products in the proof of
+Theorem 2.6. Consider two simple rational terms with input type
 $A_1^* \times \cdots \times A_n^*$ of the form
 $$
 f = w_0 \cdot (\mathrm{hom}\, f_1 \cdot w_1) \odot \cdots \odot (\mathrm{hom}\, f_n \cdot w_n)
@@ -57,7 +57,7 @@ end SimpleTerm
 
 open SimpleTerm
 
-/-- If `w₀ · (hom f₁ · w₁) ⊙ ⋯ ⊙ (hom fₙ · wₙ)` and
+/-- **Claim 2.7.** If `w₀ · (hom f₁ · w₁) ⊙ ⋯ ⊙ (hom fₙ · wₙ)` and
 `v₀ · (hom g₁ · v₁) ⊙ ⋯ ⊙ (hom gₙ · vₙ)` define the same function, then `fᵢ` and `gᵢ` produce
 outputs of the same length on every input. -/
 axiom claim_same_lengths {Bs : Type} {As : List Ty} (F G : HomList Bs As) (w₀ v₀ : List Bs) :

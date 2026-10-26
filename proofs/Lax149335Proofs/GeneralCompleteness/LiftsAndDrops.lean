@@ -67,8 +67,8 @@ theorem isDrop_undistR (A B C : Ty) : IsDrop (Term.undistR A B C) :=
       (IsDrop.prodF (IsDrop.id A) (IsDrop.inr B C)))
     (IsDrop.codiag (A ⊗ (B ⊕' C)))
 
-/-- The inverse of `split` is a concatenation map, and concatenation maps are drops. -/
-theorem isDrop_unsplit (A B : Ty) : IsDrop (Term.unsplit A B) := by
+/-- The inverse of `block` is a concatenation map, and concatenation maps are drops. -/
+theorem isDrop_unblock (A B : Ty) : IsDrop (Term.unblock A B) := by
   have hl : IsDrop (Term.homT (Term.inl A B ⨟ Term.pureT (A ⊕' B))) :=
     IsDrop.comp (IsDrop.listF (IsDrop.comp (IsDrop.inl A B) (IsDrop.pureT (A ⊕' B))))
       (IsDrop.concat (A ⊕' B))
@@ -142,8 +142,8 @@ theorem lift_iso {A B : Ty} (f : Term A B) (hf : IsLift f) :
   | distR A B C =>
     exact ⟨Term.undistR A B C, isDrop_undistR A B C, PEq.distR_undistR A B C,
       PEq.undistR_distR A B C⟩
-  | split A B =>
-    exact ⟨Term.unsplit A B, isDrop_unsplit A B, PEq.split_unsplit A B, PEq.unsplit_split A B⟩
+  | block A B =>
+    exact ⟨Term.unblock A B, isDrop_unblock A B, PEq.block_unblock A B, PEq.unblock_block A B⟩
   | shift A B =>
     exact ⟨Term.unshift A B, IsDrop.unshift A B, Term.shift_unshift A B, Term.unshift_shift A B⟩
 

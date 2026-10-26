@@ -25,7 +25,7 @@ completeness proof.
   from the parameter, $1$, $\times$, $+$ and $(-)^*$, the concatenation map
   $F(A) \rightarrowtail A^*$ lists all the elements of $A$ occurring in the input, from left
   to right. Similarly for type constructors with two parameters, with outputs in
-  $(A + B)^*$. In particular, $\mathsf{unsplit} : A^* \times (B \times A^*)^* \to
+  $(A + B)^*$. In particular, $\mathsf{unblock} : A^* \times (B \times A^*)^* \to
   (A + B)^*$ is a concatenation map.
 - The terms $\mathsf{shift} : (A \times B)^* \to 1 + A \times (B \times A)^* \times B$ and
   $\mathsf{unshift}$ of Table 1.
@@ -176,7 +176,7 @@ def TyF.lt : ℕ → TyF
   | (k + 1) => .sum (TyF.lt k) (TyF.pow (k + 1))
 
 /-- Type constructors with two parameters, used for the concatenation maps with values in
-`(A + B)*` that occur in Axiom 15 and in the definition of `unsplit`. -/
+`(A + B)*` that occur in Axiom 15 and in the definition of `unblock`. -/
 inductive TyF2 : Type
   /-- The first parameter. -/
   | p1 : TyF2
@@ -210,9 +210,9 @@ def TyF2.concatMap : (F : TyF2) → (A B : Ty) → Term (F.app A B) (A ⊕' B)�
   | .sum F G, A, B => either (F.concatMap A B) (G.concatMap A B)
   | .list F, A, B => homT (F.concatMap A B)
 
-/-- The inverse of `split`: it injects `A` and `B` into the co-product `A + B` and then
+/-- The inverse of `block`: it injects `A` and `B` into the co-product `A + B` and then
 concatenates all resulting lists. -/
-def unsplit (A B : Ty) : Term (A⋆ ⊗ (B ⊗ A⋆)⋆) (A ⊕' B)⋆ :=
+def unblock (A B : Ty) : Term (A⋆ ⊗ (B ⊗ A⋆)⋆) (A ⊕' B)⋆ :=
   TyF2.concatMap (.prod (.list .p1) (.list (.prod .p2 (.list .p1)))) A B
 
 -- The terms `shift` and `unshift` of Table 1

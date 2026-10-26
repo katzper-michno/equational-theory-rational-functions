@@ -285,7 +285,7 @@ theorem exists_unitSum_encoding (A : Ty) :
     refine ⟨SA ⊕' SB,
       Term.prodF encA encB ⨟
         (Term.prodF (Term.id SA⋆) (Term.listF (Term.pairR (Term.id SB) (Term.nilT SA))) ⨟
-          Term.unsplit SA SB),
+          Term.unblock SA SB),
       .sum hSA hSB, ?_, ?_⟩
     · simp only [Term.isAperiodic_comp, Term.isAperiodic_prodF, Term.isAperiodic_listF]
       exact ⟨⟨hapA, hapB⟩, ⟨⟨rfl, rfl⟩, rfl⟩⟩
@@ -294,13 +294,13 @@ theorem exists_unitSum_encoding (A : Ty) :
           (ProvablyInjective.prodF (ProvablyInjective.id _)
             (ProvablyInjective.listF
               (ProvablyInjective.pairR _ _ (ProvablyInjective.id _))))
-          (ProvablyInjective.unsplit _ _))
+          (ProvablyInjective.unblock _ _))
   | list A ih =>
     obtain ⟨SA, encA, hSA, hapA, hinjA⟩ := ih
     refine ⟨SA ⊕' Ty.unit,
       Term.listF encA ⨟
         (Term.pairL (Term.nilT SA) (Term.listF (Term.unitL SA⋆)) ⨟
-          Term.unsplit SA Ty.unit),
+          Term.unblock SA Ty.unit),
       .sum hSA .unit, ?_, ?_⟩
     · simp only [Term.isAperiodic_comp, Term.isAperiodic_listF]
       exact ⟨hapA, rfl, rfl⟩
@@ -308,7 +308,7 @@ theorem exists_unitSum_encoding (A : Ty) :
         (ProvablyInjective.comp
           (ProvablyInjective.pairL _ _
             (ProvablyInjective.listF (ProvablyInjective.unitL _)))
-          (ProvablyInjective.unsplit _ _))
+          (ProvablyInjective.unblock _ _))
   | sum A B ihA ihB =>
     obtain ⟨SA, encA, hSA, hapA, hinjA⟩ := ihA
     obtain ⟨SB, encB, hSB, hapB, hinjB⟩ := ihB
@@ -318,7 +318,7 @@ theorem exists_unitSum_encoding (A : Ty) :
         (Term.sumF (Term.id (SA ⊕' SB)⋆) (Term.unitL (SA ⊕' SB)⋆) ⨟
           (Term.sumF (Term.id (SA ⊕' SB)⋆)
               (Term.pairL (Term.nilT (SA ⊕' SB)) (Term.id (Ty.unit ⊗ (SA ⊕' SB)⋆))) ⨟
-            (Term.dupCode (SA ⊕' SB) ⨟ Term.unsplit (SA ⊕' SB) Ty.unit))),
+            (Term.dupCode (SA ⊕' SB) ⨟ Term.unblock (SA ⊕' SB) Ty.unit))),
       .sum (.sum hSA hSB) .unit, ?_, ?_⟩
     · simp only [Term.isAperiodic_comp, Term.isAperiodic_sumF, Term.isAperiodic_listF]
       exact ⟨⟨⟨hapA, hapB⟩, rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, rfl, rfl⟩
@@ -332,7 +332,7 @@ theorem exists_unitSum_encoding (A : Ty) :
             (ProvablyInjective.sumF (ProvablyInjective.id _)
               (ProvablyInjective.pairL _ _ (ProvablyInjective.id _)))
             (ProvablyInjective.comp (ProvablyInjective.dupCode _)
-              (ProvablyInjective.unsplit _ _))))
+              (ProvablyInjective.unblock _ _))))
 
 /-- **Claim F.1.**  For every type `A` there is a finite alphabet `Ā` and an injective
 aperiodic term `encA : A → Ā*`.  Together with Claim F.2

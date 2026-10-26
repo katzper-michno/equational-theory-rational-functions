@@ -20,8 +20,8 @@ for every rational term `f`.  Lemma 5.3 is the special case where `f` is the val
 
 The predicate `Computes` is closed under the four combinators, and the atomic functions are
 treated one at a time.  Five atomic functions are treated by the *isomorphism trick* of the
-paper: `uncons`, `unsnoc`, `shiftL`, `split` and the group prefix multiplication `pref` are
-handled through their inverses `cons`, `snoc`, `shiftR`, `unsplit` and `unpref`.
+paper: `uncons`, `unsnoc`, `shiftL`, `block` and the group prefix multiplication `pref` are
+handled through their inverses `cons`, `snoc`, `shiftR`, `unblock` and `unpref`.
 -/
 
 set_option autoImplicit false
@@ -485,7 +485,7 @@ theorem computes_unsnoc (A : Ty) : Computes (Term.unsnoc A) :=
 /-! ### Terms that do not use the six atomic functions treated separately -/
 
 /-- Whether a term uses one of the atomic functions `uncons`, `unsnoc`, `shiftL`, `shiftR`,
-`split` and `pref`, which are treated separately. -/
+`block` and `pref`, which are treated separately. -/
 def usesHard : {A B : Ty} → Term A B → Bool
   | _, _, .comp f g => usesHard f || usesHard g
   | _, _, .prodF f g => usesHard f || usesHard g
@@ -495,7 +495,7 @@ def usesHard : {A B : Ty} → Term A B → Bool
   | _, _, .unsnoc _ => true
   | _, _, .shiftL _ _ => true
   | _, _, .shiftR _ _ => true
-  | _, _, .split _ _ => true
+  | _, _, .block _ _ => true
   | _, _, .pref _ _ => true
   | _, _, _ => false
 
@@ -542,14 +542,14 @@ theorem computes_of_not_usesHard : {A B : Ty} → (f : Term A B) → usesHard f 
   | unsnoc A => intro h; exact Bool.noConfusion (show (true : Bool) = false from h)
   | shiftL A B => intro h; exact Bool.noConfusion (show (true : Bool) = false from h)
   | shiftR A B => intro h; exact Bool.noConfusion (show (true : Bool) = false from h)
-  | split A B => intro h; exact Bool.noConfusion (show (true : Bool) = false from h)
+  | block A B => intro h; exact Bool.noConfusion (show (true : Bool) = false from h)
   | pref A G => intro h; exact Bool.noConfusion (show (true : Bool) = false from h)
 
 /-! ### The atomic functions `shiftR` and `shiftL`
 
 These are treated by cancelling the concatenation map `A ⊗ (B ⊗ A)* ↣ (A+B)*` of Axiom 15,
 which is provably injective: its left inverse is obtained from the symmetric variant of
-splitting, whose inverse is the concatenation map of `(A* ⊗ B)* ⊗ A*`. -/
+`block`, whose inverse is the concatenation map of `(A* ⊗ B)* ⊗ A*`. -/
 
 namespace Term
 
@@ -584,9 +584,9 @@ theorem fdot_precomp {X Y X' Y' D : Ty} (f : Term X X') (g : Term Y Y') (x : Ter
     _ ≡ₜ (prodF (f ⨟ x) (g ⨟ y) ⨟ binconcat D) := PEq.compL _ (PEq.prod_comp _ _ _ _)
 
 /-- The concatenation map of `(A × B)* × A` factors through the concatenation map of the
-symmetric variant of splitting. -/
+symmetric variant of `block`. -/
 theorem cmL_factor (A B : Ty) :
-    cmL A B ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ cmSplitL A B) := by
+    cmL A B ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ cmBlockL A B) := by
   have h2 : (pureT A ⨟ homT (inl A B ⨟ pureT (A ⊕' B))) ≡ₜ
       (inl A B ⨟ pureT (A ⊕' B)) := homT_pure _
   have h1 : (listF (prodF (pureT A) (Term.id B)) ⨟
@@ -603,7 +603,7 @@ theorem cmL_factor (A B : Ty) :
 
 /-- The left inverse of the concatenation map of `(A × B)* × A`. -/
 def uncmL (A B : Ty) : Term ((A ⊕' B)⋆) ((A ⊗ B)⋆ ⊗ A) :=
-  splitLT A B ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A)
+  blockLT A B ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A)
 
 theorem cmL_uncmL (A B : Ty) : (cmL A B ⨟ uncmL A B) ≡ₜ Term.id ((A ⊗ B)⋆ ⊗ A) := by
   have hhead : (listF (prodF (pureT A) (Term.id B)) ⨟
@@ -618,19 +618,19 @@ theorem cmL_uncmL (A B : Ty) : (cmL A B ⨟ uncmL A B) ≡ₜ Term.id ((A ⊗ B)
       _ ≡ₜ listF (Term.id (A ⊗ B)) := PEq.congr_listF (PEq.prod_id A B)
       _ ≡ₜ Term.id ((A ⊗ B)⋆) := PEq.list_id (A ⊗ B)
   calc (cmL A B ⨟ uncmL A B)
-      ≡ₜ ((prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ cmSplitL A B) ⨟
-          (splitLT A B ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A))) :=
+      ≡ₜ ((prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ cmBlockL A B) ⨟
+          (blockLT A B ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A))) :=
         PEq.compL _ (cmL_factor A B)
-    _ ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ (cmSplitL A B ⨟
-          (splitLT A B ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A)))) :=
+    _ ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ (cmBlockL A B ⨟
+          (blockLT A B ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A)))) :=
         PEq.comp_assoc _ _ _
-    _ ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ ((cmSplitL A B ⨟
-          splitLT A B) ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A))) :=
+    _ ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟ ((cmBlockL A B ⨟
+          blockLT A B) ⨟ prodF (listF (prodF (headOr A) (Term.id B))) (headOr A))) :=
         PEq.compR _ (PEq.symm (PEq.comp_assoc _ _ _))
     _ ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟
           (Term.id ((A⋆ ⊗ B)⋆ ⊗ A⋆) ⨟
             prodF (listF (prodF (headOr A) (Term.id B))) (headOr A))) :=
-        PEq.compR _ (PEq.compL _ (splitLT_iso A B).2)
+        PEq.compR _ (PEq.compL _ (blockLT_iso A B).2)
     _ ≡ₜ (prodF (listF (prodF (pureT A) (Term.id B))) (pureT A) ⨟
           prodF (listF (prodF (headOr A) (Term.id B))) (headOr A)) :=
         PEq.compR _ (PEq.id_comp _)
@@ -682,11 +682,11 @@ theorem computes_shiftL (A B : Ty) : Computes (Term.shiftL A B) :=
 
 /-! ### The four remaining atomic functions -/
 
-theorem computes_unsplit (A B : Ty) : Computes (Term.unsplit A B) :=
-  computes_of_not_usesHard (Term.unsplit A B) rfl
+theorem computes_unblock (A B : Ty) : Computes (Term.unblock A B) :=
+  computes_of_not_usesHard (Term.unblock A B) rfl
 
-theorem computes_split (A B : Ty) : Computes (Term.split A B) :=
-  Computes.of_inverse (computes_unsplit A B) (PEq.split_unsplit A B) (PEq.unsplit_split A B)
+theorem computes_block (A B : Ty) : Computes (Term.block A B) :=
+  Computes.of_inverse (computes_unblock A B) (PEq.block_unblock A B) (PEq.unblock_block A B)
 
 /-! The term `unpref`, the inverse of the group prefix multiplication, is built from `shiftL`
 and from terms that use none of the atomic functions treated separately. -/
@@ -802,7 +802,7 @@ theorem computes {A B : Ty} (f : Term A B) : Computes f := by
   | unsnoc A => exact computes_unsnoc A
   | shiftL A B => exact computes_shiftL A B
   | shiftR A B => exact computes_shiftR A B
-  | split A B => exact computes_split A B
+  | block A B => exact computes_block A B
   | pref A G => exact computes_pref A G
 
 end Lax149335Proofs

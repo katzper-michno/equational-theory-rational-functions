@@ -19,10 +19,10 @@ The proof is the induction on the lift of the appendix:
   lifts `unitL` and `unitR` are handled by their naturality;
 * the two distributivities are handled by the normalisation lemmas for drops with a product
   and with a co-product codomain, followed by naturality of distributivity;
-* the two remaining prime lifts, `split` and `shift`, are the hard cases of the appendix;
-  they are taken as hypotheses of `Lax149335Proofs.exchange_of_shift_split`, and discharged in
-  `Lax149335Proofs.Appendix.Drops.ExchangeShiftSplit` and
-  `Lax149335Proofs.Appendix.Drops.SplitExchange`.
+* the two remaining prime lifts, `block` and `shift`, are the hard cases of the appendix;
+  they are taken as hypotheses of `Lax149335Proofs.exchange_of_shift_block`, and discharged in
+  `Lax149335Proofs.Appendix.Drops.ExchangeShiftBlock` and
+  `Lax149335Proofs.Appendix.Drops.BlockExchange`.
 -/
 
 set_option autoImplicit false
@@ -370,10 +370,10 @@ end AdmitsExchange
 
 /-! ### The induction
 
-Everything except the two hard prime lifts `shift` and `split`. -/
+Everything except the two hard prime lifts `shift` and `block`. -/
 
 /-- **The induction underlying the exchange lemma (Lemma 7.5)**, assuming the two hard cases
-of the appendix: if the prime lifts `shift` and `split` admit exchange, then every lift
+of the appendix: if the prime lifts `shift` and `block` admit exchange, then every lift
 admits exchange, i.e. every drop followed by a lift has a lift-drop factorisation.
 
 The two assumptions are exactly the cases *Shift* and *Split* of the appendix proof; all the
@@ -381,7 +381,7 @@ other cases — the four combinators and the ten remaining prime lifts of Table 
 proved here. -/
 theorem exchange_aux
     (Hshift : ∀ S T : Ty, AdmitsExchange (Term.shift S T))
-    (Hsplit : ∀ S T : Ty, AdmitsExchange (Term.split S T)) :
+    (Hsplit : ∀ S T : Ty, AdmitsExchange (Term.block S T)) :
     ∀ {B C : Ty} {l : Term B C}, IsLift l → AdmitsExchange l := by
   intro B C l hl
   induction hl with
@@ -399,15 +399,15 @@ theorem exchange_aux
   | comm A B => exact admitsExchange_of_isDrop (isDrop_comm A B)
   | distL A B C => exact admitsExchange_distL A B C
   | distR A B C => exact admitsExchange_distR A B C
-  | split A B => exact Hsplit A B
+  | block A B => exact Hsplit A B
   | shift A B => exact Hshift A B
 
 /-- **Lemma 7.5 (Exchange)**, assuming its two hard cases: if the prime lifts `shift` and
-`split` admit exchange, then every composition of the form drop-lift is provably equivalent
+`block` admit exchange, then every composition of the form drop-lift is provably equivalent
 to a composition of the form lift-drop. -/
-theorem exchange_of_shift_split
+theorem exchange_of_shift_block
     (Hshift : ∀ S T : Ty, AdmitsExchange (Term.shift S T))
-    (Hsplit : ∀ S T : Ty, AdmitsExchange (Term.split S T))
+    (Hsplit : ∀ S T : Ty, AdmitsExchange (Term.block S T))
     {A B C : Ty} (d : Term A B) (l : Term B C) (hd : IsDrop d) (hl : IsLift l) :
     ∃ (D : Ty) (l' : Term A D) (d' : Term D C),
       IsLift l' ∧ IsDrop d' ∧ (d ⨟ l) ≡ₜ (l' ⨟ d') :=

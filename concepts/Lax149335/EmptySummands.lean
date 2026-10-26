@@ -9,7 +9,7 @@ type: claim
 empty constant, i.e. $f_E \equiv (E \to 1) \mathbin{;} [\,]$. Then $\mathrm{hom}\, f$ is
 provably equivalent to the composition
 $$
-(E + N)^* \xrightarrow{\ \mathsf{split}\ } E^* \times (N \times E^*)^*
+(E + N)^* \xrightarrow{\ \mathsf{block}\ } E^* \times (N \times E^*)^*
 \xrightarrow{\ \mathsf{snd} \,;\, \mathsf{fst}^*\ } N^*
 \xrightarrow{\ \mathrm{hom}\, f_N\ } B^* .
 $$
@@ -25,6 +25,6 @@ factors through `hom f_N`. -/
 axiom hom_factors {B E N : Ty} (fE : Term E B⋆) (fN : Term N B⋆)
     (hfE : fE ≡ₜ toUnit E ⨟ nilT B) :
     homT (Term.either fE fN) ≡ₜ
-      (split E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆) ⨟ listF (fst N E⋆) ⨟ homT fN)
+      (block E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆) ⨟ listF (fst N E⋆) ⨟ homT fN)
 
 end Lax149335.EmptySummands

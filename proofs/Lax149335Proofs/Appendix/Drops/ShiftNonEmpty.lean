@@ -6,7 +6,7 @@ import Lax149335Proofs.Appendix.Drops.SumShuffleLifts
 
 The list node of the shift exchange lemma is proved by an induction in which the *empty*
 components of the conclusion have to be kept apart from the non-empty ones: a list whose
-elements all have a non-empty content can be handled by `shift` and `split` alone, whereas an
+elements all have a non-empty content can be handled by `shift` and `block` alone, whereas an
 empty component has to be removed first.
 
 This file introduces the three classes of contents that the induction distinguishes:

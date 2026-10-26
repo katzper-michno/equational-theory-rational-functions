@@ -2,14 +2,14 @@
 Copyright (c) 2025.  Formalisation of *The equational theory of rational
 string-to-string functions*.
 -/
-import Lax149335Proofs.Appendix.Drops.SplitCollect
+import Lax149335Proofs.Appendix.Drops.BlockCollect
 import Mathlib.Tactic.Set
 
 /-!
 # Peeling the last block off a list
 
 This file provides the *peeling* lift/drop pair used in the proof of the exchange lemma for
-the atom `split` (Lemma 7.5).  A list over `V` is read as a list over `1 × V`, whose last
+the atom `block` (Lemma 7.5).  A list over `V` is read as a list over `1 × V`, whose last
 element is then split off by `shift`; the resulting term `Lax149335Proofs.Term.peelLift` is a lift,
 with drop inverse `Lax149335Proofs.Term.peelDrop`.  Consequently every drop with codomain `V*`
 factors, after a lift, through the co-domain of `shift 1 V`

@@ -1,16 +1,16 @@
 import Lax149335Proofs.Appendix.Drops.InjectiveTypes
 
 /-!
-# Letters, contents, and the rebracketing properties of `split` and `shift`
+# Letters, contents, and the rebracketing properties of `block` and `shift`
 
 Auxiliary terms and equations about the *content* of a type, i.e. the list of the letters it
-carries, read in `(S + T)*`.  They are used by the appendix section on `split`
-(`Lax149335Proofs.Appendix.Drops.SplitCollect` and the files that follow it).
+carries, read in `(S + T)*`.  They are used by the appendix section on `block`
+(`Lax149335Proofs.Appendix.Drops.BlockCollect` and the files that follow it).
 
 * `Lax149335Proofs.sLetter` and `Lax149335Proofs.tLetter` are the one-letter words of `(S + T)*`;
 * `Lax149335Proofs.pairContent` and `Lax149335Proofs.shiftContent` are the concatenation maps of the types
   `(S × T)*` and `1 + S × (T × S)* × T` into `(S + T)*`;
-* `Lax149335Proofs.split_content` and `Lax149335Proofs.shift_content` say that the prime lifts `split` and
+* `Lax149335Proofs.block_content` and `Lax149335Proofs.shift_content` say that the prime lifts `block` and
   `shift` do not change the content, in the form in which the appendix uses it: the content
   of a letter may be an arbitrary word.
 -/
@@ -52,16 +52,16 @@ theorem fdot_assoc' {X Y Z D : Ty} (c₁ : Term X D⋆) (c₂ : Term Y D⋆) (c�
     _ ≡ₜ (assocL X Y Z ⨟ (assocR X Y Z ⨟ (c₁ ⊙ (c₂ ⊙ c₃)))) := PEq.comp_assoc _ _ _
     _ ≡ₜ (assocL X Y Z ⨟ ((c₁ ⊙ c₂) ⊙ c₃)) := PEq.compR _ (PEq.symm (fdot_assoc _ _ _))
 
-/-! ### The content of `split` and of `shift`
+/-! ### The content of `block` and of `shift`
 
 The two prime lifts that the argument uses are rebracketings, and they stay rebracketings
 when the letters are replaced by arbitrary contents: this is obtained from the rebracketing
 properties for the letters of `A + B`, by post-composing with the homomorphism that maps a
 letter to its content. -/
 
-/-- **`split` does not change the content.** -/
-theorem split_content {A B D : Ty} (u : Term A D⋆) (v : Term B D⋆) :
-    (Term.split A B ⨟ (Term.homT u ⊙ Term.homT (v ⊙ Term.homT u))) ≡ₜ
+/-- **`block` does not change the content.** -/
+theorem block_content {A B D : Ty} (u : Term A D⋆) (v : Term B D⋆) :
+    (Term.block A B ⨟ (Term.homT u ⊙ Term.homT (v ⊙ Term.homT u))) ≡ₜ
       Term.homT (Term.either u v) := by
   set h : Term (A ⊕' B) D⋆ := Term.either u v with hh
   set iL : Term A ((A ⊕' B)⋆) := inl A B ⨟ pureT (A ⊕' B) with hiL
@@ -70,7 +70,7 @@ theorem split_content {A B D : Ty} (u : Term A D⋆) (v : Term B D⋆) :
     (PEq.comp_assoc _ _ _).trans ((PEq.compR _ (homT_pure h)).trans (inl_either u v))
   have hv : (iR ⨟ Term.homT h) ≡ₜ v :=
     (PEq.comp_assoc _ _ _).trans ((PEq.compR _ (homT_pure h)).trans (inr_either u v))
-  have hunsplit : (Term.unsplit A B ⨟ Term.homT h) ≡ₜ
+  have hunblock : (Term.unblock A B ⨟ Term.homT h) ≡ₜ
       (Term.homT u ⊙ Term.homT (v ⊙ Term.homT u)) := by
     calc ((Term.homT iL ⊙ Term.homT (iR ⊙ Term.homT iL)) ⨟ Term.homT h)
         ≡ₜ ((Term.homT iL ⨟ Term.homT h) ⊙ (Term.homT (iR ⊙ Term.homT iL) ⨟ Term.homT h)) :=
@@ -83,11 +83,11 @@ theorem split_content {A B D : Ty} (u : Term A D⋆) (v : Term B D⋆) :
           fdot_congr (PEq.refl _) (homT_congr (fdot_congr hv (homT_comp _ _)))
       _ ≡ₜ (Term.homT u ⊙ Term.homT (v ⊙ Term.homT u)) :=
           fdot_congr (PEq.refl _) (homT_congr (fdot_congr (PEq.refl _) (homT_congr hu)))
-  calc (Term.split A B ⨟ (Term.homT u ⊙ Term.homT (v ⊙ Term.homT u)))
-      ≡ₜ (Term.split A B ⨟ (Term.unsplit A B ⨟ Term.homT h)) :=
-        PEq.compR _ (PEq.symm hunsplit)
-    _ ≡ₜ ((Term.split A B ⨟ Term.unsplit A B) ⨟ Term.homT h) := PEq.symm (PEq.comp_assoc _ _ _)
-    _ ≡ₜ (Term.id ((A ⊕' B)⋆) ⨟ Term.homT h) := PEq.compL _ (PEq.split_unsplit A B)
+  calc (Term.block A B ⨟ (Term.homT u ⊙ Term.homT (v ⊙ Term.homT u)))
+      ≡ₜ (Term.block A B ⨟ (Term.unblock A B ⨟ Term.homT h)) :=
+        PEq.compR _ (PEq.symm hunblock)
+    _ ≡ₜ ((Term.block A B ⨟ Term.unblock A B) ⨟ Term.homT h) := PEq.symm (PEq.comp_assoc _ _ _)
+    _ ≡ₜ (Term.id ((A ⊕' B)⋆) ⨟ Term.homT h) := PEq.compL _ (PEq.block_unblock A B)
     _ ≡ₜ Term.homT h := PEq.id_comp _
 
 /-- **`shift` does not change the content.** -/

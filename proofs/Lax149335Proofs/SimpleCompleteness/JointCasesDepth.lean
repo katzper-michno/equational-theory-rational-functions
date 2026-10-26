@@ -6,7 +6,7 @@ import Lax149335Proofs.SimpleCompleteness.ValueExtraction
 `Lax149335Proofs.JointCases` (in `Lax149335Proofs.SimpleCompleteness.Conjugacy`) records a joint decomposition of
 two terms into co-pairings, and asks every re-organisation of the input type to be
 non-increasing for the list nesting depth.  The proof of value extraction has to pass through
-*intermediate* input types of a larger nesting depth (the `split` isomorphism increases the
+*intermediate* input types of a larger nesting depth (the `block` isomorphism increases the
 nesting depth by one), even though the components it finally produces do not.
 
 The variant of this file therefore records the bound on the list nesting depth at the

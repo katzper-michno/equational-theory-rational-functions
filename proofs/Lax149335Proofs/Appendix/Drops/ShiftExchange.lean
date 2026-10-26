@@ -42,7 +42,7 @@ Two remarks on the reading of the statement.
 The consequences of the lemma are the case *Shift* of the list normalisation lemma
 (`Lax149335Proofs.normListable_comp_unshift`, in `Lax149335Proofs.Appendix.Drops.UnshiftListNormal`) and the
 case *Shift* of the exchange lemma (`Lax149335Proofs.admitsExchange_shift`, in
-`Lax149335Proofs.Appendix.Drops.ExchangeShiftSplit`).
+`Lax149335Proofs.Appendix.Drops.ExchangeShiftBlock`).
 
 The three notions of shape are defined in `Lax149335Proofs.Appendix.Drops.ShiftShapes`, and the
 content calculus that the proofs of the cases use is in

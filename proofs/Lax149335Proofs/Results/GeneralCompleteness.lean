@@ -21,8 +21,8 @@ open Term
 conclusion: Lax149335.LiftInverses.lift_iso
 ---
 By induction on the lift. The combinators are handled by functoriality, and each atomic lift
-has a drop inverse by the isomorphism axioms; for `split` the inverse is the concatenation
-map `unsplit`, and for `shift` it is `⟨[], unshift⟩`.
+has a drop inverse by the isomorphism axioms; for `block` the inverse is the concatenation
+map `unblock`, and for `shift` it is `⟨[], unshift⟩`.
 -/
 theorem lift_iso : type_of% @Lax149335.LiftInverses.lift_iso :=
   @Lax149335Proofs.lift_iso
@@ -56,8 +56,8 @@ theorem lift_drop_factorisation :
 ---
 conclusion: Lax149335.Exchange.exchange
 ---
-By induction on the lift. The combinators and all atomic lifts except `shift` and `split`
-are straightforward; the cases of `shift` and `split` are the shift exchange and the split
+By induction on the lift. The combinators and all atomic lifts except `shift` and `block`
+are straightforward; the cases of `shift` and `block` are the shift exchange and the block
 exchange lemmas of the appendix.
 -/
 theorem exchange : type_of% @Lax149335.Exchange.exchange :=

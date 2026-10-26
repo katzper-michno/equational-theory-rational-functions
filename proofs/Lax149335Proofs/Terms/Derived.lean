@@ -5,7 +5,7 @@ import Lax149335Proofs.Terms.Terms
 
 This file collects the derived combinators used throughout the paper: co-pairing, the
 notation `[]`, `pure`, `prepend`, `append`, `binconcat` from Section 4.6, the inverses
-`undistL`, `undistR`, `unsplit`, `unpref` of Section 4.4, the concatenation maps of
+`undistL`, `undistR`, `unblock`, `unpref` of Section 4.4, the concatenation maps of
 Section 5.1, and the terms `shift` / `unshift` from Table 1.
 -/
 

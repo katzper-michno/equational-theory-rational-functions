@@ -20,7 +20,7 @@ A \times (B \times C) \xrightarrow{\mathsf{assocL}} (A \times B) \times C \qquad
 A + (B + C) \to (A + B) + C \qquad (A + B) + C \to A + (B + C) \\
 (A + B) \times C \xrightarrow{\mathsf{distL}} A \times C + B \times C \qquad
 A \times (B + C) \xrightarrow{\mathsf{distR}} A \times B + A \times C \\
-(A + B)^* \xrightarrow{\mathsf{split}} A^* \times (B \times A^*)^* \qquad
+(A + B)^* \xrightarrow{\mathsf{block}} A^* \times (B \times A^*)^* \qquad
 (A \times B)^* \xrightarrow{\mathsf{shift}} 1 + A \times (B \times A)^* \times B
 \end{gathered}
 $$
@@ -77,8 +77,8 @@ inductive IsLift : {A B : Ty} → Term A B → Prop
   | distL (A B C : Ty) : IsLift (Term.distL A B C)
   /-- `distR` is a prime lift. -/
   | distR (A B C : Ty) : IsLift (Term.distR A B C)
-  /-- `split` is a prime lift. -/
-  | split (A B : Ty) : IsLift (Term.split A B)
+  /-- `block` is a prime lift. -/
+  | block (A B : Ty) : IsLift (Term.block A B)
   /-- `shift` is a prime lift. -/
   | shift (A B : Ty) : IsLift (Term.shift A B)
 

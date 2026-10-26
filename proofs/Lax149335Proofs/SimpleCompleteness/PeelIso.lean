@@ -51,11 +51,11 @@ theorem cons (A : Ty) : ProvableIso (Term.cons A) :=
 theorem snoc (A : Ty) : ProvableIso (Term.snoc A) :=
   ⟨Term.unsnoc A, PEq.snoc_unsnoc A, PEq.unsnoc_snoc A⟩
 
-theorem split (A B : Ty) : ProvableIso (Term.split A B) :=
-  ⟨Term.unsplit A B, PEq.split_unsplit A B, PEq.unsplit_split A B⟩
+theorem block (A B : Ty) : ProvableIso (Term.block A B) :=
+  ⟨Term.unblock A B, PEq.block_unblock A B, PEq.unblock_block A B⟩
 
-theorem unsplit (A B : Ty) : ProvableIso (Term.unsplit A B) :=
-  ⟨Term.split A B, PEq.unsplit_split A B, PEq.split_unsplit A B⟩
+theorem unblock (A B : Ty) : ProvableIso (Term.unblock A B) :=
+  ⟨Term.block A B, PEq.unblock_block A B, PEq.block_unblock A B⟩
 
 end ProvableIso
 
@@ -146,19 +146,19 @@ def blockR (B E : Ty) {N : Ty} (F : Term N B⋆) : Term (N ⊗ E⋆) B⋆ := F �
 abbrev nilCase (B E : Ty) {N : Ty} (F : Term N B⋆) : Term (E ⊕' N) B⋆ :=
   Term.either (nilconst B E) F
 
-/-- Composing the inverse of `split` with the homomorphism of a term that erases `E`. -/
-theorem unsplit_homT_nilCase {E N : Ty} (F : Term N B⋆) :
-    (Term.unsplit E N ⨟ homT (nilCase B E F)) ≡ₜ
+/-- Composing the inverse of `block` with the homomorphism of a term that erases `E`. -/
+theorem unblock_homT_nilCase {E N : Ty} (F : Term N B⋆) :
+    (Term.unblock E N ⨟ homT (nilCase B E F)) ≡ₜ
       (nilconst B E⋆ ⊙ homT (blockR B E F)) := by
   have hE : (Term.inl E N ⨟ nilCase B E F) ≡ₜ nilconst B E :=
     Term.inl_either _ _
   have hN : (Term.inr E N ⨟ nilCase B E F) ≡ₜ F := Term.inr_either _ _
   have hEh : homT (Term.inl E N ⨟ nilCase B E F) ≡ₜ nilconst B E⋆ :=
     (Term.homT_congr hE).trans (Term.homT_nilconst E B)
-  calc (Term.unsplit E N ⨟ homT (nilCase B E F))
+  calc (Term.unblock E N ⨟ homT (nilCase B E F))
       ≡ₜ (homT (Term.inl E N ⨟ nilCase B E F) ⊙
           homT ((Term.inr E N ⨟ nilCase B E F) ⊙ homT (Term.inl E N ⨟ nilCase B E F))) :=
-        Term.unsplit_comp_homT _
+        Term.unblock_comp_homT _
     _ ≡ₜ (nilconst B E⋆ ⊙ homT (F ⊙ nilconst B E⋆)) :=
         Term.fdot_congr hEh (Term.homT_congr (Term.fdot_congr hN hEh))
 
@@ -167,34 +167,34 @@ a list over `E` followed by one element of `N` followed by a list over `E + N`. 
 def unpeelL (E N : Ty) :
     Term (E⋆ ⊕' ((E⋆ ⊗ N) ⊗ (E ⊕' N)⋆)) ((E ⊕' N)⋆) :=
   Term.sumF (Term.unitR E⋆)
-      (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+      (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
         (Term.assocR E⋆ N (E⋆ ⊗ (N ⊗ E⋆)⋆) ⨟
           Term.prodF (Term.id E⋆) (Term.assocL N E⋆ ((N ⊗ E⋆)⋆)))) ⨟
     Term.undistR E⋆ Ty.unit ((N ⊗ E⋆) ⊗ (N ⊗ E⋆)⋆) ⨟
-      Term.prodF (Term.id E⋆) (Term.cons (N ⊗ E⋆)) ⨟ Term.unsplit E N
+      Term.prodF (Term.id E⋆) (Term.cons (N ⊗ E⋆)) ⨟ Term.unblock E N
 
 /-- **Peeling one block off on the right.** -/
 def unpeelR (E N : Ty) :
     Term (E⋆ ⊕' ((E ⊕' N)⋆ ⊗ (N ⊗ E⋆))) ((E ⊕' N)⋆) :=
   Term.sumF (Term.unitR E⋆)
-      (Term.prodF (Term.split E N) (Term.id (N ⊗ E⋆)) ⨟
+      (Term.prodF (Term.block E N) (Term.id (N ⊗ E⋆)) ⨟
         Term.assocR E⋆ ((N ⊗ E⋆)⋆) (N ⊗ E⋆)) ⨟
     Term.undistR E⋆ Ty.unit (((N ⊗ E⋆)⋆) ⊗ (N ⊗ E⋆)) ⨟
-      Term.prodF (Term.id E⋆) (Term.snoc (N ⊗ E⋆)) ⨟ Term.unsplit E N
+      Term.prodF (Term.id E⋆) (Term.snoc (N ⊗ E⋆)) ⨟ Term.unblock E N
 
 theorem provableIso_unpeelL (E N : Ty) : ProvableIso (unpeelL E N) := by
   refine ProvableIso.comp (ProvableIso.comp (ProvableIso.comp ?_ (ProvableIso.undistR _ _ _))
-    (ProvableIso.prodF (ProvableIso.id _) (ProvableIso.cons _))) (ProvableIso.unsplit E N)
+    (ProvableIso.prodF (ProvableIso.id _) (ProvableIso.cons _))) (ProvableIso.unblock E N)
   exact ProvableIso.sumF (ProvableIso.unitR _)
-    (ProvableIso.comp (ProvableIso.prodF (ProvableIso.id _) (ProvableIso.split E N))
+    (ProvableIso.comp (ProvableIso.prodF (ProvableIso.id _) (ProvableIso.block E N))
       (ProvableIso.comp (ProvableIso.assocR _ _ _)
         (ProvableIso.prodF (ProvableIso.id _) (ProvableIso.assocL _ _ _))))
 
 theorem provableIso_unpeelR (E N : Ty) : ProvableIso (unpeelR E N) := by
   refine ProvableIso.comp (ProvableIso.comp (ProvableIso.comp ?_ (ProvableIso.undistR _ _ _))
-    (ProvableIso.prodF (ProvableIso.id _) (ProvableIso.snoc _))) (ProvableIso.unsplit E N)
+    (ProvableIso.prodF (ProvableIso.id _) (ProvableIso.snoc _))) (ProvableIso.unblock E N)
   exact ProvableIso.sumF (ProvableIso.unitR _)
-    (ProvableIso.comp (ProvableIso.prodF (ProvableIso.split E N) (ProvableIso.id _))
+    (ProvableIso.comp (ProvableIso.prodF (ProvableIso.block E N) (ProvableIso.id _))
       (ProvableIso.assocR _ _ _))
 
 /-- **The effect of peeling one block off on the left.** -/
@@ -206,7 +206,7 @@ theorem unpeelL_homT {E N : Ty} (F : Term N B⋆) :
   set M : Ty := N ⊗ E⋆ with hM
   set G : Term M B⋆ := blockR B E F with hG
   -- the four stages of the isomorphism
-  have h1 : (Term.unsplit E N ⨟ homT h) ≡ₜ (nE ⊙ homT G) := unsplit_homT_nilCase F
+  have h1 : (Term.unblock E N ⨟ homT h) ≡ₜ (nE ⊙ homT G) := unblock_homT_nilCase F
   have h2 : (Term.prodF (Term.id E⋆) (Term.cons M) ⨟ (nE ⊙ homT G)) ≡ₜ
       (nE ⊙ Term.either (Term.nilT B) (G ⊙ homT G)) :=
     (Term.fdot_comp_both _ _ _ _).trans
@@ -235,7 +235,7 @@ theorem unpeelL_homT {E N : Ty} (F : Term N B⋆) :
       _ ≡ₜ (Term.id E⋆ ⨟ nE) := PEq.compL _ (PEq.unitR_fst E⋆)
       _ ≡ₜ nE := PEq.id_comp _
   -- the right summand
-  have hright : ((Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+  have hright : ((Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
         (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
           Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))) ⨟ (nE ⊙ (G ⊙ homT G))) ≡ₜ
       (blockL B E F ⊙ homT h) := by
@@ -253,71 +253,71 @@ theorem unpeelL_homT {E N : Ty} (F : Term N B⋆) :
     have e2 : (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟ (nE ⊙ (F ⊙ (nE ⊙ homT G)))) ≡ₜ
         (blockL B E F ⊙ (nE ⊙ homT G)) :=
       PEq.symm (Term.fdot_assoc nE F (nE ⊙ homT G))
-    have e3 : (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+    have e3 : (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
         (blockL B E F ⊙ (nE ⊙ homT G))) ≡ₜ (blockL B E F ⊙ homT h) := by
       refine (Term.fdot_comp_both _ _ _ _).trans ?_
       refine Term.fdot_congr (PEq.id_comp _) ?_
-      calc (Term.split E N ⨟ (nE ⊙ homT G))
-          ≡ₜ (Term.split E N ⨟ (Term.unsplit E N ⨟ homT h)) := PEq.compR _ (PEq.symm h1)
-        _ ≡ₜ ((Term.split E N ⨟ Term.unsplit E N) ⨟ homT h) := PEq.symm (PEq.comp_assoc _ _ _)
-        _ ≡ₜ (Term.id _ ⨟ homT h) := PEq.compL _ (PEq.split_unsplit E N)
+      calc (Term.block E N ⨟ (nE ⊙ homT G))
+          ≡ₜ (Term.block E N ⨟ (Term.unblock E N ⨟ homT h)) := PEq.compR _ (PEq.symm h1)
+        _ ≡ₜ ((Term.block E N ⨟ Term.unblock E N) ⨟ homT h) := PEq.symm (PEq.comp_assoc _ _ _)
+        _ ≡ₜ (Term.id _ ⨟ homT h) := PEq.compL _ (PEq.block_unblock E N)
         _ ≡ₜ homT h := PEq.id_comp _
-    calc ((Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+    calc ((Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
             (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
               Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))) ⨟ (nE ⊙ (G ⊙ homT G)))
-        ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+        ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
             ((Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
               Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆))) ⨟ (nE ⊙ (G ⊙ homT G)))) :=
           PEq.comp_assoc _ _ _
-      _ ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+      _ ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
             (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
               (Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)) ⨟ (nE ⊙ (G ⊙ homT G))))) :=
           PEq.compR _ (PEq.comp_assoc _ _ _)
-      _ ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+      _ ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
             (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟ (nE ⊙ (F ⊙ (nE ⊙ homT G))))) :=
           PEq.compR _ (PEq.compR _ e1)
-      _ ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+      _ ≡ₜ (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
             (blockL B E F ⊙ (nE ⊙ homT G))) := PEq.compR _ e2
       _ ≡ₜ (blockL B E F ⊙ homT h) := e3
   -- putting the stages together
   calc (unpeelL E N ⨟ homT h)
       ≡ₜ (Term.sumF (Term.unitR E⋆)
-            (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+            (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
               (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
                 Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))) ⨟
           (Term.undistR E⋆ Ty.unit (M ⊗ M⋆) ⨟
-            (Term.prodF (Term.id E⋆) (Term.cons M) ⨟ (Term.unsplit E N ⨟ homT h)))) :=
+            (Term.prodF (Term.id E⋆) (Term.cons M) ⨟ (Term.unblock E N ⨟ homT h)))) :=
         (PEq.comp_assoc
             ((Term.sumF (Term.unitR E⋆)
-                (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+                (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
                   (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
                     Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))) ⨟
               Term.undistR E⋆ Ty.unit (M ⊗ M⋆)) ⨟
               Term.prodF (Term.id E⋆) (Term.cons M))
-            (Term.unsplit E N) (homT h)).trans
+            (Term.unblock E N) (homT h)).trans
           ((PEq.comp_assoc
               (Term.sumF (Term.unitR E⋆)
-                  (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+                  (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
                     (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
                       Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))) ⨟
                 Term.undistR E⋆ Ty.unit (M ⊗ M⋆))
               (Term.prodF (Term.id E⋆) (Term.cons M))
-              (Term.unsplit E N ⨟ homT h)).trans
+              (Term.unblock E N ⨟ homT h)).trans
             (PEq.comp_assoc
               (Term.sumF (Term.unitR E⋆)
-                (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+                (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
                   (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
                     Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))))
               (Term.undistR E⋆ Ty.unit (M ⊗ M⋆))
-              (Term.prodF (Term.id E⋆) (Term.cons M) ⨟ (Term.unsplit E N ⨟ homT h))))
+              (Term.prodF (Term.id E⋆) (Term.cons M) ⨟ (Term.unblock E N ⨟ homT h))))
     _ ≡ₜ (Term.sumF (Term.unitR E⋆)
-            (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+            (Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
               (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
                 Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))) ⨟
           Term.either (nE ⊙ Term.nilT B) (nE ⊙ (G ⊙ homT G))) :=
         PEq.compR _ ((PEq.compR _ ((PEq.compR _ h1).trans h2)).trans h3)
     _ ≡ₜ Term.either (Term.unitR E⋆ ⨟ (nE ⊙ Term.nilT B))
-          ((Term.prodF (Term.id (E⋆ ⊗ N)) (Term.split E N) ⨟
+          ((Term.prodF (Term.id (E⋆ ⊗ N)) (Term.block E N) ⨟
             (Term.assocR E⋆ N (E⋆ ⊗ M⋆) ⨟
               Term.prodF (Term.id E⋆) (Term.assocL N E⋆ (M⋆)))) ⨟ (nE ⊙ (G ⊙ homT G))) :=
         Term.sumF_either _ _ _ _
@@ -331,7 +331,7 @@ theorem unpeelR_homT {E N : Ty} (F : Term N B⋆) :
   set nE : Term (E⋆) B⋆ := nilconst B E⋆ with hnE
   set M : Ty := N ⊗ E⋆ with hM
   set G : Term M B⋆ := blockR B E F with hG
-  have h1 : (Term.unsplit E N ⨟ homT h) ≡ₜ (nE ⊙ homT G) := unsplit_homT_nilCase F
+  have h1 : (Term.unblock E N ⨟ homT h) ≡ₜ (nE ⊙ homT G) := unblock_homT_nilCase F
   have h2 : (Term.prodF (Term.id E⋆) (Term.snoc M) ⨟ (nE ⊙ homT G)) ≡ₜ
       (nE ⊙ Term.either (Term.nilT B) (homT G ⊙ G)) :=
     (Term.fdot_comp_both _ _ _ _).trans
@@ -358,48 +358,48 @@ theorem unpeelR_homT {E N : Ty} (F : Term N B⋆) :
       _ ≡ₜ ((Term.unitR E⋆ ⨟ Term.fst E⋆ Ty.unit) ⨟ nE) := PEq.symm (PEq.comp_assoc _ _ _)
       _ ≡ₜ (Term.id E⋆ ⨟ nE) := PEq.compL _ (PEq.unitR_fst E⋆)
       _ ≡ₜ nE := PEq.id_comp _
-  have hright : ((Term.prodF (Term.split E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
+  have hright : ((Term.prodF (Term.block E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
       (nE ⊙ (homT G ⊙ G))) ≡ₜ (homT h ⊙ G) := by
     have e2 : (Term.assocR E⋆ (M⋆) M ⨟ (nE ⊙ (homT G ⊙ G))) ≡ₜ ((nE ⊙ homT G) ⊙ G) :=
       PEq.symm (Term.fdot_assoc nE (homT G) G)
-    have e3 : (Term.prodF (Term.split E N) (Term.id M) ⨟ ((nE ⊙ homT G) ⊙ G)) ≡ₜ
+    have e3 : (Term.prodF (Term.block E N) (Term.id M) ⨟ ((nE ⊙ homT G) ⊙ G)) ≡ₜ
         (homT h ⊙ G) := by
       refine (Term.fdot_comp_both _ _ _ _).trans ?_
       refine Term.fdot_congr ?_ (PEq.id_comp _)
-      calc (Term.split E N ⨟ (nE ⊙ homT G))
-          ≡ₜ (Term.split E N ⨟ (Term.unsplit E N ⨟ homT h)) := PEq.compR _ (PEq.symm h1)
-        _ ≡ₜ ((Term.split E N ⨟ Term.unsplit E N) ⨟ homT h) := PEq.symm (PEq.comp_assoc _ _ _)
-        _ ≡ₜ (Term.id _ ⨟ homT h) := PEq.compL _ (PEq.split_unsplit E N)
+      calc (Term.block E N ⨟ (nE ⊙ homT G))
+          ≡ₜ (Term.block E N ⨟ (Term.unblock E N ⨟ homT h)) := PEq.compR _ (PEq.symm h1)
+        _ ≡ₜ ((Term.block E N ⨟ Term.unblock E N) ⨟ homT h) := PEq.symm (PEq.comp_assoc _ _ _)
+        _ ≡ₜ (Term.id _ ⨟ homT h) := PEq.compL _ (PEq.block_unblock E N)
         _ ≡ₜ homT h := PEq.id_comp _
     exact (PEq.comp_assoc _ _ _).trans ((PEq.compR _ e2).trans e3)
   calc (unpeelR E N ⨟ homT h)
       ≡ₜ (Term.sumF (Term.unitR E⋆)
-            (Term.prodF (Term.split E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
+            (Term.prodF (Term.block E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
           (Term.undistR E⋆ Ty.unit (M⋆ ⊗ M) ⨟
-            (Term.prodF (Term.id E⋆) (Term.snoc M) ⨟ (Term.unsplit E N ⨟ homT h)))) :=
+            (Term.prodF (Term.id E⋆) (Term.snoc M) ⨟ (Term.unblock E N ⨟ homT h)))) :=
         (PEq.comp_assoc
             ((Term.sumF (Term.unitR E⋆)
-                (Term.prodF (Term.split E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
+                (Term.prodF (Term.block E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
               Term.undistR E⋆ Ty.unit (M⋆ ⊗ M)) ⨟
               Term.prodF (Term.id E⋆) (Term.snoc M))
-            (Term.unsplit E N) (homT h)).trans
+            (Term.unblock E N) (homT h)).trans
           ((PEq.comp_assoc
               (Term.sumF (Term.unitR E⋆)
-                  (Term.prodF (Term.split E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
+                  (Term.prodF (Term.block E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
                 Term.undistR E⋆ Ty.unit (M⋆ ⊗ M))
               (Term.prodF (Term.id E⋆) (Term.snoc M))
-              (Term.unsplit E N ⨟ homT h)).trans
+              (Term.unblock E N ⨟ homT h)).trans
             (PEq.comp_assoc
               (Term.sumF (Term.unitR E⋆)
-                (Term.prodF (Term.split E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M))
+                (Term.prodF (Term.block E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M))
               (Term.undistR E⋆ Ty.unit (M⋆ ⊗ M))
-              (Term.prodF (Term.id E⋆) (Term.snoc M) ⨟ (Term.unsplit E N ⨟ homT h))))
+              (Term.prodF (Term.id E⋆) (Term.snoc M) ⨟ (Term.unblock E N ⨟ homT h))))
     _ ≡ₜ (Term.sumF (Term.unitR E⋆)
-            (Term.prodF (Term.split E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
+            (Term.prodF (Term.block E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
           Term.either (nE ⊙ Term.nilT B) (nE ⊙ (homT G ⊙ G))) :=
         PEq.compR _ ((PEq.compR _ ((PEq.compR _ h1).trans h2)).trans h3)
     _ ≡ₜ Term.either (Term.unitR E⋆ ⨟ (nE ⊙ Term.nilT B))
-          ((Term.prodF (Term.split E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
+          ((Term.prodF (Term.block E N) (Term.id M) ⨟ Term.assocR E⋆ (M⋆) M) ⨟
             (nE ⊙ (homT G ⊙ G))) := Term.sumF_either _ _ _ _
     _ ≡ₜ Term.either nE (homT h ⊙ G) := Term.either_congr hleft hright
 

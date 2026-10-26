@@ -1,4 +1,4 @@
-import Lax149335Proofs.Appendix.Drops.ExchangeShiftSplit
+import Lax149335Proofs.Appendix.Drops.ExchangeShiftBlock
 import Lax149335Proofs.Appendix.Drops.Contents
 import Lax149335Proofs.Appendix.Drops.SumShuffleLifts
 
@@ -7,7 +7,7 @@ import Lax149335Proofs.Appendix.Drops.SumShuffleLifts
 
 The sum normalisation lemma (`Lax149335Proofs.drops_with_sum_codomain_tree`) puts a drop with a
 co-product codomain in the shape of a case tree whose leaves are `g ; Left`, `g ; Right` and
-`g₁ + g₂`.  The case *Split* of the exchange lemma needs the normal form of the paper in its
+`g₁ + g₂`.  The case *Block* of the exchange lemma needs the normal form of the paper in its
 sharpest form: **after a lift, a drop `A ⇒ P + Q` is a co-product of two drops**, unless all
 of its leaves land in one of the two summands.  This is `Lax149335Proofs.SumSplitShape`, and
 `Lax149335Proofs.sumSplitShape_of_drop` proves that every drop has such a shape.

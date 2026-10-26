@@ -7,7 +7,7 @@ The combinator `hom f = f*; concat` sends a term `A → B*` to the unique monoid
 `A* → B*` that extends it.  This file collects the corresponding provable equalities, which
 are used throughout the appendix: `hom f` maps the empty list to the empty list, commutes
 with concatenation, extends `f` along `pure`, and composes with another homomorphism as
-expected.  As a consequence, the inverse of `split` composed with a homomorphism is computed.
+expected.  As a consequence, the inverse of `block` composed with a homomorphism is computed.
 -/
 
 set_option autoImplicit false
@@ -128,9 +128,9 @@ theorem homT_nilconst (E : Ty) (B : Ty) :
     _ ≡ₜ (toUnit E⋆ ⨟ nilT B) :=
         PEq.compL _ (PEq.unit_unique (listF (toUnit E) ⨟ toUnit Ty.unit⋆) (toUnit E⋆))
 
-/-- Composing the inverse of `split` with a homomorphism. -/
-theorem unsplit_comp_homT {E N : Ty} (f : Term (E ⊕' N) B⋆) :
-    (unsplit E N ⨟ homT f) ≡ₜ
+/-- Composing the inverse of `block` with a homomorphism. -/
+theorem unblock_comp_homT {E N : Ty} (f : Term (E ⊕' N) B⋆) :
+    (unblock E N ⨟ homT f) ≡ₜ
       (homT (inl E N ⨟ f) ⊙ homT ((inr E N ⨟ f) ⊙ homT (inl E N ⨟ f))) := by
   have hm1 : ((inl E N ⨟ pureT (E ⊕' N)) ⨟ homT f) ≡ₜ (inl E N ⨟ f) := by
     calc ((inl E N ⨟ pureT (E ⊕' N)) ⨟ homT f)

@@ -382,7 +382,7 @@ is the empty constant, then `hom f` factors through `hom f_N`. -/
 theorem hom_factors {B E N : Ty} (fE : Term E B⋆) (fN : Term N B⋆)
     (hfE : fE ≡ₜ toUnit E ⨟ nilT B) :
     homT (Term.either fE fN) ≡ₜ
-      (split E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆) ⨟ listF (fst N E⋆) ⨟ homT fN) := by
+      (block E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆) ⨟ listF (fst N E⋆) ⨟ homT fN) := by
   set f : Term (E ⊕' N) B⋆ := Term.either fE fN with hf
   -- the empty case contributes nothing
   have hE : homT (Term.inl E N ⨟ f) ≡ₜ (toUnit E⋆ ⨟ nilT B) :=
@@ -397,21 +397,21 @@ theorem hom_factors {B E N : Ty} (fE : Term E B⋆) (fN : Term N B⋆)
     refine (Term.fdot_congr hE (PEq.refl _)).trans ?_
     refine (Term.prodF_nilconst_binconcat_left (homT (fst N E⋆ ⨟ fN))).trans ?_
     exact PEq.compR _ (Term.homT_precomp (fst N E⋆) fN)
-  -- the uppermost face of the diagram is naturality of `split`
+  -- the uppermost face of the diagram is naturality of `block`
   calc homT f ≡ₜ (Term.id ((E ⊕' N)⋆) ⨟ homT f) := PEq.symm (PEq.id_comp _)
-    _ ≡ₜ ((split E N ⨟ unsplit E N) ⨟ homT f) :=
-        PEq.compL _ (PEq.symm (PEq.split_unsplit E N))
-    _ ≡ₜ (split E N ⨟ (unsplit E N ⨟ homT f)) := PEq.comp_assoc _ _ _
-    _ ≡ₜ (split E N ⨟ (homT (Term.inl E N ⨟ f) ⊙
+    _ ≡ₜ ((block E N ⨟ unblock E N) ⨟ homT f) :=
+        PEq.compL _ (PEq.symm (PEq.block_unblock E N))
+    _ ≡ₜ (block E N ⨟ (unblock E N ⨟ homT f)) := PEq.comp_assoc _ _ _
+    _ ≡ₜ (block E N ⨟ (homT (Term.inl E N ⨟ f) ⊙
           homT ((Term.inr E N ⨟ f) ⊙ homT (Term.inl E N ⨟ f)))) :=
-        PEq.compR _ (Term.unsplit_comp_homT f)
-    _ ≡ₜ (split E N ⨟ (homT (Term.inl E N ⨟ f) ⊙ homT (fst N E⋆ ⨟ fN))) :=
+        PEq.compR _ (Term.unblock_comp_homT f)
+    _ ≡ₜ (block E N ⨟ (homT (Term.inl E N ⨟ f) ⊙ homT (fst N E⋆ ⨟ fN))) :=
         PEq.compR _ (Term.fdot_congr (PEq.refl _) (Term.homT_congr hmid))
-    _ ≡ₜ (split E N ⨟ (snd E⋆ ((N ⊗ E⋆)⋆) ⨟ (listF (fst N E⋆) ⨟ homT fN))) :=
+    _ ≡ₜ (block E N ⨟ (snd E⋆ ((N ⊗ E⋆)⋆) ⨟ (listF (fst N E⋆) ⨟ homT fN))) :=
         PEq.compR _ hlow
-    _ ≡ₜ ((split E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆)) ⨟ (listF (fst N E⋆) ⨟ homT fN)) :=
+    _ ≡ₜ ((block E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆)) ⨟ (listF (fst N E⋆) ⨟ homT fN)) :=
         PEq.symm (PEq.comp_assoc _ _ _)
-    _ ≡ₜ (((split E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆)) ⨟ listF (fst N E⋆)) ⨟ homT fN) :=
+    _ ≡ₜ (((block E N ⨟ snd E⋆ ((N ⊗ E⋆)⋆)) ⨟ listF (fst N E⋆)) ⨟ homT fN) :=
         PEq.symm (PEq.comp_assoc _ _ _)
 
 /-! ### Extracting the values of the short cases (the appendix lemma behind Lemma 6.4) -/
@@ -730,7 +730,7 @@ theorem empty_split {B : Ty} {k : ℕ} (hk : 0 < k) :
 /-- The map that erases the empty part of a co-product from a list. -/
 def optDrop : (E : Option Ty) → (N : Ty) → Term ((optSum E N)⋆) (N⋆)
   | none, N => Term.id (N⋆)
-  | some E, N => (Term.split E N ⨟ Term.snd E⋆ ((N ⊗ E⋆)⋆)) ⨟ Term.listF (Term.fst N E⋆)
+  | some E, N => (Term.block E N ⨟ Term.snd E⋆ ((N ⊗ E⋆)⋆)) ⨟ Term.listF (Term.fst N E⋆)
 
 /-- A homomorphism whose empty part is the empty constant factors through the homomorphism of
 its nonempty part; this is Claim 6.6, taken as the hypothesis `h66`, read through

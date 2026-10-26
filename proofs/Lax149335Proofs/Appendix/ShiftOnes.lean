@@ -271,64 +271,64 @@ theorem shiftL_gconc (B : Ty) : (shiftL B⋆ B⋆ ⨟ gconcL B) ≡ₜ gconcR B 
     _ ≡ₜ (cmR B⋆ B⋆ ⨟ homT d) := PEq.compL _ (shiftL_cm B⋆ B⋆)
     _ ≡ₜ gconcR B := hR
 
-/-! ### The symmetric variant of splitting (appendix, concatenation maps) -/
+/-! ### The symmetric variant of `block` (appendix, concatenation maps) -/
 
-/-- The symmetric variant of `split`: `(A+B)* → (A* × B)* × A*`. -/
-def splitLT (A B : Ty) : Term ((A ⊕' B)⋆) ((A⋆ ⊗ B)⋆ ⊗ A⋆) := split A B ⨟ shiftL A⋆ B
+/-- The symmetric variant of `block`: `(A+B)* → (A* × B)* × A*`. -/
+def blockLT (A B : Ty) : Term ((A ⊕' B)⋆) ((A⋆ ⊗ B)⋆ ⊗ A⋆) := block A B ⨟ shiftL A⋆ B
 
 /-- The concatenation map of `(A* × B)* × A*`. -/
-def cmSplitL (A B : Ty) : Term ((A⋆ ⊗ B)⋆ ⊗ A⋆) ((A ⊕' B)⋆) :=
+def cmBlockL (A B : Ty) : Term ((A⋆ ⊗ B)⋆ ⊗ A⋆) ((A ⊕' B)⋆) :=
   homT (homT (inl A B ⨟ pureT (A ⊕' B)) ⊙ (inr A B ⨟ pureT (A ⊕' B))) ⊙
     homT (inl A B ⨟ pureT (A ⊕' B))
 
-/-- The inverse of the symmetric variant of splitting is the concatenation map. -/
-theorem shiftR_unsplit (A B : Ty) :
-    (shiftR A⋆ B ⨟ unsplit A B) ≡ₜ cmSplitL A B := by
+/-- The inverse of the symmetric variant of `block` is the concatenation map. -/
+theorem shiftR_unblock (A B : Ty) :
+    (shiftR A⋆ B ⨟ unblock A B) ≡ₜ cmBlockL A B := by
   set d : Term (A⋆ ⊕' B) ((A ⊕' B)⋆) :=
     either (homT (inl A B ⨟ pureT (A ⊕' B))) (inr A B ⨟ pureT (A ⊕' B)) with hd
   have hl : (inl A⋆ B ⨟ d) ≡ₜ homT (inl A B ⨟ pureT (A ⊕' B)) := inl_either _ _
   have hr : (inr A⋆ B ⨟ d) ≡ₜ (inr A B ⨟ pureT (A ⊕' B)) := inr_either _ _
-  have hR : (cmR A⋆ B ⨟ homT d) ≡ₜ unsplit A B := by
+  have hR : (cmR A⋆ B ⨟ homT d) ≡ₜ unblock A B := by
     calc (cmR A⋆ B ⨟ homT d)
         ≡ₜ ((inl A⋆ B ⨟ d) ⊙ homT ((inr A⋆ B ⨟ d) ⊙ (inl A⋆ B ⨟ d))) := cmR_comp_homT d
       _ ≡ₜ (homT (inl A B ⨟ pureT (A ⊕' B)) ⊙
             homT ((inr A B ⨟ pureT (A ⊕' B)) ⊙ homT (inl A B ⨟ pureT (A ⊕' B)))) :=
           fdot_congr hl (homT_congr (fdot_congr hr hl))
-  have hL : (cmL A⋆ B ⨟ homT d) ≡ₜ cmSplitL A B := by
+  have hL : (cmL A⋆ B ⨟ homT d) ≡ₜ cmBlockL A B := by
     calc (cmL A⋆ B ⨟ homT d)
         ≡ₜ (homT ((inl A⋆ B ⨟ d) ⊙ (inr A⋆ B ⨟ d)) ⊙ (inl A⋆ B ⨟ d)) := cmL_comp_homT d
       _ ≡ₜ (homT (homT (inl A B ⨟ pureT (A ⊕' B)) ⊙ (inr A B ⨟ pureT (A ⊕' B))) ⊙
             homT (inl A B ⨟ pureT (A ⊕' B))) := fdot_congr (homT_congr (fdot_congr hl hr)) hl
-  calc (shiftR A⋆ B ⨟ unsplit A B)
+  calc (shiftR A⋆ B ⨟ unblock A B)
       ≡ₜ (shiftR A⋆ B ⨟ (cmR A⋆ B ⨟ homT d)) := PEq.compR _ (PEq.symm hR)
     _ ≡ₜ ((shiftR A⋆ B ⨟ cmR A⋆ B) ⨟ homT d) := PEq.symm (PEq.comp_assoc _ _ _)
     _ ≡ₜ (cmL A⋆ B ⨟ homT d) := PEq.compL _ (PEq.shiftR_content A⋆ B)
-    _ ≡ₜ cmSplitL A B := hL
+    _ ≡ₜ cmBlockL A B := hL
 
-/-- **Appendix (concatenation maps).**  The symmetric variant of splitting is a provable
+/-- **Appendix (concatenation maps).**  The symmetric variant of `block` is a provable
 isomorphism, and its inverse is the concatenation map. -/
-theorem splitLT_iso (A B : Ty) :
-    (splitLT A B ⨟ cmSplitL A B) ≡ₜ Term.id ((A ⊕' B)⋆) ∧
-      (cmSplitL A B ⨟ splitLT A B) ≡ₜ Term.id ((A⋆ ⊗ B)⋆ ⊗ A⋆) := by
+theorem blockLT_iso (A B : Ty) :
+    (blockLT A B ⨟ cmBlockL A B) ≡ₜ Term.id ((A ⊕' B)⋆) ∧
+      (cmBlockL A B ⨟ blockLT A B) ≡ₜ Term.id ((A⋆ ⊗ B)⋆ ⊗ A⋆) := by
   constructor
-  · calc ((split A B ⨟ shiftL A⋆ B) ⨟ cmSplitL A B)
-        ≡ₜ ((split A B ⨟ shiftL A⋆ B) ⨟ (shiftR A⋆ B ⨟ unsplit A B)) :=
-          PEq.compR _ (PEq.symm (shiftR_unsplit A B))
-      _ ≡ₜ (split A B ⨟ (shiftL A⋆ B ⨟ (shiftR A⋆ B ⨟ unsplit A B))) := PEq.comp_assoc _ _ _
-      _ ≡ₜ (split A B ⨟ ((shiftL A⋆ B ⨟ shiftR A⋆ B) ⨟ unsplit A B)) :=
+  · calc ((block A B ⨟ shiftL A⋆ B) ⨟ cmBlockL A B)
+        ≡ₜ ((block A B ⨟ shiftL A⋆ B) ⨟ (shiftR A⋆ B ⨟ unblock A B)) :=
+          PEq.compR _ (PEq.symm (shiftR_unblock A B))
+      _ ≡ₜ (block A B ⨟ (shiftL A⋆ B ⨟ (shiftR A⋆ B ⨟ unblock A B))) := PEq.comp_assoc _ _ _
+      _ ≡ₜ (block A B ⨟ ((shiftL A⋆ B ⨟ shiftR A⋆ B) ⨟ unblock A B)) :=
           PEq.compR _ (PEq.symm (PEq.comp_assoc _ _ _))
-      _ ≡ₜ (split A B ⨟ (Term.id (A⋆ ⊗ (B ⊗ A⋆)⋆) ⨟ unsplit A B)) :=
+      _ ≡ₜ (block A B ⨟ (Term.id (A⋆ ⊗ (B ⊗ A⋆)⋆) ⨟ unblock A B)) :=
           PEq.compR _ (PEq.compL _ (PEq.shiftL_shiftR A⋆ B))
-      _ ≡ₜ (split A B ⨟ unsplit A B) := PEq.compR _ (PEq.id_comp _)
-      _ ≡ₜ Term.id ((A ⊕' B)⋆) := PEq.split_unsplit A B
-  · calc (cmSplitL A B ⨟ (split A B ⨟ shiftL A⋆ B))
-        ≡ₜ ((shiftR A⋆ B ⨟ unsplit A B) ⨟ (split A B ⨟ shiftL A⋆ B)) :=
-          PEq.compL _ (PEq.symm (shiftR_unsplit A B))
-      _ ≡ₜ (shiftR A⋆ B ⨟ (unsplit A B ⨟ (split A B ⨟ shiftL A⋆ B))) := PEq.comp_assoc _ _ _
-      _ ≡ₜ (shiftR A⋆ B ⨟ ((unsplit A B ⨟ split A B) ⨟ shiftL A⋆ B)) :=
+      _ ≡ₜ (block A B ⨟ unblock A B) := PEq.compR _ (PEq.id_comp _)
+      _ ≡ₜ Term.id ((A ⊕' B)⋆) := PEq.block_unblock A B
+  · calc (cmBlockL A B ⨟ (block A B ⨟ shiftL A⋆ B))
+        ≡ₜ ((shiftR A⋆ B ⨟ unblock A B) ⨟ (block A B ⨟ shiftL A⋆ B)) :=
+          PEq.compL _ (PEq.symm (shiftR_unblock A B))
+      _ ≡ₜ (shiftR A⋆ B ⨟ (unblock A B ⨟ (block A B ⨟ shiftL A⋆ B))) := PEq.comp_assoc _ _ _
+      _ ≡ₜ (shiftR A⋆ B ⨟ ((unblock A B ⨟ block A B) ⨟ shiftL A⋆ B)) :=
           PEq.compR _ (PEq.symm (PEq.comp_assoc _ _ _))
       _ ≡ₜ (shiftR A⋆ B ⨟ (Term.id (A⋆ ⊗ (B ⊗ A⋆)⋆) ⨟ shiftL A⋆ B)) :=
-          PEq.compR _ (PEq.compL _ (PEq.unsplit_split A B))
+          PEq.compR _ (PEq.compL _ (PEq.unblock_block A B))
       _ ≡ₜ (shiftR A⋆ B ⨟ shiftL A⋆ B) := PEq.compR _ (PEq.id_comp _)
       _ ≡ₜ Term.id ((A⋆ ⊗ B)⋆ ⊗ A⋆) := PEq.shiftR_shiftL A⋆ B
 

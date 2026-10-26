@@ -161,51 +161,51 @@ end Term
 The two terms `precheck_H` and `check_H` below both flag every letter of their input as good
 or bad and then check that no letter was flagged bad, returning the (unchanged) input in the
 left variant if the check succeeds.  The second half of that procedure is the term
-`Lax149335Proofs.Term.allLeftTest`, which is built from `split`: a list over `X + X` is split into
+`Lax149335Proofs.Term.allLeftTest`, which is built from `block`: a list over `X + X` is split into
 an initial run of left variants followed by a list of blocks, each starting with a right
 variant, and the input consists only of left variants exactly when the list of blocks is
-empty.  In either case the input can be rebuilt from the output of `split`. -/
+empty.  In either case the input can be rebuilt from the output of `block`. -/
 
 namespace Term
 
-/-- Rebuilds the input of `split X X` from its output. -/
-def rebuildSplit (X : Ty) : Term ((X⋆) ⊗ (X ⊗ X⋆)⋆) (X⋆) :=
+/-- Rebuilds the input of `block X X` from its output. -/
+def rebuildBlock (X : Ty) : Term ((X⋆) ⊗ (X ⊗ X⋆)⋆) (X⋆) :=
   prodF (id (X⋆)) (listF (inr Ty.unit (X ⊗ X⋆) ⨟ cons X) ⨟ concat X) ⨟ binconcat X
 
 @[simp] theorem den_cons_inr_pair (X : Ty) (x : ⟦X⟧ × List ⟦X⟧) :
     (cons X).den (Sum.inr x) = x.1 :: x.2 := rfl
 
-@[simp] theorem den_rebuildSplit (X : Ty) (g : List ⟦X⟧) (r : List (⟦X⟧ × List ⟦X⟧)) :
-    (rebuildSplit X).den (g, r) = g ++ (r.map (fun p => p.1 :: p.2)).flatten := by
-  simp only [rebuildSplit, den_comp, den_prodF, den_id, den_listF, den_concat, den_binconcat]
+@[simp] theorem den_rebuildBlock (X : Ty) (g : List ⟦X⟧) (r : List (⟦X⟧ × List ⟦X⟧)) :
+    (rebuildBlock X).den (g, r) = g ++ (r.map (fun p => p.1 :: p.2)).flatten := by
+  simp only [rebuildBlock, den_comp, den_prodF, den_id, den_listF, den_concat, den_binconcat]
   rfl
 
-@[simp] theorem usesPref_rebuildSplit (X : Ty) : usesPref (rebuildSplit X) = false := by
-  simp [rebuildSplit, usesPref, binconcat, prepend, pureT, nilT]
+@[simp] theorem usesPref_rebuildBlock (X : Ty) : usesPref (rebuildBlock X) = false := by
+  simp [rebuildBlock, usesPref, binconcat, prepend, pureT, nilT]
 
 /-- The collapse of a co-product of a type with itself. -/
 def unSum {X : Ty} : ⟦X⟧ ⊕ ⟦X⟧ → ⟦X⟧ := Sum.elim _root_.id _root_.id
 
-/-- Rebuilding the input of `split X X` from its output really does give the input back
+/-- Rebuilding the input of `block X X` from its output really does give the input back
 (after the two variants have been collapsed). -/
-theorem splitDen_rebuild {X : Ty} (l : List (⟦X⟧ ⊕ ⟦X⟧)) :
-    (splitDen l).1 ++ ((splitDen l).2.map (fun p => p.1 :: p.2)).flatten = l.map unSum := by
+theorem blockDen_rebuild {X : Ty} (l : List (⟦X⟧ ⊕ ⟦X⟧)) :
+    (blockDen l).1 ++ ((blockDen l).2.map (fun p => p.1 :: p.2)).flatten = l.map unSum := by
   induction l with
   | nil => rfl
   | cons y t ih =>
       cases y with
-      | inl a => simpa [splitDen, unSum] using ih
-      | inr b => simpa [splitDen, unSum] using ih
+      | inl a => simpa [blockDen, unSum] using ih
+      | inr b => simpa [blockDen, unSum] using ih
 
-/-- `split X X` produces no block exactly when all the letters are left variants. -/
-theorem splitDen_snd_nil {X : Ty} (l : List (⟦X⟧ ⊕ ⟦X⟧)) :
-    (splitDen l).2 = [] ↔ ∀ y ∈ l, y.isLeft = true := by
+/-- `block X X` produces no block exactly when all the letters are left variants. -/
+theorem blockDen_snd_nil {X : Ty} (l : List (⟦X⟧ ⊕ ⟦X⟧)) :
+    (blockDen l).2 = [] ↔ ∀ y ∈ l, y.isLeft = true := by
   induction l with
-  | nil => simp [splitDen]
+  | nil => simp [blockDen]
   | cons y t ih =>
       cases y with
-      | inl a => simpa [splitDen] using ih
-      | inr b => simp [splitDen]
+      | inl a => simpa [blockDen] using ih
+      | inr b => simp [blockDen]
 
 /-- The aperiodic test: the input list is returned unchanged, in the left variant exactly
 when all its letters are left variants. -/
@@ -213,10 +213,10 @@ def allLeftFinish (X : Ty) : Term ((X⋆) ⊗ (X ⊗ X⋆)⋆) ((X⋆) ⊕' (X�
   (prodF (id (X⋆)) (uncons (X ⊗ X⋆)) ⨟ distR (X⋆) Ty.unit ((X ⊗ X⋆) ⊗ (X ⊗ X⋆)⋆)) ⨟
     either (fst (X⋆) Ty.unit ⨟ inl (X⋆) (X⋆))
       ((prodF (id (X⋆)) (inr Ty.unit ((X ⊗ X⋆) ⊗ (X ⊗ X⋆)⋆) ⨟ cons (X ⊗ X⋆)) ⨟
-          rebuildSplit X) ⨟ inr (X⋆) (X⋆))
+          rebuildBlock X) ⨟ inr (X⋆) (X⋆))
 
 def allLeftTest (X : Ty) : Term ((X ⊕' X)⋆) ((X⋆) ⊕' (X⋆)) :=
-  split X X ⨟ allLeftFinish X
+  block X X ⨟ allLeftFinish X
 
 theorem den_allLeftFinish_nil (X : Ty) (g : List ⟦X⟧) :
     (allLeftFinish X).den (g, []) = Sum.inl g := rfl
@@ -225,8 +225,8 @@ theorem den_allLeftFinish_cons (X : Ty) (g : List ⟦X⟧) (z : ⟦X⟧ × List 
     (zs : List (⟦X⟧ × List ⟦X⟧)) :
     (allLeftFinish X).den (g, z :: zs) =
       Sum.inr (g ++ ((z :: zs).map (fun p => p.1 :: p.2)).flatten) := by
-  show Sum.inr ((rebuildSplit X).den (g, z :: zs)) = _
-  rw [den_rebuildSplit]
+  show Sum.inr ((rebuildBlock X).den (g, z :: zs)) = _
+  rw [den_rebuildBlock]
 
 @[simp] theorem usesPref_allLeftTest (X : Ty) : usesPref (allLeftTest X) = false := by
   simp [allLeftTest, allLeftFinish, either, usesPref]
@@ -234,10 +234,10 @@ theorem den_allLeftFinish_cons (X : Ty) (g : List ⟦X⟧) (z : ⟦X⟧ × List 
 theorem den_allLeftTest (X : Ty) (l : List (⟦X⟧ ⊕ ⟦X⟧)) :
     (allLeftTest X).den l =
       if ∀ y ∈ l, y.isLeft = true then Sum.inl (l.map unSum) else Sum.inr (l.map unSum) := by
-  have hrb := splitDen_rebuild l
-  have hnil := splitDen_snd_nil l
-  have hden : (allLeftTest X).den l = (allLeftFinish X).den (splitDen l) := rfl
-  rcases hs : splitDen l with ⟨g, r⟩
+  have hrb := blockDen_rebuild l
+  have hnil := blockDen_snd_nil l
+  have hden : (allLeftTest X).den l = (allLeftFinish X).den (blockDen l) := rfl
+  rcases hs : blockDen l with ⟨g, r⟩
   rw [hs] at hrb hnil
   rw [hden, hs]
   cases r with

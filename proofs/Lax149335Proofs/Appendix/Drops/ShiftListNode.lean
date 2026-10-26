@@ -14,7 +14,7 @@ The proof uses the two rebracketings of `Lax149335Proofs.Appendix.Drops.Contents
   component: the first letter of `S` is peeled off, the trailing part of each element and the
   leading letter of the next one are merged into pairs, and what remains at the end is the
   tail of the last element;
-* `Lax149335Proofs.split_content` handles a list whose element content is a **co-pairing**: the list
+* `Lax149335Proofs.block_content` handles a list whose element content is a **co-pairing**: the list
   is split into the blocks of the first summand and the blocks that follow an element of the
   second summand.
 
@@ -56,7 +56,7 @@ theorem SC1.homT_head {W X E : Ty} {x : Term X S} {v : Term E ((S ⊕' T)⋆)} (
 
 /-- **The inductive step**: the content of a list whose elements are a non-empty content
 followed by an arbitrary content of the class maintained by the induction.  The induction is
-on the non-empty content; the co-pairing case is the one that uses `split`. -/
+on the non-empty content; the co-pairing case is the one that uses `block`. -/
 theorem NEC.homT_fdot {A : Ty} {c : Term A ((S ⊕' T)⋆)} (h : NEC S T r c) :
     ∀ {K : Ty} {w : Term K ((S ⊕' T)⋆)}, QC S T r w → SC1 S T r (Term.homT (c ⊙ w)) := by
   induction h with
@@ -68,8 +68,8 @@ theorem NEC.homT_fdot {A : Ty} {c : Term A ((S ⊕' T)⋆)} (h : NEC S T r c) :
       intro K w hw
       refine SC1.of_liftEq (LiftEq.homT
         ⟨distL A₁ A₂ K, IsLift.distL _ _ _, fdot_either_distL _ _ _⟩) ?_
-      refine SC1.congr (PEq.symm (split_content (c₁ ⊙ w) (c₂ ⊙ w)))
-        (SC1.lift_comp (IsLift.split _ _) ?_)
+      refine SC1.congr (PEq.symm (block_content (c₁ ⊙ w) (c₂ ⊙ w)))
+        (SC1.lift_comp (IsLift.block _ _) ?_)
       have hleft : SC1 S T r (Term.homT (c₁ ⊙ w)) := ih₁ hw
       have hright : SC1 S T r (Term.homT ((c₂ ⊙ w) ⊙ Term.homT (c₁ ⊙ w))) := by
         refine SC1.of_liftEq (LiftEq.homT (LiftEq.assoc _ _ _)) ?_
@@ -91,8 +91,8 @@ theorem NEC.homT {A : Ty} {c : Term A ((S ⊕' T)⋆)} (h : NEC S T r c) :
   induction h with
   | head hx hrx hv => exact SC1.homT_head hx hrx hv
   | @either A₁ A₂ c₁ c₂ _ hc₂ ih₁ ih₂ =>
-      refine SC1.congr (PEq.symm (split_content c₁ c₂))
-        (SC1.lift_comp (IsLift.split _ _) ?_)
+      refine SC1.congr (PEq.symm (block_content c₁ c₂))
+        (SC1.lift_comp (IsLift.block _ _) ?_)
       exact SC1.fdot ih₁ (hc₂.homT_fdot (Or.inr ih₁))
   | congr h _ ih => exact SC1.congr (homT_congr h) ih
   | lift hrho _ ih =>
@@ -110,8 +110,8 @@ theorem RC.homT_sc {A : Ty} {c : Term A ((S ⊕' T)⋆)} (h : RC S T r c) :
   · obtain ⟨A₁, E, rho, e, n, hrho, he, hn, hc⟩ := hs
     refine SC.congr (homT_congr hc) (SC.congr (homT_precomp _ _)
       (SC.lift_comp (IsLift.listF hrho) ?_))
-    refine SC.congr (PEq.symm (split_content e n))
-      (SC.lift_comp (IsLift.split _ _) (SC1.sc ?_))
+    refine SC.congr (PEq.symm (block_content e n))
+      (SC.lift_comp (IsLift.block _ _) (SC1.sc ?_))
     exact EC.fdot_sc1 (EC.homT he) (NEC.homT (hn.fdot_ec (EC.homT he)))
 
 /-- **The list node**, read on contents: the content of the list of the values of a content of

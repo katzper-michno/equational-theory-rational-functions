@@ -210,9 +210,9 @@ theorem pairL {A B C : Ty} (v : Value C) (f : Term A B) (hf : ProvablyInjective 
 theorem unitL (A : Ty) : ProvablyInjective (Term.unitL A) :=
   ⟨Term.snd Ty.unit A, PEq.unitL_snd A⟩
 
-/-- The inverse of `split` is provably injective. -/
-theorem unsplit (A B : Ty) : ProvablyInjective (Term.unsplit A B) :=
-  ⟨Term.split A B, PEq.unsplit_split A B⟩
+/-- The inverse of `block` is provably injective. -/
+theorem unblock (A B : Ty) : ProvablyInjective (Term.unblock A B) :=
+  ⟨Term.block A B, PEq.unblock_block A B⟩
 
 end ProvablyInjective
 

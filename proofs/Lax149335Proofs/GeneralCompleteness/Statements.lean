@@ -1,8 +1,8 @@
 import Lax149335Proofs.GeneralCompleteness.LiftsAndDrops
 import Lax149335Proofs.SimpleCompleteness.Proof
 import Lax149335Proofs.Appendix.Drops.JointSimplification
-import Lax149335Proofs.Appendix.Drops.ExchangeShiftSplit
-import Lax149335Proofs.Appendix.Drops.SplitExchange
+import Lax149335Proofs.Appendix.Drops.ExchangeShiftBlock
+import Lax149335Proofs.Appendix.Drops.BlockExchange
 import Mathlib.Tactic.Set
 
 /-!
@@ -99,17 +99,17 @@ bridge_export Lax149335Proofs
 to a composition of the form lift-drop.
 
 The induction of the appendix on the lift is carried out in
-`Lax149335Proofs.Appendix.Drops.ExchangeProof`: `Lax149335Proofs.exchange_of_shift_split` proves this
+`Lax149335Proofs.Appendix.Drops.ExchangeProof`: `Lax149335Proofs.exchange_of_shift_block` proves this
 statement from the two hard cases of the appendix, namely that the prime lifts `shift` and
-`split` admit exchange (`Lax149335Proofs.AdmitsExchange`).  All the other cases -- the four
+`block` admit exchange (`Lax149335Proofs.AdmitsExchange`).  All the other cases -- the four
 combinators and the ten remaining prime lifts of Table 1 -- are proved there.  The case
 *Shift* is `Lax149335Proofs.admitsExchange_shift`
-(`Lax149335Proofs.Appendix.Drops.ExchangeShiftSplit`) and the case *Split* is
-`Lax149335Proofs.admitsExchange_split` (`Lax149335Proofs.Appendix.Drops.SplitExchange`). -/
+(`Lax149335Proofs.Appendix.Drops.ExchangeShiftBlock`) and the case *Block* is
+`Lax149335Proofs.admitsExchange_block` (`Lax149335Proofs.Appendix.Drops.BlockExchange`). -/
 theorem exchange {A B C : Ty} (d : Term A B) (l : Term B C) (hd : IsDrop d) (hl : IsLift l) :
     ∃ (D : Ty) (l' : Term A D) (d' : Term D C),
       IsLift l' ∧ IsDrop d' ∧ (d ⨟ l) ≡ₜ (l' ⨟ d') :=
-  exchange_of_shift_split admitsExchange_shift admitsExchange_split d l hd hl
+  exchange_of_shift_block admitsExchange_shift admitsExchange_block d l hd hl
 
 /-! ### The lift-drop factorisation (Lemma 7.4)
 
@@ -361,7 +361,7 @@ theorem isLiftDrop_of_aperiodic_of (hex : type_of% @Lax149335.Exchange.exchange)
   | snoc A => exact fun _ => IsLiftDrop.of_isEqDrop (isEqDrop_snoc A)
   | unsnoc A => exact fun _ => isLiftDrop_unsnoc A
   | concat A => exact fun _ => IsLiftDrop.of_isDrop (IsDrop.concat A)
-  | split A B => exact fun _ => IsLiftDrop.of_isLift (IsLift.split A B)
+  | block A B => exact fun _ => IsLiftDrop.of_isLift (IsLift.block A B)
   | shiftR A B => exact fun _ => isLiftDrop_shiftR A B
   | shiftL A B => exact fun _ => isLiftDrop_shiftL A B
   | pref A G =>

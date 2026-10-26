@@ -259,7 +259,7 @@ theorem shape_transport_of_lift (B : Ty) {X Y : Ty} {alpha : Term X Y} (ha : IsL
       intro lv
       obtain ⟨a, b, c⟩ : LeafVal B X × LeafVal B Y × LeafVal B Z := lv
       exact ⟨((a, b), (a, c)), Term.fdot_either_distR _ _ _⟩
-  | split X Y =>
+  | block X Y =>
       intro lv
       obtain ⟨a, b⟩ : LeafVal B X × LeafVal B Y := lv
       refine ⟨(a, (b, a)), ?_⟩
@@ -268,7 +268,7 @@ theorem shape_transport_of_lift (B : Ty) {X Y : Ty} {alpha : Term X Y} (ha : IsL
       set m := Term.either sa sb with hm
       have hl : (Term.inl X Y ⨟ m) ≡ₜ sa := Term.inl_either _ _
       have hr : (Term.inr X Y ⨟ m) ≡ₜ sb := Term.inr_either _ _
-      have hplug : (Term.unsplit X Y ⨟ Term.homT m) ≡ₜ
+      have hplug : (Term.unblock X Y ⨟ Term.homT m) ≡ₜ
           (Term.homT sa ⊙ Term.homT (sb ⊙ Term.homT sa)) := by
         have h := (Term.TyF2.concatMap_comp_homT
             (.prod (.list .p1) (.list (.prod .p2 (.list .p1)))) m).trans
@@ -277,10 +277,10 @@ theorem shape_transport_of_lift (B : Ty) {X Y : Ty} {alpha : Term X Y} (ha : IsL
         exact h
       calc Term.homT m
           ≡ₜ (Term.id ((X ⊕' Y)⋆) ⨟ Term.homT m) := PEq.symm (PEq.id_comp _)
-        _ ≡ₜ ((Term.split X Y ⨟ Term.unsplit X Y) ⨟ Term.homT m) :=
-            PEq.compL _ (PEq.symm (PEq.split_unsplit X Y))
-        _ ≡ₜ (Term.split X Y ⨟ (Term.unsplit X Y ⨟ Term.homT m)) := PEq.comp_assoc _ _ _
-        _ ≡ₜ (Term.split X Y ⨟ (Term.homT sa ⊙ Term.homT (sb ⊙ Term.homT sa))) :=
+        _ ≡ₜ ((Term.block X Y ⨟ Term.unblock X Y) ⨟ Term.homT m) :=
+            PEq.compL _ (PEq.symm (PEq.block_unblock X Y))
+        _ ≡ₜ (Term.block X Y ⨟ (Term.unblock X Y ⨟ Term.homT m)) := PEq.comp_assoc _ _ _
+        _ ≡ₜ (Term.block X Y ⨟ (Term.homT sa ⊙ Term.homT (sb ⊙ Term.homT sa))) :=
             PEq.compR _ hplug
   | shift X Y =>
       intro lv

@@ -15,8 +15,8 @@ parameters are indexed by natural numbers; the parameters are instantiated by an
 `As : ℕ → Ty`.
 
 The two consequences of the section that the development uses, the lemmas *shift ones* and
-*shift unsplit*, are proved in `Lax149335Proofs.Appendix.ShiftOnes`
-(`Lax149335Proofs.Term.shift_ones` and `Lax149335Proofs.Term.splitLT_iso`).
+*shift unblock*, are proved in `Lax149335Proofs.Appendix.ShiftOnes`
+(`Lax149335Proofs.Term.shift_ones` and `Lax149335Proofs.Term.blockLT_iso`).
 -/
 
 set_option autoImplicit false

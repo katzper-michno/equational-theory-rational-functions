@@ -4,7 +4,7 @@ import Lax149335Proofs.Terms.Derived
 # Denotations of the derived terms
 
 This file computes the denotation of each derived term of `Lax149335Proofs.Terms.Derived` and
-establishes the semantic facts (about `splitDen`, `shiftRDen`, `shiftLDen`, `prefixMul`, ...)
+establishes the semantic facts (about `blockDen`, `shiftRDen`, `shiftLDen`, `prefixMul`, ...)
 that are needed for the soundness of the axioms of Section 4.
 -/
 
@@ -99,8 +99,8 @@ variable {A B C : Ty}
 @[simp] theorem den_concat (A : Ty) (l : List (List ⟦A⟧)) :
     (concat A).den l = l.flatten := rfl
 
-@[simp] theorem den_split (A B : Ty) (l : List (⟦A⟧ ⊕ ⟦B⟧)) :
-    (split A B).den l = splitDen l := rfl
+@[simp] theorem den_block (A B : Ty) (l : List (⟦A⟧ ⊕ ⟦B⟧)) :
+    (block A B).den l = blockDen l := rfl
 
 @[simp] theorem den_shiftR (A B : Ty) (l : List (⟦A⟧ × ⟦B⟧)) (a : ⟦A⟧) :
     (shiftR A B).den (l, a) = shiftRDen l a := rfl
@@ -202,7 +202,7 @@ variable {A B C : Ty}
 @[simp] theorem den_sing {A : Ty} (v : Value A) (u : Unit) :
     (sing v).den u = [v.den ()] := rfl
 
-/-! ### `snoc`, `unsnoc`, `split`, `shift` -/
+/-! ### `snoc`, `unsnoc`, `block`, `shift` -/
 
 @[simp] theorem snocDen_inl {α : Type} (u : Unit) : snocDen (Sum.inl u : Unit ⊕ (List α × α)) = [] := rfl
 
@@ -224,12 +224,12 @@ theorem unsnocDen_append_singleton {α : Type} (l : List α) (a : α) :
   · rfl
   · rw [show snocDen (Sum.inr (l, a)) = l ++ [a] from rfl, unsnocDen_append_singleton]
 
-/-- The denotation of the term `unsplit`. -/
-def unsplitDen {α β : Type} (x : List α × List (β × List α)) : List (α ⊕ β) :=
+/-- The denotation of the term `unblock`. -/
+def unblockDen {α β : Type} (x : List α × List (β × List α)) : List (α ⊕ β) :=
   x.1.map Sum.inl ++ (x.2.map (fun p => Sum.inr p.1 :: p.2.map Sum.inl)).flatten
 
-theorem den_unsplit (A B : Ty) (x : List ⟦A⟧ × List (⟦B⟧ × List ⟦A⟧)) :
-    (unsplit A B).den x = unsplitDen x := by
+theorem den_unblock (A B : Ty) (x : List ⟦A⟧ × List (⟦B⟧ × List ⟦A⟧)) :
+    (unblock A B).den x = unblockDen x := by
   obtain ⟨l, ls⟩ := x
   have h3 : ∀ l : List ⟦A⟧,
       (l.map (fun a => ([Sum.inl a] : List ⟦A ⊕' B⟧))).flatten = l.map Sum.inl := by
@@ -238,7 +238,7 @@ theorem den_unsplit (A B : Ty) (x : List ⟦A⟧ × List (⟦B⟧ × List ⟦A�
     | nil => rfl
     | cons a t ih =>
       simp only [List.map_cons, List.flatten_cons, ih, List.cons_append, List.nil_append]
-  simp only [unsplit, TyF2.concatMap, den_fdot, den_homT]
+  simp only [unblock, TyF2.concatMap, den_fdot, den_homT]
   have h1 : ⟦inl A B ⨟ pureT (A ⊕' B)⟧ₜ = fun a => ([Sum.inl a] : List ⟦A ⊕' B⟧) := rfl
   have h2 : ⟦(inr A B ⨟ pureT (A ⊕' B)) ⊙ (inl A B ⨟ pureT (A ⊕' B)).homT⟧ₜ
       = fun p : ⟦B⟧ × List ⟦A⟧ => Sum.inr p.1 :: p.2.map Sum.inl := by
@@ -248,48 +248,48 @@ theorem den_unsplit (A B : Ty) (x : List ⟦A⟧ × List (⟦B⟧ × List ⟦A�
   rw [h1, h2, h3]
   rfl
 
-@[simp] theorem splitDen_nil {α β : Type} :
-    splitDen ([] : List (α ⊕ β)) = ([], []) := rfl
+@[simp] theorem blockDen_nil {α β : Type} :
+    blockDen ([] : List (α ⊕ β)) = ([], []) := rfl
 
-@[simp] theorem splitDen_inl {α β : Type} (a : α) (t : List (α ⊕ β)) :
-    splitDen (Sum.inl a :: t) = (a :: (splitDen t).1, (splitDen t).2) := rfl
+@[simp] theorem blockDen_inl {α β : Type} (a : α) (t : List (α ⊕ β)) :
+    blockDen (Sum.inl a :: t) = (a :: (blockDen t).1, (blockDen t).2) := rfl
 
-@[simp] theorem splitDen_inr {α β : Type} (b : β) (t : List (α ⊕ β)) :
-    splitDen (Sum.inr b :: t) = ([], (b, (splitDen t).1) :: (splitDen t).2) := rfl
+@[simp] theorem blockDen_inr {α β : Type} (b : β) (t : List (α ⊕ β)) :
+    blockDen (Sum.inr b :: t) = ([], (b, (blockDen t).1) :: (blockDen t).2) := rfl
 
-theorem splitDen_map_inl_append {α β : Type} (l : List α) (r : List (α ⊕ β)) :
-    splitDen (l.map Sum.inl ++ r) = (l ++ (splitDen r).1, (splitDen r).2) := by
+theorem blockDen_map_inl_append {α β : Type} (l : List α) (r : List (α ⊕ β)) :
+    blockDen (l.map Sum.inl ++ r) = (l ++ (blockDen r).1, (blockDen r).2) := by
   induction l with
   | nil => simp
-  | cons a t ih => simp only [List.map_cons, List.cons_append, splitDen_inl, ih]
+  | cons a t ih => simp only [List.map_cons, List.cons_append, blockDen_inl, ih]
 
-@[simp] theorem splitDen_unsplitDen {α β : Type} (x : List α × List (β × List α)) :
-    splitDen (unsplitDen x) = x := by
+@[simp] theorem blockDen_unblockDen {α β : Type} (x : List α × List (β × List α)) :
+    blockDen (unblockDen x) = x := by
   obtain ⟨l, ls⟩ := x
   have key : ∀ ls : List (β × List α),
-      splitDen ((ls.map (fun p => Sum.inr p.1 :: p.2.map Sum.inl)).flatten) = ([], ls) := by
+      blockDen ((ls.map (fun p => Sum.inr p.1 :: p.2.map Sum.inl)).flatten) = ([], ls) := by
     intro ls
     induction ls with
     | nil => rfl
     | cons p ps ih =>
       obtain ⟨b, l'⟩ := p
-      simp only [List.map_cons, List.flatten_cons, List.cons_append, splitDen_inr,
-        splitDen_map_inl_append, ih]
+      simp only [List.map_cons, List.flatten_cons, List.cons_append, blockDen_inr,
+        blockDen_map_inl_append, ih]
       simp
-  simp only [unsplitDen, splitDen_map_inl_append, key]
+  simp only [unblockDen, blockDen_map_inl_append, key]
   simp
 
-@[simp] theorem unsplitDen_splitDen {α β : Type} (l : List (α ⊕ β)) :
-    unsplitDen (splitDen l) = l := by
+@[simp] theorem unblockDen_blockDen {α β : Type} (l : List (α ⊕ β)) :
+    unblockDen (blockDen l) = l := by
   induction l with
   | nil => rfl
   | cons x t ih =>
     cases x with
     | inl a =>
-      simp only [splitDen_inl, unsplitDen, List.map_cons, List.cons_append]
+      simp only [blockDen_inl, unblockDen, List.map_cons, List.cons_append]
       exact congrArg _ ih
     | inr b =>
-      simp only [splitDen_inr, unsplitDen, List.map_nil, List.nil_append, List.map_cons,
+      simp only [blockDen_inr, unblockDen, List.map_nil, List.nil_append, List.map_cons,
         List.flatten_cons, List.cons_append]
       exact congrArg _ ih
 
@@ -369,17 +369,17 @@ theorem shiftLDen_map {α α' β β' : Type} (f : α → α') (g : β → β') (
     obtain ⟨b₁, a₂⟩ := p
     simp only [List.map_cons, shiftLDen_cons, ih]
 
-/-! ### Naturality of `split` -/
+/-! ### Naturality of `block` -/
 
-theorem splitDen_map {α α' β β' : Type} (f : α → α') (g : β → β') (l : List (α ⊕ β)) :
-    splitDen (l.map (Sum.map f g)) =
-      ((splitDen l).1.map f, (splitDen l).2.map (fun p => (g p.1, p.2.map f))) := by
+theorem blockDen_map {α α' β β' : Type} (f : α → α') (g : β → β') (l : List (α ⊕ β)) :
+    blockDen (l.map (Sum.map f g)) =
+      ((blockDen l).1.map f, (blockDen l).2.map (fun p => (g p.1, p.2.map f))) := by
   induction l with
   | nil => rfl
   | cons x t ih =>
     cases x with
-    | inl a => simp only [List.map_cons, Sum.map_inl, splitDen_inl, ih]
-    | inr b => simp only [List.map_cons, Sum.map_inr, splitDen_inr, ih, List.map_nil]
+    | inl a => simp only [List.map_cons, Sum.map_inl, blockDen_inl, ih]
+    | inr b => simp only [List.map_cons, Sum.map_inr, blockDen_inr, ih, List.map_nil]
 
 /-! ### The group prefix operation and its inverse -/
 

@@ -22,7 +22,7 @@ products, co-products and lists:
 7. the list constructors and destructors $\mathsf{cons} : 1 + A \times A^* \to A^*$,
    $\mathsf{uncons}$, $\mathsf{snoc} : 1 + A^* \times A \to A^*$ and $\mathsf{unsnoc}$;
 8. list concatenation $\mathsf{concat} : A^{**} \to A^*$;
-9. $\mathsf{split} : (A + B)^* \to A^* \times (B \times A^*)^*$, which cuts a list before
+9. $\mathsf{block} : (A + B)^* \to A^* \times (B \times A^*)^*$, which cuts a list before
    every element of $B$;
 10. bracket shifting $\mathsf{shiftR} : (A \times B)^* \times A \to A \times (B \times A)^*$
     and its inverse $\mathsf{shiftL}$;
@@ -48,13 +48,13 @@ def prefixMul {α G : Type} [Mul G] : G → List (α × G) → List (α × G)
   | _, [] => []
   | acc, (a, g) :: t => (a, acc * g) :: prefixMul (acc * g) t
 
-/-- Auxiliary function used for the denotation of `split`: a list over `A + B` is split into a
+/-- Auxiliary function used for the denotation of `block`: a list over `A + B` is split into a
 maximal prefix of elements of `A`, followed by a list of blocks, each consisting of one
 element of `B` and the following maximal run of elements of `A`. -/
-def splitDen {α β : Type} : List (α ⊕ β) → List α × List (β × List α)
+def blockDen {α β : Type} : List (α ⊕ β) → List α × List (β × List α)
   | [] => ([], [])
-  | .inl a :: t => let p := splitDen t; (a :: p.1, p.2)
-  | .inr b :: t => let p := splitDen t; ([], (b, p.1) :: p.2)
+  | .inl a :: t => let p := blockDen t; (a :: p.1, p.2)
+  | .inr b :: t => let p := blockDen t; ([], (b, p.1) :: p.2)
 
 /-- Auxiliary function used for the denotation of `snoc`. -/
 def snocDen {α : Type} : Unit ⊕ (List α × α) → List α
@@ -123,8 +123,8 @@ inductive Term : Ty → Ty → Type
   | unsnoc (A : Ty) : Term A⋆ (Ty.unit ⊕' (A⋆ ⊗ A))
   /-- Atomic function 8: concatenation of a list of lists. -/
   | concat (A : Ty) : Term A⋆⋆ A⋆
-  /-- Atomic function 9: splitting a list over a co-product. -/
-  | split (A B : Ty) : Term (A ⊕' B)⋆ (A⋆ ⊗ (B ⊗ A⋆)⋆)
+  /-- Atomic function 9: cutting a list over a co-product into blocks. -/
+  | block (A B : Ty) : Term (A ⊕' B)⋆ (A⋆ ⊗ (B ⊗ A⋆)⋆)
   /-- Atomic function 10: shifting brackets to the right. -/
   | shiftR (A B : Ty) : Term ((A ⊗ B)⋆ ⊗ A) (A ⊗ (B ⊗ A)⋆)
   /-- Atomic function 10: shifting brackets to the left. -/
@@ -171,7 +171,7 @@ def den : {A B : Ty} → Term A B → ⟦A⟧ → ⟦B⟧
   | _, _, .snoc _, x => snocDen x
   | _, _, .unsnoc _, l => unsnocDen l
   | _, _, .concat _, l => l.flatten
-  | _, _, .split _ _, l => splitDen l
+  | _, _, .block _ _, l => blockDen l
   | _, _, .shiftR _ _, x => match x with | (l, a) => shiftRDen l a
   | _, _, .shiftL _ _, x => match x with | (a, l) => shiftLDen a l
   | _, _, .pref _ G, l => letI := G; prefixMul (1 : ⟦Ty.finAlph _⟧) l

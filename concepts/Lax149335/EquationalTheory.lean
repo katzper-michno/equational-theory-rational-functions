@@ -18,8 +18,8 @@ Definition 3.1 (composition and functoriality of products, co-products and lists
 4. *Isomorphisms:* ten pairs of mutually inverse terms — the units and $\mathsf{fst}$,
    $\mathsf{snd}$; $\mathsf{assocL}$ and $\mathsf{assocR}$; $\mathsf{distL}$ and
    $\mathsf{undistL}$; $\mathsf{distR}$ and $\mathsf{undistR}$; $\mathsf{cons}$ and
-   $\mathsf{uncons}$; $\mathsf{snoc}$ and $\mathsf{unsnoc}$; $\mathsf{split}$ and
-   $\mathsf{unsplit}$; $\mathsf{pref}$ and $\mathsf{unpref}$; $\mathsf{shiftL}$ and
+   $\mathsf{uncons}$; $\mathsf{snoc}$ and $\mathsf{unsnoc}$; $\mathsf{block}$ and
+   $\mathsf{unblock}$; $\mathsf{pref}$ and $\mathsf{unpref}$; $\mathsf{shiftL}$ and
    $\mathsf{shiftR}$.
 5. The unit type is terminal: any two terms $A \to 1$ are equivalent.
 6. *The co-diagonal:* $\mathsf{Left} \mathbin{;} \mathsf{codiag} \equiv \mathrm{id}$,
@@ -48,7 +48,7 @@ $$
 ((\mathrm{id}, 1) \mathbin{;} (\mathrm{id} \times \mathsf{Right}))^* \mathbin{;}
 \mathsf{pref}_{\mathbb{Z}_2} \mathbin{;}
 (\mathsf{distR} \mathbin{;} \langle \mathsf{fst} \mathbin{;} \mathsf{Right},
-\mathsf{fst} \mathbin{;} \mathsf{Left} \rangle)^* \mathbin{;} \mathsf{split}
+\mathsf{fst} \mathbin{;} \mathsf{Left} \rangle)^* \mathbin{;} \mathsf{block}
 \mathbin{;} \mathsf{shiftL} \mathbin{;} ((\mathsf{head}_w \times \mathrm{id})^*
 \times (\mathsf{uncons} \mathbin{;} (\mathrm{id} + \mathsf{fst}))),
 $$
@@ -98,7 +98,7 @@ def bundleTag (A : Ty) : Term (A ⊗ Ty.finAlph 1) (A ⊕' A) :=
 `w : 1 → A`:
 
 `((id,1) ; (id × Right))* ; pref_{ℤ₂} ; (distR ; either (fst ; Right) (fst ; Left))* ;
-split ; shiftL ; ((head_w × id)* × (uncons ; (id + fst)))`.
+block ; shiftL ; ((head_w × id)* × (uncons ; (id + fst)))`.
 
 The window axiom (Axiom 16) says that, for `A = 2*` and `w = []`, it is a one-sided inverse
 of the concatenation map `(A × A)* × (1 + A) ↣ A*`. -/
@@ -106,7 +106,7 @@ def bundle (A : Ty) (w : Value A) : Term A⋆ ((A ⊗ A)⋆ ⊗ (Ty.unit ⊕' A)
   listF (unitR A ⨟ prodF (Term.id A) (inr Ty.unit (Ty.finAlph 0))) ⨟
     pref A cyclicTwo ⨟
     listF (bundleTag A) ⨟
-    split A A ⨟
+    block A A ⨟
     shiftL A⋆ A ⨟
     prodF (listF (prodF (headT w) (Term.id A))) (uncons A ⨟ sumF (Term.id Ty.unit) (fst A A⋆))
 
@@ -183,9 +183,9 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
       PEq (listF f ⨟ unsnoc B) (unsnoc A ⨟ sumF (Term.id Ty.unit) (prodF (listF f) f))
   | nat_concat {A B : Ty} (f : Term A B) :
       PEq (listF (listF f) ⨟ concat B) (concat A ⨟ listF f)
-  | nat_split {A A' B B' : Ty} (f : Term A A') (g : Term B B') :
-      PEq (listF (sumF f g) ⨟ split A' B')
-        (split A B ⨟ prodF (listF f) (listF (prodF g (listF f))))
+  | nat_block {A A' B B' : Ty} (f : Term A A') (g : Term B B') :
+      PEq (listF (sumF f g) ⨟ block A' B')
+        (block A B ⨟ prodF (listF f) (listF (prodF g (listF f))))
   | nat_shiftR {A A' B B' : Ty} (f : Term A A') (g : Term B B') :
       PEq (prodF (listF (prodF f g)) f ⨟ shiftR A' B')
         (shiftR A B ⨟ prodF f (listF (prodF g f)))
@@ -215,8 +215,8 @@ inductive PEq : {A B : Ty} → Term A B → Term A B → Prop
   | uncons_cons (A : Ty) : PEq (uncons A ⨟ cons A) (Term.id A⋆)
   | snoc_unsnoc (A : Ty) : PEq (snoc A ⨟ unsnoc A) (Term.id (Ty.unit ⊕' (A⋆ ⊗ A)))
   | unsnoc_snoc (A : Ty) : PEq (unsnoc A ⨟ snoc A) (Term.id A⋆)
-  | split_unsplit (A B : Ty) : PEq (split A B ⨟ unsplit A B) (Term.id (A ⊕' B)⋆)
-  | unsplit_split (A B : Ty) : PEq (unsplit A B ⨟ split A B) (Term.id (A⋆ ⊗ (B ⊗ A⋆)⋆))
+  | block_unblock (A B : Ty) : PEq (block A B ⨟ unblock A B) (Term.id (A ⊕' B)⋆)
+  | unblock_block (A B : Ty) : PEq (unblock A B ⨟ block A B) (Term.id (A⋆ ⊗ (B ⊗ A⋆)⋆))
   | pref_unpref (A : Ty) {n : ℕ} (G : Group ⟦Ty.finAlph n⟧) :
       PEq (pref A G ⨟ unpref A G) (Term.id ((A ⊗ Ty.finAlph n)⋆))
   | unpref_pref (A : Ty) {n : ℕ} (G : Group ⟦Ty.finAlph n⟧) :

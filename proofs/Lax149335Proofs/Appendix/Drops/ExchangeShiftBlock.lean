@@ -4,7 +4,7 @@ import Lax149335Proofs.Appendix.Drops.ExchangeProof
 # The two hard cases of the exchange lemma (appendix, *Proof of Exchange Lemma*)
 
 `Lax149335Proofs.Appendix.Drops.ExchangeProof` reduces the exchange lemma (Lemma 7.5) to the two
-prime lifts `shift` and `split`: `Lax149335Proofs.exchange_aux` proves that every lift admits
+prime lifts `shift` and `block`: `Lax149335Proofs.exchange_aux` proves that every lift admits
 exchange as soon as those two do.
 
 This file proves the case *Shift*: every drop followed by the prime lift `shift` has a

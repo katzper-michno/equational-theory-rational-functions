@@ -78,9 +78,9 @@ theorem prefixMul_tagFun (acc : ⟦Ty.finAlph 1⟧) (l : List ⟦A⟧) :
           List.map_cons, ih (Sum.inl ())]
         rfl
 
-/-! ### Steps four and five: `split ; shiftL`, and the coercion into pairs -/
+/-! ### Steps four and five: `block ; shiftL`, and the coercion into pairs -/
 
-/-- The blocks produced by `split ; shiftL` on the alternating annotation of a list: a list
+/-- The blocks produced by `block ; shiftL` on the alternating annotation of a list: a list
 of blocks `([a₂ᵢ₋₁], a₂ᵢ)`, followed by a tail that is empty for a list of even length and the
 singleton of the last element for a list of odd length. -/
 def blocksOf (A : Ty) : List ⟦A⟧ → List (List ⟦A⟧ × ⟦A⟧) × List ⟦A⟧
@@ -88,26 +88,26 @@ def blocksOf (A : Ty) : List ⟦A⟧ → List (List ⟦A⟧ × ⟦A⟧) × List 
   | [a] => ([], [a])
   | a :: b :: t => (([a], b) :: (blocksOf A t).1, (blocksOf A t).2)
 
-/-- `split` cuts the alternating annotation of a list of length at least two after its first
+/-- `block` cuts the alternating annotation of a list of length at least two after its first
 two elements. -/
-theorem splitDen_tagAlt_cons_cons (a b : ⟦A⟧) (t : List ⟦A⟧) :
-    splitDen (tagAlt A (Sum.inl ()) (a :: b :: t))
-      = ([a], (b, (splitDen (tagAlt A (Sum.inl ()) t)).1) ::
-          (splitDen (tagAlt A (Sum.inl ()) t)).2) := rfl
+theorem blockDen_tagAlt_cons_cons (a b : ⟦A⟧) (t : List ⟦A⟧) :
+    blockDen (tagAlt A (Sum.inl ()) (a :: b :: t))
+      = ([a], (b, (blockDen (tagAlt A (Sum.inl ()) t)).1) ::
+          (blockDen (tagAlt A (Sum.inl ()) t)).2) := rfl
 
-/-- **`split ; shiftL` cuts the alternating annotation of a list into its blocks.** -/
-theorem shiftLDen_splitDen_tagAlt : ∀ l : List ⟦A⟧,
-    shiftLDen (splitDen (tagAlt A (Sum.inl ()) l)).1 (splitDen (tagAlt A (Sum.inl ()) l)).2
+/-- **`block ; shiftL` cuts the alternating annotation of a list into its blocks.** -/
+theorem shiftLDen_blockDen_tagAlt : ∀ l : List ⟦A⟧,
+    shiftLDen (blockDen (tagAlt A (Sum.inl ()) l)).1 (blockDen (tagAlt A (Sum.inl ()) l)).2
       = blocksOf A l
   | [] => rfl
   | [_] => rfl
   | a :: b :: t => by
-      have ih := shiftLDen_splitDen_tagAlt t
-      rw [splitDen_tagAlt_cons_cons]
-      show (([a], b) :: (shiftLDen (splitDen (tagAlt A (Sum.inl ()) t)).1
-          (splitDen (tagAlt A (Sum.inl ()) t)).2).1,
-        (shiftLDen (splitDen (tagAlt A (Sum.inl ()) t)).1
-          (splitDen (tagAlt A (Sum.inl ()) t)).2).2) = _
+      have ih := shiftLDen_blockDen_tagAlt t
+      rw [blockDen_tagAlt_cons_cons]
+      show (([a], b) :: (shiftLDen (blockDen (tagAlt A (Sum.inl ()) t)).1
+          (blockDen (tagAlt A (Sum.inl ()) t)).2).1,
+        (shiftLDen (blockDen (tagAlt A (Sum.inl ()) t)).1
+          (blockDen (tagAlt A (Sum.inl ()) t)).2).2) = _
       rw [ih]
       rfl
 
@@ -125,11 +125,11 @@ theorem den_bundle_blocks (w : Value A) (l : List ⟦A⟧) :
     List.map_congr_left (fun p _ => den_bundleTag p)
   have h3 : (1 : ⟦Ty.finAlph 1⟧) = Sum.inl () := rfl
   show (prodF (listF (prodF (headT w) (id A))) (uncons A ⨟ sumF (id Ty.unit) (fst A A⋆))).den
-      ((shiftL A⋆ A).den ((split A A).den ((listF (bundleTag A)).den
+      ((shiftL A⋆ A).den ((block A A).den ((listF (bundleTag A)).den
         ((listF (unitR A ⨟ prodF (id A) (inr Ty.unit (Ty.finAlph 0))) ⨟
           pref A cyclicTwo).den l)))) = _
   rw [h1, h2, h3, prefixMul_tagFun]
-  exact congrArg _ (shiftLDen_splitDen_tagAlt l)
+  exact congrArg _ (shiftLDen_blockDen_tagAlt l)
 
 /-! ### The concatenation map of the window axiom -/
 

@@ -73,9 +73,9 @@ theorem cyclic_annotation_injective (A B : Ty) :
       (TyF2.concatMap (.prod (.list (.prod .p1 .p2)) (.sum .unit .p1)) A B) := by
   set p₁ : Term A ((A ⊕' B)⋆) := inl A B ⨟ pureT (A ⊕' B) with hp₁
   set p₂ : Term B ((A ⊕' B)⋆) := inr A B ⨟ pureT (A ⊕' B) with hp₂
-  -- the concatenation map factors through the symmetric variant of splitting
+  -- the concatenation map factors through the symmetric variant of `block`
   have hfac : (prodF (listF (prodF (pureT A) (Term.id B))) (either (nilT A) (pureT A)) ⨟
-      cmSplitL A B) ≡ₜ
+      cmBlockL A B) ≡ₜ
       TyF2.concatMap (.prod (.list (.prod .p1 .p2)) (.sum .unit .p1)) A B := by
     have hfst : (listF (prodF (pureT A) (Term.id B)) ⨟ homT (homT p₁ ⊙ p₂)) ≡ₜ
         homT (p₁ ⊙ p₂) := by
@@ -139,8 +139,8 @@ theorem cyclic_annotation_injective (A B : Ty) :
       _ ≡ₜ either (inl Ty.unit A) (inr Ty.unit A) :=
           either_congr (PEq.id_comp _) (PEq.id_comp _)
       _ ≡ₜ Term.id (Ty.unit ⊕' A) := either_inl_inr _ _
-  have hcm : ProvablyInjective (cmSplitL A B) :=
-    ⟨splitLT A B, (splitLT_iso A B).2⟩
+  have hcm : ProvablyInjective (cmBlockL A B) :=
+    ⟨blockLT A B, (blockLT_iso A B).2⟩
   exact ProvablyInjective.of_peq (PEq.symm hfac)
     (ProvablyInjective.comp (ProvablyInjective.prodF hinj₁ hinj₂) hcm)
 

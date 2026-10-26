@@ -51,9 +51,9 @@ theorem PEq.sound {A B : Ty} {f g : Term A B} (h : f ≡ₜ g) : f.den = g.den :
   | nat_unsnoc f => funext x; have hX := unsnocDen_map f.den x; simp at hX ⊢; exact hX
   | nat_distL f g h => funext x; rcases x with ⟨a | b, c⟩ <;> simp
   | nat_distR f g h => funext x; rcases x with ⟨a, b | c⟩ <;> simp
-  | nat_split f g =>
+  | nat_block f g =>
     funext x
-    have hX := splitDen_map f.den g.den x; simp [Sum.map] at hX ⊢; exact hX
+    have hX := blockDen_map f.den g.den x; simp [Sum.map] at hX ⊢; exact hX
   | nat_shiftR f g =>
     funext x
     obtain ⟨l, a⟩ := x
@@ -68,10 +68,10 @@ theorem PEq.sound {A B : Ty} {f g : Term A B} (h : f ≡ₜ g) : f.den = g.den :
   | undistR_distR A B C => funext x; rcases x with ⟨a, b⟩ | ⟨a, c⟩ <;> rfl
   | cons_uncons A => funext x; rcases x with ⟨⟩ | ⟨a, l⟩ <;> rfl
   | uncons_cons A => funext x; cases x <;> rfl
-  | split_unsplit A B =>
-    funext x; rw [den_comp, den_split, den_unsplit, unsplitDen_splitDen, den_id]
-  | unsplit_split A B =>
-    funext x; rw [den_comp, den_unsplit, den_split, splitDen_unsplitDen, den_id]
+  | block_unblock A B =>
+    funext x; rw [den_comp, den_block, den_unblock, unblockDen_blockDen, den_id]
+  | unblock_block A B =>
+    funext x; rw [den_comp, den_unblock, den_block, blockDen_unblockDen, den_id]
   | shiftL_shiftR A B =>
     funext x
     obtain ⟨a, l⟩ := x

@@ -1,0 +1,219 @@
+\subsection{Normalisation with Sum or Product Codomain}\label{sec:appendix:drops-with-sum-or-product-co-domain}
+
+First, we define the \intro{composition rank} of a \kl{drop term}, which will be used to perform induction in the proofs of \cref{lem:drops-with-sum-co-domain} and \cref{lem:drops-with-prod-co-domain}. The rank is defined as the length of the longest chain of compositions found along a single sequential thread of a drop term.
+
+\begin{definition}[Composition rank]
+	We define the \emph{rank} $\rk(f) \in \mathbb{N}$ of a \kl{drop term} $f$ as follows. If $f$ is atomic, then $\rk(f) = 0$. Otherwise, we define it inductively:
+	\[
+		\rk(f_1 \comp f_2) = \rk(f_1) + \rk(f_2) + 1, \quad \rk(f_1 \star f_2) = \max \left( \rk(f_1), \rk(f_2) \right), \quad \rk(f^*) = \rk(f),
+	\]
+	where $\star$ ranges over $\{ +, \times \}$. We write $g \preceq f$ if $\rk(g) \le \rk(f)$, and $g \prec f$ if $\rk(g) < \rk(f)$.
+\end{definition}
+
+Note that $\rk((1\comp{}v)) = 0$, because $(1\comp{}v)$ is an \kl{atomic drop term}, although syntactically it contains a composition. We extend the definition of composition rank to vectors of drop terms. By $\rk(\vec f)$ we mean the maximum rank of any $f_i$ in the vector $\vec f$. This allows us to write $g \preceq \vec f, \vec g \preceq f$, or $\vec g \preceq \vec f$.
+
+The following two lemmas are proved by mutual induction with respect to $\preceq$. 
+
+\begin{lemma}[Sum normalisation]\label{lem:drops-with-sum-co-domain}
+	Suppose that $f$ is a \kl{drop term} with sum codomain. There exists a \kl{lift} $\alpha$ and \kl{drop terms} $\vec f$ such that 
+	\[
+		f \equiv \alpha \comp \eithermany{i}{(f_i)},
+	\]
+	where every $f_i$ is equal to one of $g_i \comp \leftterm$ or $g_i \comp \rightterm$ for some \kl{drop term} $g_i$ and $\vec g \preceq f$.
+\end{lemma}
+
+\begin{lemma}[Product normalisation]\label{lem:drops-with-prod-co-domain}
+	Suppose that $f$ is a \kl{drop term} with product codomain. There exists a \kl{lift} $\alpha$ and \kl{drop terms} $\vec x, \vec y \preceq f$ such that 
+	\[ 
+		f \equiv \alpha \comp \eithermany{i}{\left( x_i \times y_i \right)}.
+	\]
+\end{lemma}
+
+\begin{proof}[Proof of \cref{lem:drops-with-sum-co-domain}]
+	We proceed by induction on $f$ with respect to $\preceq$. The easy cases are when $\rk(f) = 0$ or $f$ is a literal sum of drop terms $f_1 + f_2$. We leave these cases to the reader, as the remaining cases are strictly more involved. What we are left with is the case where $f$ is a composition $f_1 \comp f_2$. Here, we proceed by a nested induction on $f_2$ with respect to $\preceq$. First, suppose that $f_2$ is itself a composition, that is, $f_2 = g_1 \comp g_2$. Then, $f \equiv (f_1 \comp g_1) \comp g_2 \preceq f$ and $g_2 \prec f_2$, so we obtain the desired result by induction. 
+
+	This leaves us with two cases: either $f_2$ is a sum of two drop terms, or $f_2$ is an atomic drop term. We consider these two cases separately. Crucially, in both of them we have $f_1 \prec f$, so we can normalise all terms at most $f_1$ in $\preceq$ by induction, as long as their codomain is a product or coproduct.
+
+	\begin{description}
+		\item[Sum, $f_2 = h_1 + h_2$.] By induction we have some $\alpha \in \Lift$ and $\vec f_1 \in \Drop$ such that $f_1 \equiv \alpha \comp \eithermany{i}{(f_i)}$. We get
+		\begin{align*}
+			f = f_1 \comp f_2 \equalbecause{induction} \\ 
+			\alpha \comp \eithermany{i}{(f_i)} \comp (h_1 + h_2) \equalbecause{functoriality of copairing, \cref{lem:functoriality-of-either}} \\ 
+			\alpha \comp \eithermany{i}{(f_i \comp h_1 + h_2)}.
+		\end{align*}
+		Now, for every $i$, we have that $f_i$ is either $g_i \comp \leftterm$ or $g_i \comp \rightterm$. In the former case, we have $f_i \comp (h_1 + h_2) \equiv g_i \comp \leftterm \comp (h_1 + h_2) \equiv (g_i \comp h_1) \comp \leftterm$ by naturality of $\leftterm$ (\cref{ax:naturality}) and $(g_i\comp{}h_1) \preceq f$. The latter case is symmetric.
+
+		\item[Atomic drops.] The atomic drop terms which produce a sum output are $\idterm$, $\leftterm$, $\rightterm$, $(1\comp{}v)$, $\fstterm$, $\sndterm$, and $\codiagterm$. The cases where $f_2 \in \{ \leftterm, \rightterm \}$ are trivial. If $f_2 = \idterm$, then the statement holds by induction on $f_1$. If $f_2 = (1\comp{}v)$, then $v \equiv u\comp\leftterm$ or $v \equiv u\comp\rightterm$ for some \kl{value} $u$ by \cref{lem:value-completeness}. In the former case, we have $f \equiv f_1 \comp (v \comp \leftterm) \equiv (f_1 \comp v) \comp \leftterm$. The latter case is symmetric. 
+		
+		The remaining cases are $\fstterm$, $\sndterm$, and $\codiagterm$. We consider these three cases separately.
+
+		\begin{description}
+			\item[Projection, $f_2 = \fstterm$.] Suppose that $f_2 = \fstterm$ (the case $f_2 = \sndterm$ is symmetric). The construction first applies \cref{lem:drops-with-prod-co-domain} to extract the parts of input producing the left factor $(B_1 \times B_2)$, and then applies \cref{lem:drops-with-sum-co-domain} to normalise the summands. This is illustrated on the following diagram: 
+			\[
+			\begin{tikzcd}
+				A
+				\ar[rr, \dropar, "f_1"]
+				\ar[d, \liftar, "\text{Lemmas } \ref{lem:drops-with-prod-co-domain} \text{ and } \ref{lem:drops-with-sum-co-domain}"']
+				&\hspace*{2cm}&(B_1 + B_2) \times C
+				\ar[dd, \dropar, "\fstterm"]
+				\\ 
+				\sum_i \left( \sum_j X_{i j} \right) \times Y_i
+				\ar[urr, \dropar, "{\eithermany{i}{\left( \eithermany{j}{\left( x_{i j} \right)} \times y_i \right)}}"'{xshift=-25pt, yshift=-5pt}]
+				\ar[d, \liftar, "\cong"']
+				\\ 
+				\sum_{i j} X_{i j} \times Y_i
+				\ar[rr, \dropar, "{\eithermany{i j}{\left( \fstterm \comp x_{i j} \right)}}"]
+				&&B_1 + B_2
+			\end{tikzcd}
+				\]
+			The upper triangle of the diagram commutes by induction. The derivation for the lower face is as follows:
+			\begin{align*}
+				\eithermany{i}{\left( \eithermany{j}{\left( x_{i j} \right)} \times y_i \right)} \comp \fstterm \equalbecause{\cref{lem:functoriality-of-either}} \\
+				\eithermany{i}{\left( \left( \eithermany{j}{\left( x_{i j} \right)} \times y_i \right) \comp \fstterm \right)} \equalbecause{naturality of $\fstterm$, \cref{ax:naturality}} \\
+				\eithermany{i}{\left( \fstterm \comp \eithermany{j}{\left( x_{i j} \right)} \right)} \equalbecause{\cref{lem:distl-fst-coherence}} \\
+				\eithermany{i}{\left( \distribute \comp \left( \sum \fstterm \right) \comp \eithermany{j}{\left( x_{i j} \right)} \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+				\distribute \comp \eithermany{i}{\left( \left( \sum \fstterm \right) \comp \eithermany{j}{\left( x_{i j} \right)} \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+				\distribute \comp \eithermany{i}{\left( \eithermany{j}{\left(\fstterm \comp x_{i j} \right)} \right)} \equalbecause{\cref{lem:assocr-fst-mapped-coherence}} \\
+				\distribute \comp \eithermany{i j}{\left( \assocrterm \comp \left( \fstterm \comp x_{i j} \right) \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+				\distribute \comp \left(\sum \assocrterm \right) \comp \eithermany{i j}{\left( \fstterm \comp x_{i j} \right)}.
+			\end{align*}
+
+			\item[Codiagonal, $f_2 = \codiagterm$.] In this case, we apply \cref{lem:drops-with-sum-co-domain} to normalise the outer coproduct of the codomain, and then apply \cref{lem:drops-with-sum-co-domain} again to normalise the inner coproducts. This is illustrated on the following diagram (every $\rho_i$ is either $\leftterm$ or $\rightterm$):
+			\[
+			\begin{tikzcd}
+				A
+				\ar[rr, \dropar, "f_1"]
+				\ar[d, \liftar, "\cref{lem:drops-with-sum-co-domain}"']
+				&\hspace*{2cm}&(B_1 + B_2) + (B_1 + B_2)
+				\ar[dd, \dropar, "\codiagterm"]
+				\\
+				\sum_i \left( \sum_j A_{ij} \right)
+				\ar[urr, \dropar, "{\eithermany{i}{\left( \left( \eithermany{j}{f_{ij}} \right) \comp \rho_i \right)}}"'{xshift=-25pt, yshift=-5pt}]
+				\ar[d, \liftar, "\cong"']
+				\\ 
+				\sum_{i j} A_{i j}
+				\ar[rr, \dropar, "{\eithermany{i j}{(f_{ij})}}"]
+				&&B_1 + B_2
+			\end{tikzcd}
+			\] 
+			The upper triangle commutes by induction. For the lower face, we write:
+			\begin{align*}
+				\eithermany{i}{\left( \left( \eithermany{j}{(f_{ij})} \right) \comp \rho_i \right)} \comp \codiagterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+				\eithermany{i}{\left( \left( \eithermany{j}{(f_{ij})} \right) \comp \rho_i \comp \codiagterm \right)} \equalbecause{\cref{ax:eval-codiag}} \\ 
+				\eithermany{i}{\left( \left( \eithermany{j}{(f_{ij})} \right) \right)} \equalbecause{coproduct reassociation} \\
+				\assoc \comp \eithermany{i j}{(f_{ij})}. 
+			\end{align*}
+		\end{description}
+	\end{description}
+\end{proof}
+
+\begin{proof}[Proof of \cref{lem:drops-with-prod-co-domain}]
+	We proceed by induction on $f$ with respect to $\preceq$, analogously to the proof of \cref{lem:drops-with-sum-co-domain}. In particular, we reduce to the case where $f = f_1 \comp f_2$ and $f_2$ is either a product or an atomic drop term in the same way as with coproduct codomain. Again, we have $f_1 \prec f$, so we can normalise all terms at most $f_1$ in $\preceq$ by induction, as long as their codomain is a product or coproduct.
+
+	\begin{description}
+		\item[Product, $f_2 = h_1 \times h_2$.] By induction, we have some $\alpha \in \Lift$ and collections of terms $x_i, y_i \in \Drop$ such that $f_1 \equiv \alpha \comp \eithermany{i}{(x_i \times y_i)}$. We get
+		\begin{align*}
+			f = f_1 \comp f_2 \equalbecause{induction} \\ 
+			\alpha \comp \left(\eithermany{i}{(x_i \times y_i)} \right) \comp (h_1 \times h_2) \equalbecause{functoriality of copairing, \cref{lem:functoriality-of-either}} \\
+			\alpha \comp \eithermany{i}{\left( (x_i \times y_i) \comp (h_1 \times h_2)\right)} \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\
+			\alpha \comp \eithermany{i}{\left( \left( x_i \comp h_1 \right) \times \left( y_i \comp h_2 \right) \right)}.
+		\end{align*}
+
+		\item[Atomic drops.] The atomic drop terms which produce a product output are $\idterm$, $(1\comp{}v)$, $\assoclterm$, $\assocrterm$, $\fstterm$, $\sndterm$, and $\codiagterm$. If $f_2 = \idterm$, then the statement holds by induction on $f_1$. If $f_2 = (1 \comp v)$, then $v \equiv (u, w)$ for some values $u, w$ by \cref{lem:value-completeness}. Then the statement holds for $\alpha = \unitlterm$, $x_1 = (1 \comp u)$ and $y_1 = (1 \comp w)$:
+		\begin{align*}
+			f = f_1 \comp f_2 \equalbecause{the choice of $u, w$} \\ 
+			f_1 \comp (1 \comp (u, w)) &= \why{definition of pairing} \\ 
+			f_1 \comp (1 \comp \unitlterm \comp (u \times w)) \equalbecause{$\onetype$ is terminal, \cref{ax:unit-type}} \\
+			1 \comp \unitlterm \comp (u \times w) \equalbecause{naturality of $\unitlterm$, \cref{ax:naturality}} \\
+			\unitlterm \comp (\idterm \times 1) \comp (u \times w) \equalbecause{$\onetype$ is terminal, \cref{ax:unit-type}} \\
+			\unitlterm \comp (1 \times 1) \comp (u \times w) \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\
+			\unitlterm \comp (1 \comp u) \times (1 \comp w).
+		\end{align*}
+		We are left with the cases where $f_2 \in \{ \assoclterm, \assocrterm, \fstterm, \sndterm, \codiagterm \}$. We consider these cases separately.
+		
+		\begin{description}
+			\item[Product associativity, $f_2 = \assoclterm$.] Suppose that $f_2 = \assoclterm$ (the case where $f_2 = \assocrterm$ is symmetric). The construction applies \cref{lem:drops-with-prod-co-domain} to first normalise the outer product of the codomain, and then applies \cref{lem:drops-with-prod-co-domain} again to normalise the inner product. This is illustrated on the following diagram:
+			\[
+			\begin{tikzcd}
+				A
+				\ar[rr, \dropar, "f_1"]
+				\ar[d, \liftar, "\cref{lem:drops-with-prod-co-domain}"']
+				&\hspace*{2cm}&B \times (C \times D)
+				\ar[dd, \dropar, "\assoclterm"]
+				\\ 
+				\sum_i X_i \times \left( \sum_j Y_{ij} \times Z_{ij} \right)
+				\ar[urr, \dropar, "{\eithermany{i}{\left( x_i \times \left(  \eithermany{j}{y_{ij} \times z_{ij}} \right) \right)}}"'{xshift=-25pt, yshift=-5pt}]
+				\ar[d, \liftar, "\cong"']
+				\\ 
+				\sum_{ij} (X_i \times Y_{ij}) \times Z_{ij}
+				\ar[rr, \dropar, "{\eithermany{ij}{\left((x_i \times y_{ij}) \times z_{ij}\right)}}"]
+				&&(B \times C) \times D
+			\end{tikzcd}
+			\]
+			The upper triangle commutes by induction. For the lower face, we write:
+			\begin{align*}
+				\eithermany{i}{\left( x_i \times \left( \eithermany{j}{y_{ij} \times z_{ij}} \right) \right)} \comp \assoclterm \equalbecause{\cref{lem:distributivity-of-either}} \\
+				\distribute \comp \eithermany{ij}{\left( x_i \times \left( y_{ij} \times z_{ij} \right) \right)} \comp \assoclterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+				\distribute \comp \eithermany{ij}{\left( x_i \times \left( y_{ij} \times z_{ij} \right) \comp \assoclterm \right)} \equalbecause{naturality of $\assoclterm$, \cref{ax:naturality}} \\ 
+				\distribute \comp \eithermany{ij}{\left( \assoclterm \comp \left( \left( x_i \times y_{ij} \right) \times z_{ij} \right) \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\ 
+				\distribute \comp \left(\sum \assoclterm \right) \comp  \eithermany{ij}{\left( \left( x_i \times y_{ij} \right) \times z_{ij} \right)}
+			\end{align*}
+
+			\item[Projection, $f_2 = \fstterm$.] Suppose that $f_2 = \fstterm$ (the case where $f_2 = \sndterm$ is symmetric). In this case, we again apply \cref{lem:drops-with-prod-co-domain} to normalise the outer product, and then apply \cref{lem:drops-with-prod-co-domain} again to normalise the inner product. The construction is presented on the following diagram: 
+			\[
+			\begin{tikzcd}
+				A
+				\ar[rr, \dropar, "f_1"]
+				\ar[d, \liftar, "\cref{lem:drops-with-prod-co-domain}"']
+				&\hspace*{2cm}& (B_1 \times B_2) \times C
+				\ar[dd, \dropar, "\fstterm"]
+				\\ 
+				\sum_i \left( \sum_j X_{ij} \times Y_{ij} \right) \times Z_i
+				\ar[urr, \dropar, "{\eithermany{i}{\left( \left( \eithermany{j}{(x_{ij} \times y_{ij})} \right) \times z_i \right)}}"'{xshift=-25pt, yshift=-5pt}]
+				\ar[d, \liftar, "\cong"']
+				\\ 
+				\sum_{ij} X_{ij} \times (Y_{ij} \times Z_i)
+				\ar[rr, \dropar, "\eithermany{ij}{\left( x_{ij} \times (\fstterm \comp y_{ij}) \right)}"]
+				&&B_1 \times B_2
+			\end{tikzcd}
+			\]
+			The upper triangle commutes by induction. For the lower face, we write:
+			\begin{align*}
+				\eithermany{i}{\left( \left( \eithermany{j}{\left( x_{ij} \times y_{ij} \right)} \right) \times z_i \right)} \comp \fstterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+				\eithermany{i}{\left( \left( \eithermany{j}{\left( x_{ij} \times y_{ij} \right)} \right) \times z_i \comp \fstterm\right)} \equalbecause{naturality of $\fstterm$, \cref{ax:naturality}} \\ 
+				\eithermany{i}{\left( \fstterm \comp \left( \eithermany{j}{\left( x_{ij} \times y_{ij} \right)} \right) \right)} \equalbecause{\cref{lem:distl-fst-coherence}} \\ 
+				\eithermany{i}{\left( \distribute \comp \left(\sum \fstterm \right) \comp \left( \eithermany{j}{\left( x_{ij} \times y_{ij} \right)} \right) \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+				\distribute \comp \eithermany{i}{\left( \left( \sum \fstterm \right) \comp \left( \eithermany{j}{\left( x_{ij} \times y_{ij} \right)} \right) \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+				\distribute \comp \eithermany{i}{\left( \eithermany{j}{\left( \fstterm \comp \left( x_{ij} \times y_{ij} \right) \right)} \right)} \equalbecause{\cref{lem:assocr-fst-mapped-coherence}} \\ 
+				\distribute \comp \eithermany{ij}{\left( \assocrterm \comp \left( x_{ij} \times (\fstterm \comp y_{ij}) \right) \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\ 
+				\distribute \comp \left( \sum \assocrterm \right) \comp \eithermany{ij}{\left( \left( x_{ij} \times (\fstterm \comp y_{ij}) \right) \right)}.
+			\end{align*}
+
+			\item[Codiagonal, $f_2 = \codiagterm$.] In this case, we apply \cref{lem:drops-with-sum-co-domain} to normalise the outer coproduct of the codomain, and then apply \cref{lem:drops-with-prod-co-domain} again to normalise the inner products. This is illustrated on the following diagram (every $\rho_i$ is either $\leftterm$ or $\rightterm$):
+			\[
+			\begin{tikzcd}
+				A
+				\ar[rr, \dropar, "f_1"]
+				\ar[d, \liftar, "\text{Lemmas \ref{lem:drops-with-sum-co-domain} and \ref{lem:drops-with-prod-co-domain}}"']
+				&\hspace*{2cm}&(B_1 \times B_2) + (B_1 \times B_2)
+				\ar[dd, \dropar, "\codiagterm"]
+				\\ 
+				\sum_i \left( \sum_j X_{ij} \times Y_{ij} \right)
+				\ar[d, \liftar, "\cong"']
+				\ar[urr, \dropar, "{\eithermany{i}{\left( \left( \eithermany{j}{(x_{ij} \times y_{ij})} \right) \comp \rho_i \right)}}"'{xshift=-30pt, yshift=-5pt}]
+				\\ 
+				\sum_{ij} X_{ij} \times Y_{ij}
+				\ar[rr, \dropar, "{\eithermany{ij}{\left(x_{ij} \times y_{ij} \right)}}"]
+				&&B_1 \times B_2
+			\end{tikzcd}
+			\]
+			The upper triangle commutes by induction. For the lower face, we write:
+			\begin{align*}
+				\eithermany{i}{\left( \left( \eithermany{j}{(x_{ij} \times y_{ij})} \right) \comp \rho_i \right)} \comp \codiagterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+				\eithermany{i}{\left( \left( \eithermany{j}{(x_{ij} \times y_{ij})} \right) \comp \rho_i \comp \codiagterm \right)} \equalbecause{\cref{ax:eval-codiag}} \\ 
+				\eithermany{i}{\left( \left( \eithermany{j}{(x_{ij} \times y_{ij})} \right) \right)} \equalbecause{coproduct reassociation} \\
+				\assoc \comp \eithermany{i j}{(x_{ij} \times y_{ij})}. 
+			\end{align*}
+		\end{description}
+	\end{description}
+\end{proof}

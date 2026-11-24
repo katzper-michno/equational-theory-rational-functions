@@ -1,0 +1,283 @@
+\section{The Equational Axiomatisation}
+\label{sec:equational-theory}
+\setcounter{equation}{0}
+
+We are now ready to describe the main subject of this paper, which is  the equational axiomatisation of the \kl{rational terms}. It consists of axioms such as 
+\begin{align*}
+(f\comp{}g)\comp{}h \equiv f\comp(g\comp{}h).
+\end{align*}
+These axioms are required to be sound, which means that both sides have the same \kl{denotation} for every choice of terms for the variables (in the above axiom, the variables are $f$, $g$ and $h$). 
+We also want the axioms to be complete, which means that if two terms have the same denotation, then their equality can be proved using the axioms. When we say that an equality $f \equiv g$ can be proved by some set of axioms, we understand $\equiv$ to be the least equivalence relation $\equiv$ that contains the axioms and which is stable under applying the four combinators in our system: composition and functoriality of coproducts,  products, and lists.
+
+To avoid simply adding an axiom $f \equiv g$ for all pairs of terms with the same denotation\footnote{Such a trivial axiomatisation would still be decidable, since as discussed in \cref{sec:intro}, equivalence is decidable for \kl{rational functions}.}, we want to find an axiomatisation which is finitary, as stated in the following, main result of this paper.
+
+% lax begin Lax149335.FiniteAxiomatisation
+\begin{theorem}[Finitary axiomatisation]\label{thm:main}
+    Two \kl{rational terms} $f$ and $g$ have the same \kl{denotation} $\sem f = \sem g$ if and only if $f \equiv g$ can be proved using Axioms~\ref{ax:associativity-of-composition}--\ref{ax:last} described in Sections~\ref{sec:category-axioms}--\ref{sec:list-axioms}.
+\end{theorem}
+% lax end
+
+The statement of the theorem might be a bit misleading, since it suggests that there are 16 axioms. In fact, the referenced axioms are groups of axioms, e.g.~the functoriality axiom (\cref{ax:functoriality-of-type-constructors}) is a group of six axioms which say that the \kl{type} constructors for products, coproducts and lists are all functors. Furthermore, as remarked in \cref{sec:intro}, the axioms are parameterised by types, which means that most axioms represent infinite families of axioms, one for each choice of types. Nevertheless, we think that it is fair to treat each parameterised family of axioms as a single axiom. %, especially since every such family will represent a single natural transformation in the sense of category theory (except for \cref{ax:associativity-of-composition} about associativity of composition, \cref{ax:functoriality-of-type-constructors} about functoriality, and \cref{ax:pentagon} about associativity coherence, which each equate two composite natural transformations rather than asserting that a single one exists). 
+
+The rest of this paper is devoted to proving \cref{thm:main}. We begin by describing the axioms, and proving that they are sound. For reference, all axioms are also collected as commutative diagrams in \appref{sec:axioms-in-diagrams}, together with explicit definitions of all derived terms that are used in them. We have not made any serious efforts at finding a minimal set of axioms, and hence some of them might be derivable from others.
+
+% lax begin Lax149335.EquationalTheory
+\subsection{Category Axioms}
+\label{sec:category-axioms}
+
+The first group of axioms asserts that \kl{rational terms} form a category with \kl{types} as objects and rational terms quotiented by $\equiv$ as morphisms. We call this category the \intro{category of rational terms}; note that \cref{thm:atomics-and-combinators-completeness,thm:main} imply that the \kl{denotation} map $f \mapsto \sem f$ yields an isomorphism between this category and the \kl{category of rational functions}.
+\begin{axiom}
+    \label{ax:associativity-of-composition}
+    \begin{casesright}
+            (f\comp{}g)\comp{}h \equiv f\comp(g\comp{}h) \\
+    \idterm\comp{}f \equiv f \equiv f\comp\idterm
+    \end{casesright}
+\end{axiom}
+By associativity of composition, we will often write $f\comp{}g\comp{}h$ instead of $(f\comp{}g)\comp{}h$ or $f\comp(g\comp{}h)$. 
+
+\subsection{Functoriality Axioms} 
+
+The next group of axioms says that the \kl{type} constructors $+$, $\times$, and $*$ are functors. In other words, they preserve identities and composition:
+\begin{axiom}
+    \label{ax:functoriality-of-type-constructors}
+   \begin{casesright}
+    \begin{aligned}
+        \idterm \times \idterm &\equiv \idterm \qquad (f_1 \times f_2) \comp (g_1 \times g_2) \equiv (f_1 \comp g_1) \times (f_2 \comp g_2) \\[2pt]
+        \idterm + \idterm &\equiv \idterm \qquad (f_1 + f_2) \comp (g_1 + g_2) \equiv (f_1 \comp g_1) + (f_2 \comp g_2) \\[2pt]
+        \idterm^* &\equiv \idterm \qquad f^* \comp g^* \equiv (f \comp g)^*
+    \end{aligned}
+  \end{casesright}
+\end{axiom}
+Observe that when we write equations, we are a bit sloppy with the types. For example, in the equation $\idterm^* \equiv \idterm$ of \cref{ax:functoriality-of-type-constructors}, $\idterm$ on the left has type $A \to A$, while on the right it has type $A^* \to A^*$. We will continue to use this abbreviated notation, as long as the types can be easily inferred from the context.
+
+\subsection{Naturality Axioms}
+\label{sec:naturality-axioms}
+The next axiom group says that all atomic terms are natural transformations. Let us explain this notion of naturality for the reader unfamiliar with the concept. Each atomic term is parameterised by some choice of types. Naturality says that the operation commutes with the application of morphisms, as in the following example, which says that $\concatterm$ is natural:
+\[
+\begin{tikzcd}
+A^{**} \arrow[r, "f^{**}"] \arrow[d, "\concatterm"'] & B^{**} \arrow[d, "\concatterm"] \\
+A^* \arrow[r, "f^*"'] & B^*
+\end{tikzcd}
+\qquad \text{commutes for every rational term } A \xrightarrow{f} B.
+\]
+In the diagram, the input functor (which is $(-)^{**}$ in this case) is applied to the term $f$ at the top, and the output functor (which is $(-)^*$ in this case) is applied to the term at the bottom. 
+For some \kl{atomic term}, such as $\assoclterm$, there is more than one \kl{type} parameter. In this case, the naturality axiom involves multiple terms, one for each type parameter, as follows:
+\[
+\begin{tikzcd}[column sep=huge]
+    A_1 \times (A_2 \times A_3) \arrow[r, "f_1 \times (f_2 \times f_3)"] \arrow[d, "\assoclterm"'] & B_1 \times (B_2 \times B_3) \arrow[d, "\assoclterm"] \\
+    (A_1 \times A_2) \times A_3 \arrow[r, "(f_1 \times f_2) \times f_3"'] & (B_1 \times B_2) \times B_3 
+\end{tikzcd}
+\qquad \text{commutes for every rational } A_i \xrightarrow{f_i} B_i.
+\]
+As it turns out, all atomic terms in our system are natural transformations\footnote{\label{fn:naturality-of-group-prefix-operation}A special case of naturality arises in the case of the \kl{group prefix multiplication}, which uses finite groups in its parameters. This operation is also natural, with a suitable choice of category; however the corresponding naturality property need not be postulated as an axiom, since it can be derived from the other axioms, as we  show in \appref{lem:naturality-of-group-prefix-operation}. Therefore, \cref{ax:naturality} can be used either with or without the group prefix multiplication.
+}, and this gives rise to the following axiom, which is part of our finitary axiomatisation:
+\begin{axiom}
+    \label{ax:naturality}
+    \textit{each atomic term is a natural transformation.}
+\end{axiom}
+
+\subsection{Isomorphism Axioms}\label{sec:theory:isomorphism-axioms} Another group of axioms states that some of the \kl{atomic terms} are \kl{isomorphisms}, i.e.~they have two-sided inverses. In fact, most terms in our system are isomorphisms, with the only nonisomorphic terms being: the projections and coprojections, the codiagonal, and list concatenations. For the atomic terms that are isomorphisms, in most cases the inverses are also atomic terms, with the exceptions being: distributivity, blocking and the \kl{group prefix multiplication}. Let us explain the inverses for these exceptions. For distributivity on the right, the inverse is defined as follows:
+% lax begin Lax149335.DerivedTerms
+\begin{align*}
+(A \times B) + (A \times C) \xrightarrow \undistrterm A \times (B + C)
+\quad  \eqdef \quad  \either{(\idterm \times \leftterm)}{(\idterm \times \rightterm)},
+\end{align*}
+and a similar term $\undistlterm$ is used for distributivity on the left. The inverse of $\blockterm$ is the following term:
+\begin{align*}
+    A^* \times (B \times A^*)^* \xrightarrowtail{\; \unblockterm \,} (A + B)^*, 
+\end{align*}
+whose \kl{denotation} injects $A$ and $B$ into the coproduct $A+B$ and then concatenates all resulting lists. The simplest way to define this operation is through the use of \emph{concatenation maps}, which are denoted by tail arrows, and which will also be used to state \cref{ax:shift-concatenation,ax:window} below. Intuitively, if $F(A_1,\ldots,A_n)$ is a \kl{type} built from $A_1,\ldots,A_n$ using the type constructors, then the \kl{concatenation map} $F(A_1,\ldots,A_n) \concmap (A_1 + \cdots + A_n)^*$ collects all elements of the types $A_i$ in its input into a single list, from left to right. The formal definition, by induction on $F$, is given in \cref{sec:concatenation-maps}.
+
+The most interesting case is the inverse of the group prefix multiplication. Rather than deriving this inverse in our system (which we do in \appref{def:unprefterm}), it will be more readable to write the explicit formula:
+\begin{align*}
+[(a_1,g_1),\ldots,(a_n,g_n)] \in (A \times G)^* \xmapsto{\sem{\unprefterm}}  [(a_1, g_1), (a_2,g_1^{-1} g_2), \ldots, (a_n,g_{n-1}^{-1} g_n)] \in (A \times G)^*,
+\end{align*}
+in which $g_0$ is the identity element of the group $G$.
+This function is rational:  the $i$-th group element in the  output depends on the group elements attached to the $i$-th and $(i-1)$-th input letters. Since the group is finite, the function  can be computed by a transducer which remembers the previous group element in its state. Therefore, by the completeness result from Theorem~\ref{thm:atomics-and-combinators-completeness}, the function $\sem{\unprefterm}$ can be expressed in our system, even without using the group prefix multiplication. 
+% lax end
+
+The isomorphism axiom states that ten pairs of terms are mutual inverses, as follows:
+\begin{axiom}
+    \label{ax:isomorphisms}
+    \begin{casesright}
+    (\appendoneterm,\fstterm),
+    (\prependoneterm,\sndterm),
+    (\assoclterm,\assocrterm),\\
+    (\distlterm,\undistlterm),
+    (\distrterm,\undistrterm),
+    (\consterm,\unconsterm),\\
+    (\snocterm,\unsnocterm),
+    (\blockterm,\unblockterm), \\
+    (\prefterm,\unprefterm), 
+    (\shiftlterm,\shiftrterm)
+    \end{casesright}
+    \text{are mutual inverses}
+\end{axiom}
+
+
+\subsection{Listless Axioms}
+\label{sec:listless-axioms}
+Let us now present the remaining axioms that do not involve the list \kl{type} constructor. First, since the unit type has only one element, all terms with codomain $\onetype$ are equivalent: 
+\begin{axiom}
+    \label{ax:unit-type}
+    f \equiv g \qquad \text{for every } f,g: A \to \onetype.
+\end{axiom}
+In other words, the type $\onetype$ is terminal in the \kl{category of rational terms}.
+
+Next, we have an axiom which describes the behaviour of the codiagonal. These correspond to the $\beta$ and $\eta$ rules in \cite[Section 4]{10.1007/BFb0014052}; together, they ensure that \kl{copairing} behaves as expected.
+\begin{axiom}
+        \label{ax:eval-codiag}
+        \begin{casesright}
+                 \leftterm\comp \codiagterm \equiv \idterm \equiv \rightterm\comp \codiagterm\\
+                 (\leftterm + \rightterm)\comp \codiagterm \equiv \idterm
+        \end{casesright}
+\end{axiom}
+
+Apart from that, we need axioms about associativity of $\times$. Naturality and the isomorphism axiom say that $\assoclterm$ and $\assocrterm$ are natural and mutually inverse, but this does not yet ensure that all ways of reassociating a product of several factors agree, which is the classical coherence problem for monoidal categories~\cite{MacLane1963}. For $+$, coherence is automatic, since $+$ is a proper coproduct: any two reassociations and reorderings of a coproduct between the same types are provably equivalent, as shown using copairing in~\appref{sec:distributivity}. However, $\times$ is not a categorical product in our system -- there is no pairing combinator, only projections -- and so this coherence does not come for free and must be postulated. We therefore add Mac Lane's pentagon axiom~\cite[VII.1(5)]{MacLane1971}, which says that the two ways of using $\assoclterm$ to reassociate a four-fold product agree:
+\begin{axiom}\label{ax:pentagon}
+    \myunderbrace{(\idterm \times \assoclterm)\comp \assoclterm\comp (\assoclterm \times \idterm) \equiv \assoclterm\comp \assoclterm}{both sides have type $A \times (B \times (C \times D)) \to ((A \times B) \times C) \times D$.}
+\end{axiom}
+Together with the pentagon, to make sure that product associativity interacts properly with projections, we also add the standard Mac Lane's triangle axiom \cite[VII.1(7)]{MacLane1971}:
+\begin{axiom}\label{ax:triangle}
+    \begin{tikzcd}[ampersand replacement=\&, column sep=small]
+        A \times \left( \onetype \times C \right)
+        \ar[rr, "\assoclterm"]
+        \ar[dr, "{\idterm \times \sndterm}"']
+        \& \& \left(A \times \onetype \right) \times C
+        \ar[dl, "{\fstterm \times \idterm}"]
+        \\
+        \& A \times C
+    \end{tikzcd}
+\end{axiom}
+Axioms \ref{ax:pentagon} and \ref{ax:triangle}, together with naturality and isomorphism axioms for $\assoclterm, \assocrterm$, give exactly the data of a (not necessarily symmetric) monoidal category in the sense of Mac Lane~\cite[VII.1]{MacLane1971}. By a construction in the spirit of the redundancy result of Kelly~\cite{Kelly1964}, we can derive the ``unit on the left or right'' versions of the triangle. Moreover, adding naturality of projections, in \appref{sec:projections-coherence-laws} we are able to strenghten them into what we call \intro{projections coherence laws}, where the discarded unit is replaced with an arbitrary type.
+
+Combined with the isomorphism axioms for distributivity, our listless fragment becomes an instance of what is called a \emph{bimonoidal category}~\cite{Laplaza1972a,Laplaza1972b,Kelly1974} (the case of a rig category in which the multiplicative structure $\times$ is not required to be symmetric), except that in our setting $+$ has no zero object and $\times$ additionally has a terminal (rather than merely two-sided unital) unit, giving the projections $\fstterm,\sndterm$. See also~\cite{Labella2003} for a treatment of categories with sums and a (possibly nonsymmetric) right-distributive tensor product, including normal forms for morphisms, which is close in spirit to parts of our reasoning in \appref{sec:appendix-reduction-to-simple}.
+
+% The following axioms has been replaced by the standard triangle.
+\begin{comment}
+The following axiom says that the associators cohere with the projections:
+\begin{axiom}
+        \label{ax:assoc-fst-snd-coherence}
+        \begin{casesright}
+                \assoclterm \comp \fstterm \equiv \idterm \times \fstterm \\
+                \assocrterm \comp \sndterm \equiv \sndterm \times \idterm
+        \end{casesright}
+\end{axiom}
+\end{comment}
+
+\subsection{List Axioms}
+\label{sec:list-axioms}
+The last group of axioms is about the list \kl{type} constructor, which is of course the main type constructor in our system. The list type $A^*$ is endowed with two kinds of structure: it is a monoid, and it is a monad. We now describe a series of axioms which capture this structure. In order to state these axioms in a more readable fashion, we introduce the following notation (this notation is best seen using string diagrams, which can be found in \appref{sec:string-diagrams}):
+% lax begin Lax149335.DerivedTerms
+\begin{eqnarray*}
+        A \times A^* \xrightarrow{\prependterm} A^* & \eqdef & \rightterm\comp \consterm. \\
+        \onetype \xrightarrow {[]} A^* &  \eqdef &  \leftterm\comp \consterm. \\ 
+        A \xrightarrow{\pureterm} A^* & \eqdef & \appendoneterm\comp \idterm \times []\comp \prependterm. \\
+    A^* \times A^* \xrightarrow{\binconcatterm} A^* & \eqdef &  (\idterm \times \pureterm)\comp \prependterm\comp \concatterm.
+\end{eqnarray*}
+In the above notation, we have chosen  $\consterm$ as the point of reference. One could consider symmetrically defined notation, based on $\snocterm$ and the term 
+\begin{eqnarray*}
+        A^* \times A \xrightarrow{\appendterm} A^* & \eqdef & \rightterm\comp \snocterm.
+\end{eqnarray*}
+% lax end
+We want the symmetrically defined notation to be equivalent, which is stated as an axiom.
+\begin{axiom}
+    \label{ax:cons-snoc-symmetry}
+    \begin{casesright}
+        \leftterm\comp \snocterm \equiv \leftterm\comp \consterm \\ 
+        \prependoneterm\comp [] \times \idterm\comp \appendterm \equiv \appendoneterm\comp \idterm \times []\comp \prependterm \\
+        (\pureterm \times \idterm)\comp \appendterm\comp \concatterm \equiv (\idterm \times \pureterm)\comp \prependterm\comp \concatterm
+    \end{casesright}
+\end{axiom}
+Equipped with the above notation, we state an axiom which says that $A^*$ is a monoid: 
+\begin{axiom}
+    \label{ax:concatenation-monoid}
+   \begin{casesright}
+   (\binconcatterm \times \idterm)\comp \binconcatterm \equiv \assocrterm\comp (\idterm \times \binconcatterm)\comp \binconcatterm \\
+\appendoneterm\comp (\idterm \times [])\comp \binconcatterm \equiv \idterm \equiv \prependoneterm\comp ([] \times \idterm)\comp \binconcatterm
+   \end{casesright} 
+\end{axiom}
+The following axiom says that $\concatterm$ is a homomorphism between the monoids $A^{**}$ and $A^*$:
+\begin{axiom}
+    \label{ax:concat-monoid-homomorphism}
+    \begin{casesright}
+    []\comp \concatterm \equiv []\\
+    \binconcatterm\comp \concatterm   \equiv  (\concatterm \times \concatterm)\comp \binconcatterm
+    \end{casesright}
+\end{axiom}
+The list type constructor is also a monad, which is expressed by the following axioms.
+\begin{axiom}
+    \label{ax:concatenation-unit}
+    \begin{casesright}
+            \concatterm^*\comp \concatterm  \equiv \concatterm\comp\concatterm \\
+            {\pureterm}\comp \concatterm \equiv \idterm \equiv \pureterm^*\comp \concatterm
+    \end{casesright}
+\end{axiom}
+Our axiomatic system prioritises the monoid and monad structure of $A^*$ over its inductive structure. Hence, we have an axiom that defines the latter structure in terms of the former, as follows:
+\begin{axiom}
+    \label{ax:from-monoid-to-inductive}
+    \begin{casesright}
+            \prependterm \equiv (\pureterm \times \idterm)\comp \binconcatterm \\
+            \appendterm \equiv (\idterm \times \pureterm)\comp \binconcatterm
+    \end{casesright}
+\end{axiom}
+The following axiom says that if we take a list of empty lists and concatenate it, then we could have just as well ignored the input and returned the empty list:
+\begin{axiom}
+    \label{ax:concatenation-of-empty-lists}
+   []^*\comp\concatterm  \equiv 1\comp[] \qquad \text{where $1$ denotes the unique term $\onetype^* \to \onetype$.}
+\end{axiom}
+
+\newcommand{\mybin}{\left(\onetype + \onetype\right)}
+
+The last two axioms are about $\shiftrterm$ and the \intro{bundle term} $\bundleterm : A^* \to (A \times A)^* \times (\onetype + A)$, which groups the elements of a list into consecutive pairs, followed by the last element if the length of the list is odd. Similarly as for $\unprefterm$, rather than giving this term in our syntax (which we do in \appref{def:bundle-term}, using prefix multiplication for the cyclic group of order two), we write the explicit formula for its \kl{denotation}:
+\begin{align*}
+    [a_1,\ldots,a_n] \xmapsto{\sem{\bundleterm}}
+    \begin{cases}
+        \big([(a_1,a_2),(a_3,a_4),\ldots,(a_{n-1},a_n)],\ \leftterm\ 1\big) & \text{if $n$ is even,}\\
+        \big([(a_1,a_2),(a_3,a_4),\ldots,(a_{n-2},a_{n-1})],\ \rightterm\ a_n\big) & \text{if $n$ is odd.}
+    \end{cases}
+\end{align*}
+The axioms state that $\shiftrterm$ and $\bundleterm$ do not change the contents of the underlying list, which is expressed by the following commutative diagrams, in which the tail arrows are \kl{concatenation maps} (see \cref{sec:theory:isomorphism-axioms}) that collect all the elements of the input into a single list. We only need an axiom for $\bundleterm$ indexed by the type $2^* = \twotype^*$, since the other instances can be reduced to it (see \appref{sec:bundle-surjectivity}).
+
+\noindent\begin{minipage}{.55\linewidth}
+    \begin{axiom}
+        \label{ax:shift-concatenation}
+        \begin{tikzcd}[
+                ampersand replacement=\&,
+                column sep=small
+            ]
+            (A \times B)^* \times A
+            \ar[dr, \concar]
+            \ar[rr,"\shiftrterm"]
+            \& \&
+            A \times (B \times A)^*
+            \ar[dl, \concar]
+            \\
+            \&
+            (A+B)^*
+        \end{tikzcd}
+    \end{axiom}
+\end{minipage}%
+%
+\begin{minipage}{.44\linewidth}
+    \begin{axiom}
+        \label{ax:window}
+        \aliaslabel{ax:last}{ax:window}
+        \begin{tikzcd}[
+                ampersand replacement=\&,
+                column sep=large,
+                row sep=large
+            ]
+            2^{**}
+            \ar[dr, "\idterm"']
+            \ar[r,"\bundleterm"]
+            \&
+            (2^* \times 2^*)^* \times (\onetype + 2^*)
+            \ar[d, \concar]
+            \\
+            \&
+            2^{**}
+        \end{tikzcd}
+    \end{axiom}
+\end{minipage}
+% lax end

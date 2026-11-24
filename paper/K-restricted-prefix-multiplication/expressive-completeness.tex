@@ -1,0 +1,67 @@
+\section{Restricted Prefix Multiplication}
+\label{sec:restricted-prefix-multiplication}
+
+\newcommand{\rprefterm}{\mathsf{rpref}}
+We finish this paper with an observation that is not directly used in the rest of the paper, but is interesting in its own right. 
+As defined in \cite{BojanczykDaviaudKrishna2018} and used in this paper, the \kl{group prefix multiplication} has type 
+\begin{align*}
+(A \times G)^* \xrightarrow{\prefterm} (A  \times G)^*.
+\end{align*}
+This means that there is a \kl{type} $A$ that is not really involved in the operation, and only copied verbatim from input to output.  What would happen if we removed this type? In other words, what if we had only a restricted prefix multiplication of type 
+\begin{align*}
+G^* \xrightarrow{\rprefterm} G^*,
+\end{align*}
+which would correspond to the original one in the special case of $A = \onetype$, up to isomorphism. 
+
+
+In this section, we show that the restricted prefix multiplication is expressive enough to define the extended prefix multiplication, and hence the system would remain expressively complete even if we only had the restricted prefix multiplication. Nevertheless, as we explain at the end of this section,  we do not know how to modify our equational axiomatisation to use only the restricted prefix multiplication, and hence we keep the extended version in our system.
+
+The expressive completeness of the restricted operation follows from the following lemma.
+
+
+\begin{lemma}\label{lem:reduction-to-non-extended-prefix-multiplication}
+    For every finite group $G$ and \kl{type} $A$ there is a finite group $H$ and \kl{aperiodic terms}  encode and decode such that the following diagram commutes:
+    \[
+    \begin{tikzcd}[column sep=2cm]
+    (A \times G)^* 
+    \ar[rr, "\text{prefix multiplication}"]
+    \ar[d, "\text{encode}"']
+    &  & (A \times G)^* \\
+    H^*
+    \ar[rr,"\text{prefix multiplication}"'] &  &
+    H^*
+    \ar[u, "\text{decode}"']
+    \end{tikzcd}
+    \]
+\end{lemma}
+\begin{proof}
+    We begin by reducing  to  the special case when $A$ is a type of the form $N^*$ for some \kl{finite alphabet}. To see this reduction, consider an \kl{injective} string representation of type $A \to N^*$ for some finite alphabet $N$, as in \cref{lem:provably-injective-string-representation}. By naturality, we can decompose the prefix multiplication as 
+    \begin{align*}
+    (A \times G)^* \xrightarrow{(\text{encode}, \idterm)^*}
+        (N^* \times G)^* \xrightarrow{\prefterm}
+    (N^* \times G)^* \xrightarrow{(\text{decode}, \idterm)^*}
+(A \times G)^*
+    \end{align*}
+    Therefore, it remains to show that the middle part can be expressed in terms of the restricted prefix multiplication. 
+Let $F$ be some finite group that is strictly larger than the finite alphabet $N$, and consider some injective term $f : N \to F$ that does not use the group identity as an output. Using the product group $H = F \times G$, we decompose  prefix multiplication as follows: 
+    \begin{enumerate}
+        \item Suppose that the input list is 
+        \begin{align*}
+        [(w_1,g_1),\ldots,(w_n,g_n)] \in (N^* \times G)^*.
+        \end{align*}
+        In the first step, we replace each pair in the input list by a list as follows
+        \begin{align*}
+        ([b_1,\ldots,b_m],g) \quad \mapsto \quad [(f(b_1),1_G),\ldots,(f(b_m),1_G),(1_F,g)] \in H^*,
+        \end{align*}
+        where $1_F$ and $1_G$ are the identities of the groups $F$ and $G$, respectively. Then we concatenate all these lists to obtain a single list in $H^*$. 
+        \item In the second step, we apply the restricted  prefix multiplication operation 
+        \begin{align*}
+        H^* \xrightarrow \rprefterm H^*
+        \end{align*}
+         to the result of the previous step. 
+        \item In the third and final step, we need to reverse the encoding. We apply the aperiodic inverse of $\rprefterm$. After doing this, the  group elements from $G$ correspond to list elements where $1_F$ is used in the first coordinate, and the letters from $F$ correspond to the remaining coordinates. Using this, we can reconstruct the original strings $w_1,\ldots,w_n$ hence we obtain the desired output.
+    \end{enumerate}
+    The terms in the first and third steps above are easily seen to be aperiodic, as required in the lemma.        
+    \end{proof}
+
+    Thanks to the above lemma, the system would remain expressively complete if we had only the restricted prefix multiplication, and not the extended one. Nevertheless, our equational axiomatisation is still based on the (nonrestricted) version of prefix multiplication. This is because we have not yet managed to formalise the above reasoning in an equational axiomatisation. The issue is that the  proof of the above lemma crucially relies on naturality of the (nonrestricted) prefix multiplication, and hence such naturality would need to be either phrased as an axiom (thus requiring the operation) or proved from simpler axioms (which we do not know how to do).

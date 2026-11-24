@@ -1,0 +1,328 @@
+\subsection{Proof of \cref{lem:bundles}}
+\label{sec:proof-of-bundles}
+
+%\newcommand{\twotype}{\mathbbm{2}}
+\newcommand{\binrep}{\twotype^*}
+\newcommand{\bundle}[2][A]{(#1^{#2})^* \times #1^{<#2}}
+\newcommand{\encterm}{\mathtt{enc}}
+\newcommand{\decterm}{\mathtt{dec}}
+
+We now prove \cref{lem:bundles}, which says that the \kl{concatenation map}
+\begin{align*}
+    \bundle[A]{k}\concmap  A^*
+\end{align*}
+is  an \kl{isomorphism} for arbitrarily large values of $k$. Somewhat surprisingly, this is the most involved  proof for  this part of the appendix. One of the curious parts of this proof is that although the concatenation map itself is \kl{first-order definable}, its inverse is not, and hence proving that it is an isomorphism requires using groups.
+
+We will first prove \cref{lem:bundles} for $k=2$.
+
+\subsubsection{Definition of the Inverse}
+\label{sec:inverse-definition}
+The inverse of the \kl{concatenation map}  will use
+the group $G$ which is the cyclic group of order $k$. Since we already use $1$ a lot, we  describe the elements of this group as
+\begin{align*}
+    g^{0}, g^1, \ldots, g^{k-1}.
+\end{align*}
+The group identity is $g^0$ and $g^1=g$ is a generator.
+
+
+\paragraph*{Semantic Description.}  Since formalising the inverse will be somewhat involved, we begin by explaining how the inverse works semantically, without formalising it in our system.
+For an input
+\begin{align*}
+    [a_1,\ldots,a_n] \in A^*,
+\end{align*}
+we first annotate each list element with the generator $g^1$  of the group,
+leading to an annotated list
+\begin{align*}
+    [(a_1,g^1),\ldots,(a_n,g^1)] \in (A \times G)^*.
+\end{align*}
+Next, we apply the \kl{group prefix multiplication}. As a result, the group elements will be arranged in cyclic order: $g^1,g^2,\ldots,g^{k-1},g^0,g^1,g^2,\ldots$. Next, we use the block operation to cut the list after those pairs that use the group identity. As a result, the list will be split into bundles of length exactly $k$, followed by some tail bundle of length $< k$. Finally, we  remove the group annotation, and coerce the lists of length $k$ into tuples of length $k$.
+
+The difficulty in  formalising this  construction in our system arises from the \kl{type} coercion in the last step. Our equational axiomatisation needs to be aware of the fact that this coercion gives the correct output.
+
+
+
+\paragraph*{Formal Description.} \label{def:concmap-inverse} We now begin a formal description of the required inverse. We identify a group element  with the corresponding \kl{value} of type $\onetype \to G$. We begin by describing the first step of the construction above, where list elements are annotated by the group. Suppose that we have a list that has already been grouped into bundles of size $k$, and we want to annotate it with the group, as in the following type:
+\begin{align*}
+    (A^k)^* \times A^{<k}  \to ((A \times G)^k)^* \times (A \times G)^{<k}.
+\end{align*}
+There are two ways to do this annotation, which we call the \emph{constant annotation} and the \emph{cyclic annotation}. In the constant annotation,  each list element is decorated with the generator $g^1$ of the cyclic group, as in the following term
+\begin{align*}
+    ((\idterm, g^1) \times \cdots \times  (\idterm, g^1))^* \times (\idterm, g^1)^{<k}.
+\end{align*}
+In the cyclic annotation, the list elements are decorated with the group elements in cyclic order, as in the following term
+\begin{align*}
+    ((\idterm, g^1) \times (\idterm, g^2) \times \cdots \times (\idterm,  g^{k-1}) \times  (\idterm, g^0))^* \times f_\text{tail},
+\end{align*}
+where the tail term continues the cyclic pattern for the last $<k$ elements of the list. The main observation in the proof is that these two annotations are equivalent up to the group prefix multiplication on the output, which is illustrated in the following diagram.
+\begin{equation}
+    \label{eq:bundles-commutative-diagram}
+    \begin{tikzcd}[column sep=small, ]
+        & (A^k)^* \times A^{<k}
+        \ar[dl,"\text{constant annotation}"']
+        \ar[dr,"\text{cyclic annotation}"]
+        \\
+        ((A \times G)^k)^* \times (A \times G)^{<k}
+        \ar[d,\concar]
+        & &
+        ((A \times G)^k)^* \times (A \times G)^{<k}
+        \ar[d,\concar] \\
+        (A \times G)^*
+        \ar[rr,"\prefterm"']
+        & &
+        (A \times G)^*
+    \end{tikzcd}
+\end{equation}
+In \cref{sec:bundle-injectivity}, we show that the term
+\begin{align*}
+    \text{cyclic annotation}\comp \concmap
+\end{align*}
+in the right path of the diagram is \kl{injective}. In \cref{sec:bundle-diagram-commutes}, we show that the diagram commutes provably. From these two results, it will follow that the
+following composition
+\begin{align*}
+    (A^k)^* \times A^{<k}
+    \xrightarrow{\text{constant annotation}\comp\concmap}
+    (A\times G)^*
+    \xrightarrow \prefterm
+    (A \times G)^*
+    \xrightarrow {\text{one-sided inverse from \cref{sec:bundle-injectivity}}}
+    (A^k)^* \times A^{<k},
+\end{align*}
+is provably equivalent to the identity on the type $(A^k)^* \times A^{<k}$. By naturality of the concatenation map, the above composition is provably equivalent to
+\begin{align*}
+    (A^k)^* \times A^{<k}
+    \concmap
+    \myunderbrace{  A^* \xrightarrow{(\idterm, g^1)^*}
+        (A\times G)^*
+        \xrightarrow \prefterm
+        (A \times G)^*
+        \xrightarrow {\text{one-sided inverse from \cref{sec:bundle-injectivity}}}
+        (A^k)^* \times A^{<k}
+    }{call this composition $f$}.
+\end{align*}
+
+We established that if we compose the concatenation map with $f$, then we get the identity on $(A^k)^* \times A^{<k}$. In other words, we know that the concatenation map is injective, as $f$ is its right inverse. It remains to prove that it is also \kl{surjective}, it has a left inverse. We provide such an inverse in \cref{sec:bundle-surjectivity}.
+
+% This completes the proof of \cref{lem:bundles}, assuming the results in \cref{sec:bundle-injectivity}, \cref{sec:bundle-diagram-commutes} and \cref{sec:bundle-surjectivity}. It remains to prove these results, which we do next.
+
+\subsubsection{Proof of Injectivity of the Right-Down Path}
+\label{sec:bundle-injectivity}
+We begin with the easier part of the lemma, which is that the term on the right  path
+\begin{align*}
+    \text{cyclic annotation}\comp \concmap
+\end{align*}
+in diagram~\eqref{eq:bundles-commutative-diagram}
+is \kl{injective}. Under the assumption of $k=2$, when we apply this term, we cast even-numbered list items to one copy of $A$ and odd-numbered list items to another copy of $A$. We want to show that this term is injective. This is proved in the following lemma, where $A$ and $B$ should be seen as representing the two copies of $A$ in the cyclic annotation.
+\begin{lemma}\label{lem:injectivity-of-cyclic-annotation}
+    For all \kl{types} $A$ and $B$, the \kl{concatenation map}
+    \begin{align*}
+        (A \times B)^* \times A^{<2} \to (A + B)^*
+        % \sum_{\ell < k} (A_1 \times \cdots \times A_{k-1} \times A_0) \times (A_1 \times \cdots \times A_\ell) \to (A_0+ \cdots + A_{k-1})^*
+    \end{align*}
+    is \kl{injective} and a \kl{rebracketing}.
+\end{lemma}
+\begin{proof}
+    Consider the composition
+    \begin{align*}
+        (A \times B)^* \times A^{<2}
+        \xrightarrow{(\concmap \times \idterm)^* \times \concmap}
+        (A^* \times B)^* \times A^*
+        \xrightarrow{\unblocklterm}
+        (A+B)^*.
+    \end{align*}
+    The second part of the composition is \kl{injective} as an \kl{isomorphism}. Since injective terms, as well as rebracketings,  are closed under composition and applying the functors, it remains to show that the concatenation maps
+    \begin{align*}
+        A^{<2}  \concmap A^*
+        \qquad
+        A \concmap A^*
+    \end{align*}
+    are  injective. They are clearly rebracketings, as they are concatenation maps. Let us show injectivity.
+
+    The first of these concatenation maps, with domain $A^{<2}$ is equivalent to the  composition
+    \[
+        \begin{tikzcd}
+            \onetype + A
+            \ar[r,"{\idterm + (\idterm, [])}"]
+            &
+            \onetype + A \times A^*
+            \ar[r, "\unconsterm"]
+            &
+            A^*.
+        \end{tikzcd}
+    \]
+    The first term in the composition is injective by \cref{ax:concatenation-monoid} and the second term is injective by the isomorphism axioms. Hence, their composition is injective.
+
+    The more interesting case is showing injectivity of the concatenation map
+    \begin{align*}
+        A  \concmap A^*,
+    \end{align*}
+    which is the same as $\pureterm$.
+    This is more interesting because the inverse of this map needs to escape the list monad, and this can only be done in a nonnatural way. Let us begin by fixing some \kl{value}
+    \begin{align*}
+        \onetype \xrightarrow w A.
+    \end{align*}
+    Such a value exists, since every type is inhabited. Define the \emph{head term for $w$} to be the composition
+    \begin{align*}
+        A^* \xrightarrow {\headterm_w} A
+        \qquad \eqdef \qquad
+        A^* \xrightarrow \unconsterm \onetype + A \times A^* \xrightarrow {\either w  \fstterm} A.
+    \end{align*}
+    This term is a one-sided inverse of $\pureterm$ regardless of the choice of $w$, as shown below:
+    \begin{align*}
+        \pureterm\comp \headterm_w &= \why{by definition}                                                     \\
+        (\idterm, [])\comp \rightterm\comp \consterm\comp \unconsterm\comp \either w \fstterm \equalbecause{isomorphism axioms} \\
+        (\idterm, [])\comp \rightterm\comp \either w \fstterm \equalbecause{\cref{lem:case-equivalence}}                \\
+        (\idterm, [])\comp \fstterm \equalbecause{naturality}                                                       \\
+        \idterm.
+    \end{align*}
+    This completes the proof of the injectivity of the concatenation map $A \concmap A^*$, and hence the proof of the lemma.
+\end{proof}
+
+
+\subsubsection{The Diagram Commutes}
+\label{sec:bundle-diagram-commutes}
+To finish the proof in \cref{sec:bundle-injectivity}, we need to show that the diagram~\eqref{eq:bundles-commutative-diagram} commutes provably.  Since $\prefterm$ is an \kl{isomorphism}, it is enough to prove that the diagram commutes when $\prefterm$ is replaced by its inverse, as in the following diagram (where we use the assumption that $k=2$):
+\begin{equation}\label{eq:bundles-commutative-diagram-inverse}
+    \begin{tikzcd}[column sep=small]
+        & (A \times A)^* \times A^{<2}
+        \ar[dl,"\text{constant annotation}"']
+        \ar[dr,"\text{cyclic annotation}"]
+        \\
+        ((A \times G) \times (A \times G))^* \times (A \times G)^{<2}
+        \ar[d,\concar]
+        & &
+        ((A \times G) \times (A \times G))^* \times (A \times G)^{<2}
+        \ar[d,\concar] \\
+        (A \times G)^*
+        & &
+        (A \times G)^*
+        \ar[ll,"\unprefterm"']
+    \end{tikzcd}
+\end{equation}
+
+
+
+The main observation will be the following lemma, which uses the notation and  results from \cref{sec:unprefix-commutes-with-concat} about distributing $\unprefterm$ over concatenation.
+
+\begin{lemma}\label{lem:unpref-commutes-with-concat}
+    Recall the notation $\functor g$ from \cref{sec:unprefix-commutes-with-concat}.   The following diagram commutes provably.
+    \[
+        \begin{tikzcd}[column sep=2cm]
+            (\functor g^0)^* \times (A \times G)^*
+            \ar[d,"{(\iota_\groupid)^* \times \idterm}"']
+            \\
+            (A \times G)^{**} \times (A \times G)^{*}
+            \ar[r,\concar]
+            \ar[d,"\unprefterm^* \times \unprefterm"']
+            &
+            (A \times G)^{*}
+            \ar[d,"\unprefterm"]
+            \\
+            (A \times G)^{**} \times (A \times G)^{*}
+            \ar[r,\concar]
+            &
+            (A \times G)^*.
+        \end{tikzcd}
+    \]
+\end{lemma}
+\begin{proof}
+    By \cref{lem:unprefixing-distributed-binary-concat} and \cref{lem:unprefixing-distributed-general-concat}.
+\end{proof}
+
+The right path in the diagram is
+\begin{align*}
+    (A \times A)^* \times A^{<2} \xrightarrow{
+        \text{cyclic annotation}\comp \concmap\comp \unprefterm}
+    (A \times G)^*.
+\end{align*}
+Thanks to \cref{lem:unpref-commutes-with-concat}, we can move $\unprefterm$ inside the lists, i.e.~it is provably equivalent to
+\begin{align*}
+    (A \times A)^* \times A^{<2} \xrightarrow{
+        (\text{cyclic annotation}\comp \unprefterm)^* \times (\text{cyclic annotation}\comp \unprefterm)\comp\concmap}
+    (A \times G)^*.
+\end{align*}
+In the new term, both instances of cyclic annotation are used on tuples of bounded length. For such inputs, we have an explicit description of cyclic annotation, namely the above term is equivalent to
+\begin{align*}
+    (A \times A)^* \times A^{<2} \xrightarrow{
+        ((\idterm,g^1) \times (\idterm,g^0))\comp\concmap\comp \unprefterm)^* \times ((\idterm,g^1)^{<2}\comp \concmap\comp \unprefterm)\comp\concmap}
+    (A \times G)^*.
+\end{align*}
+For lists of constant length, we can unfold the definition of $\unprefterm$ to see that the above term is equivalent to
+\begin{align*}
+    (A \times A)^* \times A^{<2} \xrightarrow{
+        ((\idterm,g^1) \times (\idterm,g^1))\comp\concmap)^* \times ((\idterm,g^1)^{<2}\comp \concmap)\comp\concmap}
+    (A \times G)^*,
+\end{align*}
+which is exactly the left path in the diagram~\eqref{eq:bundles-commutative-diagram-inverse}. This proves that the diagram commutes provably, and hence concludes the proof of \kl{injectivity} for $\concmap$ on $\bundle[A]{2}$.
+
+\subsubsection{Surjectivity}
+\label{sec:bundle-surjectivity}
+
+We now prove that the \kl{concatenation map} $\bundle{2} \concmap A^*$ is \kl{surjective} for every \kl{type} $A$. From \cref{ax:window} we know that it is the case for $A = \twotype^*$: the inverse is the term $\bundleterm : \twotype^{**} \to (\twotype^* \times \twotype^*)^* \times (\twotype^*)^{< 2}$, of which we now give an explicit definition, based on the description in \cref{sec:inverse-definition}.
+
+% lax begin Lax149335.EquationalTheory
+\begin{definition}[Bundle term]\label{def:bundle-term}
+    The term $\bundleterm$ is defined to be the composition of the following terms:
+    \[
+    \begin{tikzcd}
+        \twotype^{**}
+        \ar[d,"{\big(\appendoneterm \comp (\idterm \times \rightterm)\big)^*}"]\\
+        (\twotype^* \times \twotype)^*
+        \ar[d,"\prefterm_{\mathbb{Z}_2}"]\\
+        (\twotype^* \times \twotype)^*
+        \ar[d,"{\big(\distrterm \comp \either{(\fstterm \comp \rightterm)}{(\fstterm \comp \leftterm)}\big)^*}"]\\
+        (\twotype^* + \twotype^*)^*
+        \ar[d,"\blockterm"]\\
+        \twotype^{**} \times (\twotype^* \times \twotype^{**})^*
+        \ar[d,"\shiftlterm"]\\
+        (\twotype^{**} \times \twotype^*)^* \times \twotype^{**}
+        \ar[d,"{(\headterm_{[]} \times \idterm)^* \times \big(\unconsterm \comp (\idterm + \fstterm)\big)}"]\\
+        (\twotype^* \times \twotype^*)^* \times (\onetype + \twotype^*)
+    \end{tikzcd}
+    \]
+    where $\mathbb{Z}_2$ is the cyclic group of order two whose underlying set is $\twotype$, with identity $\leftterm$, and $\headterm_{[]}$ is the head term for the \kl{value} $\onetype \xrightarrow{[]} \twotype^*$ from the proof of \cref{lem:injectivity-of-cyclic-annotation}.
+\end{definition}
+% lax end
+
+Now, we extend the conclusion of \cref{ax:window} to arbitrary type $A$. We take the binary string encoding $\encterm: A \to \twotype^*$ from \cref{lem:provably-injective-string-representation} and its right inverse $\decterm: \twotype^* \to A$. We put 
+\[
+\bundleterm_A \quad \eqdef \quad \encterm^* \comp \bundleterm \comp F_2(\decterm),
+\]
+where $F_2(X) = \bundle[X]{2}$ is the functor such that $F_2(A)$ is the input type for $\concmap$ in the lemma.
+By naturality we obtain $F_2(\decterm)\comp \concmap_{F_2(A)} \equiv \concmap_{F_2(\twotype^*)} \comp \decterm^*$. We obtain:
+\begin{align*}
+    \bundleterm_A \comp \concmap_{F_2(A)} &= \why{definition of $\bundleterm_A$} \\
+    \encterm^* \comp \bundleterm \comp F_2(\decterm) \comp \concmap_{F_2(A)} & \equiv \why{naturality} \\
+    \encterm^* \comp \bundleterm \comp \concmap_{F_2(\twotype^*)} \comp \decterm^* & \equiv \why{$\bundleterm$ is left inverse of $\concmap$ by \cref{ax:window}} \\
+    \encterm^* \comp \idterm \comp \decterm^* & \equiv \why{$\decterm$ is right inverse of $\encterm$} \\
+    \idterm
+\end{align*}
+This proves that $\bundleterm_A$ is the left inverse of $\concmap_{F_2(A)}$, so it is a witness of surjectivity.
+Together with \cref{sec:bundle-injectivity}, it shows that $\concmap_{\bundle{2}}$ is an \kl{isomorphism} for every $A$.
+
+\subsubsection{Induction}
+\label{sec:bundle-induction}
+
+We now show, by induction on $i$, that the \kl{concatenation map} $\bundle[A]{k} \concmap A^*$ is an \kl{isomorphism} for every $k = 2^i$. The case $k = 2$ was shown above. As the induction hypothesis, assume that the claim holds for $k = l$; we show that it holds for $k = 2l$.
+
+Let $F_k(X) = \bundle[X]{k}$, and let $f_2$ and $f_l$ be the two-sided inverses of the concatenation maps on $F_2(A^l)$ and $F_l(A)$, respectively. In particular, both are isomorphisms and \kl{rebracketings}. We define $f_{2l}$ to be the composition
+\[
+    A^*
+    \xrightarrow{f_l}
+    (A^l)^* \times A^{<l}
+    \xrightarrow{f_2 \times \idterm}
+    \big(((A^l)^2)^* \times (A^l)^{<2}\big) \times A^{<l}
+    \xrightarrow{h}
+    (A^{2l})^* \times A^{<2l},
+\]
+where $h$ is the rebracketing isomorphism which reassociates the product, and then applies the isomorphisms
+\[
+    (A^l)^2 \to A^{2l}
+    \qquad \text{and} \qquad
+    (A^l)^{<2} \times A^{<l} \to A^{<2l},
+\]
+both of which are obtained by distributing products over coproducts.
+
+The term $f_{2l}$ is built from isomorphisms by using composition and the functors, and hence it is an isomorphism. By the same argument, it is a rebracketing, and hence it is a left inverse of the concatenation map $\bundle[A]{2l} \concmap A^*$. Therefore, this concatenation map is also an isomorphism, and $f_{2l}$ is its inverse, which is unique up to provable equivalence.
+
+By induction, the concatenation map $\bundle[A]{k} \concmap A^*$ is an isomorphism for every $k = 2^i$. Since these values of $k$ form an unbounded set, this completes the proof of \cref{lem:bundles}.
+

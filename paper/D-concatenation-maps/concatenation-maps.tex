@@ -1,0 +1,87 @@
+\section{Rebracketings}
+\label{sec:rebracketings}
+Many terms in our system do nothing except for rebracketing the input. A prominent example is
+\begin{align*}
+(A \times B)^* \times A 
+\xrightarrow{\shiftrterm}
+A \times (B \times A)^*.
+\end{align*}
+The following definition formalises this concept, by saying that the map commutes with \kl{multivariate concatenation maps} (see \cref{sec:concatenation-maps}).
+\begin{definition}
+    [Rebracketing] Consider two \kl{multivariate list-polynomial functors} $F$ and $G$. A \intro{rebracketing} is any term $f$ for which  the following diagram commutes provably:
+\[
+\begin{tikzcd}
+F(A_1,\ldots,A_n) 
+\ar[rr,"f"] 
+\ar[dr,\concar]
+& 
+& 
+G(A_1,\ldots,A_n)
+\ar[dl,\concar]
+\\
+&
+(A_1 + \cdots + A_n)^*
+\end{tikzcd}
+\]
+\end{definition}
+The following lemma collects some basic facts about rebracketings. The proof is straightforward, and is left as an exercise for the reader.
+\begin{lemma}\label{lem:rebracketing-basic-facts}
+    All \kl{atomic terms} are \kl{rebracketings}, except for the projections and the \kl{group prefix multiplication} $\prefterm$. Furthermore, \kl{rebracketings} are closed under composition, and applying the \kl{type} constructors.
+\end{lemma}
+We now present a very useful result, which will allow us to prove equivalence of rebracketings without going into details. The idea is that any two rebracketings of the same type must be provably equivalent, as  long as the output type has a certain  injectivity property, as defined below.
+\begin{definition}[Injective type]
+    A \kl{type} $F(A_1,\ldots,A_n)$ is called \intro[injective type]{injective} if the \kl{concatenation map}
+        \begin{align*}
+    F(A_1,\ldots,A_n) \concmap (A_1 + \cdots + A_n)^*
+    \end{align*}
+    is \kl{injective}.
+\end{definition}
+An example of an injective type is $(A \times B)^*$, and a nonexample is $A^{**}$. In the latter case, noninjectivity arises because the bracketing cannot be recovered after the list has been flattened. The following lemma is an immediate consequence of the definitions. 
+\begin{lemma}[Uniqueness of rebracketings]\label{lem:uniqueness-of-rebracketings}
+If
+    \begin{align*}
+    F(A_1,\ldots,A_n) \xrightarrow{f,g} G(A_1,\ldots,A_n)
+    \end{align*}
+    are \kl{rebracketings} and the output \kl{type} is \kl[injective type]{injective}, then $f \equiv g$.
+\end{lemma}
+
+
+Let us observe some consequences of the above lemma. 
+\begin{lemma}\label{lem:shift-ones}
+The following diagram commutes provably
+\begin{align*}
+\begin{tikzcd}[ampersand replacement=\&]
+ \& A^*
+    \ar[dl, "{\appendoneterm^*\comp \prependoneterm}"']
+    \ar[dr, "{\prependoneterm^*\comp \appendoneterm}"]
+    \\
+    \onetype \times (A \times\onetype)^* 
+    \ar[rr, "\shiftlterm" ]
+    \&
+    \&
+    (\onetype \times A)^* \times \onetype   
+\end{tikzcd}
+\end{align*}
+\end{lemma}
+\begin{proof}
+        All arrows in the diagram are easily seen to be rebracketings, which can be proved using \cref{lem:rebracketing-basic-facts}. 
+ Furthermore, all types in the diagram, in particular the output type  $(\onetype \times A)^* \times \onetype$ are injective. For the output type, the  one-sided inverse of its concatenation map is  the south-east arrow in the above diagram. 
+     Therefore, we can apply \cref{lem:uniqueness-of-rebracketings} to conclude that the diagram commutes provably. 
+\end{proof}
+
+Another consequence of \cref{lem:uniqueness-of-rebracketings} concerns a symmetric variant of blocking.
+
+\begin{lemma}\label{lem:shift-unsplit}
+    The  term
+    \begin{align*}
+(A+B)^* \xrightarrow{\blocklterm} (A^* \times B)^* \times A^* 
+\quad \eqdef \quad 
+\blockterm\comp \shiftlterm
+\end{align*}
+is an \kl{isomorphism}, and its inverse is the \kl{concatenation map}.
+\end{lemma}
+\begin{proof}
+    All terms in the statement of the lemma are easily seen to be rebracketings, which can be proved using \cref{lem:rebracketing-basic-facts}. Therefore, to prove the lemma, it is enough to show that the output type is injective. In fact, the output type is isomorphic to $(A+B)^*$, by composing $\shiftrterm$ with $\unblockterm$. 
+    This isomorphism is the same as the concatenation map, which follows from \cref{ax:shift-concatenation}.
+\end{proof}
+

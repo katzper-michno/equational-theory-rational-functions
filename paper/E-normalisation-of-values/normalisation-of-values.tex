@@ -1,0 +1,139 @@
+
+\section{Proof of Normalisation of Values}
+\label{sec:proof-of-normalisation-of-values}
+In this section, we prove \cref{lem:value-completeness}, which states that every \kl{value} is provably equivalent to a value in \kl[normalised drop term]{normal form}. By induction on the structure of a term $f$, we show that if we take a composition
+\begin{align*}
+\onetype \xrightarrow v A \xrightarrow f B
+\end{align*}
+of a value $v$ in normal form with a term $f$, then this composition is provably equivalent to a value in normal form. This will imply the lemma, by taking the special case where $v$ is the identity $\onetype  \to \onetype $.
+
+We begin with the induction step, in which the term $f$ in the application $v\comp{}f$ is constructed using one of the four combinators. 
+\begin{description}
+    \item[Composition.] Suppose that the term $f$ being applied is  a composition $f_1\comp{}f_2$. Applying the induction hypothesis for $f_1$ allows us to normalise $v\comp{}f_1$, and applying the induction hypothesis for $f_2$ allows us to normalise $(v\comp{}f_1)\comp{}f_2$, which is equivalent to $v\comp(f_1\comp{}f_2)$ by the associativity of composition.
+    \item[Product combinator.]      Suppose that the term applied is $f = f_1 \times f_2$.  The argument must be of the form $v = (v_1,v_2)$. We have
+    \begin{align*}
+    (v_1,v_2)\comp(f_1 \times f_2)&= \why{definition of $(v_1,v_2)$} \\
+        \appendoneterm\comp(v_1 \times v_2)\comp(f_1 \times f_2)\equalbecause{functoriality of $\times$}\\
+    \appendoneterm\comp((v_1\comp{}f_1) \times (v_2\comp{}f_2))\equalbecause{induction hypothesis} \\
+        \text{a value in normal form}
+    \end{align*}
+    \item[Coproduct combinator.] Suppose that the term being applied is $f = f_1 + f_2$. The value to   which $f$ is applied  must be either $v_1 \comp \leftterm$ or $v_2\comp \rightterm$.  Let us treat only the first case, since the second case is similar:
+    \begin{align*}
+    v_1 \comp \leftterm\comp (f_1 + f_2)\equalbecause{naturality} \\
+    v_1 \comp f_1\comp \leftterm  \equalbecause{induction hypothesis}\\
+    \text{a value in normal form}.
+    \end{align*}
+
+
+    \item[Map combinator.] Suppose that the applied term $f$ is of the form $g^*$. The argument must be a list of values. We have 
+    \begin{align*}
+    ([v_1] \wdot \cdots \wdot [v_n])\comp{}g^* \equalbecause{naturality} \\
+    ([v_1\comp{}g]) \wdot \cdots \wdot ([v_n\comp{}g]) \equalbecause{induction hypothesis} \\
+    \text{a value in normal form}.
+    \end{align*}
+   This completes the proof of the induction step for all combinators. 
+\end{description}
+
+
+We now prove the induction basis, in which the applied term $f$ is one of the \kl{atomic terms}.
+
+\begin{description}
+    \item[Append and prepend one.] Suppose that the applied term $f$ is one of the two terms $\appendoneterm$ or $\prependoneterm$. The result is equivalent to $(v,1)$ or $(1,v)$, respectively, by definition. 
+    \item[Coprojections.] Suppose that the applied term $f$ is a coprojection $\leftterm$ or $\rightterm$. In this case, there is nothing to do, since one of the ways of constructing a value in normal form is to postcompose it with a coprojection.
+    \item[Projections.] Suppose that the applied term $f$ is a projection $\fstterm$ or $\sndterm$. By symmetry, we only consider the first projection $\fstterm$. By definition of normal forms, the value $v$ to which $f$ is applied is a pair, and hence it must be of the form $(v_1,v_2)$ for some values $v_1$ and $v_2$.
+\begin{align*}
+    (v_1,v_2)\comp\fstterm&= \why{definition of $(v_1,v_2)$}\\
+\appendoneterm\comp(v_1 \times v_2)\comp\fstterm    \equalbecause{naturality} \\
+    \appendoneterm\comp\fstterm\comp{}v_1\equalbecause{isomorphism axiom for $\appendoneterm$} \\
+    v_1.
+\end{align*}
+    \item[Codiagonal.] Suppose that the term $f$ which is applied to the value is  the codiagonal $\codiagterm : A + A \to A$. In this case the value to which $f$ is applied must have coproduct output \kl{type}, and hence it must be  equal to either $v\comp \leftterm$ or $v\comp \rightterm$ for some value $v$. In either of these cases, the composition is provably equivalent to $v$, which is proved  using  \cref{ax:eval-codiag}.
+
+    \item[Distributivity.] Suppose now that the term $f$ is one of the two  distributivity terms. By symmetry, we consider  right distributivity
+    \begin{align*}
+    \distrterm : A \times (B_1 + B_2) \to (A \times B_1) + (A \times B_2).
+    \end{align*}
+    The value  $v$ to which $f$ is applied  must have one of two shapes
+    \begin{align*}
+   v=  (w, (w_1\comp\leftterm)) \qquad \text{or} \qquad v= (w, (w_2\comp\rightterm)),
+    \end{align*}
+    for some values $w$, $w_1$, and $w_2$. 
+    By symmetry, we only treat the first shape.  We will  show
+    \begin{align*}
+    (w, (w_1\comp\leftterm))\comp \distrterm  \equiv  (w,w_1)\comp \leftterm,
+    \end{align*}
+    which will complete the proof of this case, since the right-hand side is a value in normal form.
+    To prove the above equation, we use an isomorphism trick: since $\undistrterm$ is an \kl{isomorphism} by the isomorphism axiom, in order to prove the above equation, it suffices to prove the variant of the equation in which both sides are postcomposed with $\undistrterm$. This is done below:
+    \begin{align*}
+        (w,w_1)\comp \leftterm\comp \undistrterm &= \why{definition of $\undistrterm$} \\
+    (w,w_1)\comp \leftterm\comp \either{\idterm \times \leftterm}{\idterm \times \rightterm} \equalbecause{see \cref{lem:case-equivalence}}\\ 
+    (w,w_1)\comp (\idterm \times \leftterm) \equalbecause{functoriality} \\
+    (w, (w_1\comp\leftterm))
+    \end{align*}
+
+
+
+    \item[List constructors.] Suppose now that the applied term $f$ is one of  the list constructors $\consterm$ or $\snocterm$. By symmetry, we only treat the case of $\consterm$.  The value $v$ to which $f$ is applied must have type $\onetype  \to \onetype  + A \times A^*$, and hence it  must have one of two shapes:
+    \begin{align*}
+        v = \leftterm \qquad \text{or} \qquad  v = (u,w)\comp \rightterm
+    \end{align*}
+    for some values $u$ and $w$ of types $\onetype \to A$ and $\onetype \to A^*$ respectively. In the first case, $v\comp{}f$, which is $\leftterm\comp \consterm$, is the definition of $[]$, and hence in  normal form. In the second case,   $v\comp{}f$ which is $(u,w)\comp \prependterm$, is equal to $[u] \wdot w$ thanks to \cref{ax:from-monoid-to-inductive}.
+    \item[List destructors.] Suppose that the applied term $f$ is one of the list destructors $\unsnocterm$ or $\unconsterm$. By symmetry, we only treat the case of $\unconsterm$. The value $v$ to which $f$ is applied must have type $\onetype \to A^*$. By definition of values in normal form and \cref{lem:concatenation-monoidality}, the value $v$  must be equivalent to  either $[]$ or $[u] \wdot w$ for some values $u$ and $w$ of types $\onetype \to A$ and $\onetype \to A^*$, respectively. We want to show 
+    \begin{align*}
+    []\comp \unconsterm \equiv \leftterm  \qquad \text{and} \qquad ([u] \wdot w)\comp\unconsterm \equiv (u,w)\comp \rightterm.
+    \end{align*}
+    We use the isomorphism trick, by proving new equations obtained from the above ones where both sides are postcomposed with $\consterm$. After this postcomposition, the equations become
+    \begin{align*}
+    [] \equiv \leftterm\comp \consterm \qquad \text{and} \qquad ([u] \wdot w) \equiv (u,w)\comp \prependterm,
+    \end{align*}
+    which are exactly the equations that we proved in the previous item. 
+    \item[List concatenation.] Assume that the term $f$ is list concatenation $\concatterm$. By  \cref{ax:concat-monoid-homomorphism}, this operation is a monoid homomorphism, and hence we know that 
+     \begin{align*}
+        (v \wdot w)\comp \concatterm \equiv (v\comp \concatterm) \wdot (w\comp \concatterm).
+    \end{align*}
+    Therefore, normalisation is proved by a simple induction on  the length of the list represented by $v$. 
+
+    \item[Block.] Suppose now that the applied term $f$ is $\blockterm$.  By the isomorphism trick, it is enough to show that
+    \begin{align*}
+    v \equiv w\comp \unblockterm \quad\text{for some value $w$ in normal form}.
+    \end{align*}
+     From this it will follow that $v\comp\blockterm \equiv w$, as required in the induction step. 
+    
+    To identify the value $w$, we use a syntactic analysis of the value $v$. 
+    The value $v$, like any normal form value in type $\onetype \to (A+B)^*$, is obtained by using $\wdot$ to concatenate a list of values, each one having shape 
+    \begin{align*}
+    \myunderbrace{[x\comp\leftterm] \quad \text{for some value }\onetype \xrightarrow x A}{value of first kind}
+    \qquad \text{or} \qquad
+    \myunderbrace{[y\comp\rightterm] \quad \text{for some value }\onetype \xrightarrow y B}{value of second kind}.
+    \end{align*}
+    By identifying the occurrences of values of the second kind, we can decompose $v$ as 
+    \begin{align*}
+    v \equiv v_0 \wdot [y_1\comp\rightterm] \wdot v_1  \wdot \cdots \wdot [y_n\comp\rightterm] \wdot v_n,
+    \end{align*}
+    where each $[y_i\comp\rightterm]$ is a value of the second kind, and each $v_i$ is a concatenation of   values of the first kind. This means that each $v_i$ can be obtained as 
+    \begin{align*}
+    v_i \equiv w_i\comp(\leftterm^*).
+    \end{align*}
+    This is because of the following property: 
+    \begin{align*}
+    \binconcatterm\comp f^* \equiv (f^* \times f^*)\comp \binconcatterm,
+    \end{align*}
+    which says that $\binconcatterm$ is a natural transformation, which in turn holds because it is built by using natural transformations. Summing up, we have shown that 
+    \begin{align*}
+    v \equiv (w_0\comp\leftterm^*) \wdot ([y_1\comp\rightterm] \wdot (w_1\comp\leftterm^*)) \wdot \cdots \wdot ([y_n\comp\rightterm] \wdot (w_n\comp\leftterm^*)).
+    \end{align*}
+    We claim that the right-hand side of the above equation is exactly the result of applying $\unblockterm$ to the following value in normal form 
+    \begin{align*}
+    w \eqdef (w_0, [(y_1,w_1)] \wdot \cdots \wdot [(y_n,w_n)]).
+    \end{align*}
+    This claim will complete the  proof of the induction step in this case. To prove the claim, we observe that  $\unblockterm$ is a term that is constructed by using the combinators from atomic terms that we have already treated in the previous items (in particular, $\unblockterm$ does not use $\blockterm$). Therefore, by the already proved part of the argument, we know that $w\comp \unblockterm \equiv v$, as required in the claim.
+
+    
+    
+    \item[Prefix multiplication.] By the isomorphism trick, we need to show that if $v$ is a value in normal form of type $\onetype \to (A \times G)^*$ for some type $A$ and finite group $G$, then 
+    \begin{align*}
+    v  \equiv w\comp \unprefterm \quad \text{for some value $w$ in normal form.}
+    \end{align*}
+    We proceed as in the previous item. A  candidate for the value $w$ can be easily found by reading the value $v$, and then the above equivalence can be proved by using the part of the argument that we have already treated, since $\unprefterm$ is a term that does not use the \kl{group prefix multiplication}.
+\end{description}
+

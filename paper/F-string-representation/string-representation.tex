@@ -1,0 +1,146 @@
+\section{Injective String Representations}
+\label{sec:provably-injective-string-representations}
+In this part of the appendix, we prove \cref{lem:provably-injective-string-representation}, which states that for every \kl{type} there is an \kl{injective} term from this type into lists over the \kl{binary alphabet}. 
+
+The construction follows two steps, first by encoding any type in a \kl{finite alphabet}. Lists over a finite alphabet are then encoded into the binary alphabet.
+
+\begin{claim}\label{lem:provably-injective-string-representation-finite-alphabet}
+    For every \kl{type} $A$ there is a \kl{finite alphabet} $N$ and an \kl{injective} \kl{aperiodic term}  $f_A : A \to N^*$.
+\end{claim}
+
+\begin{claim}\label{lem:provably-injective-string-representation-finite-alphabet-into-binary}
+    For every \kl{finite alphabet} $N$ there is an \kl{injective} \kl{aperiodic term}  $\stringrep N : N^* \to {\twotype}^*$.
+\end{claim}
+
+The terms obtained from \cref{lem:provably-injective-string-representation-finite-alphabet} and \cref{lem:provably-injective-string-representation-finite-alphabet-into-binary} can be composed, giving an encoding $\stringrep A$ of arbitrary type $A$ into the lists over the binary alphabet, as required by \cref{lem:provably-injective-string-representation}. This composition is injective, as discussed in \cref{claim:injective-terms-basic-facts}.
+
+\subsection{Injective Terms}
+
+    We begin by establishing some basic facts about \kl{injective} terms. 
+    \begin{claim}\label{claim:injective-terms-basic-facts}
+        The coprojections are \kl{injective}. Also, \kl{injective} terms are closed under composition and applying the functorial combinators for $+$, $\times$ and $*$. 
+    \end{claim}
+    \begin{proof}
+        We only prove the first statement about coprojections, since the reader can easily verify the closure under combinators -- it is enough to combine the inverses. By \cref{lem:case-equivalence}, a one-sided inverse of the coprojection $A \to A+B$ is   
+        \begin{align*}
+        \either{\idterm}{g} \qquad \text{where $B \xrightarrow g A$ is any term}.
+        \end{align*}
+        The term $g$ must exist, since the type $B \to A$, like every \kl{type}, is inhabited by some term, which can be shown by composing $B \to \onetype$ with some \kl{value} of type $\onetype \to A$. (One should also construct a term of type $B \to \onetype$ for every $B$, but this is easily done by induction on the structure of the input type $B$.)
+    \end{proof}
+
+\subsection{Proof of \cref{lem:provably-injective-string-representation-finite-alphabet}}
+
+    Equipped with the above claim, we prove \cref{lem:provably-injective-string-representation-finite-alphabet} by induction on the structure of the input \kl{type} $A$.
+    \begin{description}
+    \item[Base case, $A = \onetype$.] We can use the alphabet $\underline \onetype = \onetype$ and as the string representation we can use any  term of type $\onetype \to \onetype^*$, since all terms with domain $\onetype$ are \kl{injective}, which follows from \cref{ax:unit-type}.
+
+    \item[Induction step for products, $A \times B$.] We define 
+    \begin{align*}
+    \underline{A \times B} \eqdef \underline A + \underline B.
+    \end{align*}
+    Since injective  terms are closed under composition, we define the representation as a composition of the following injective  terms:
+    \[
+    \begin{tikzcd}
+    A \times B 
+    \ar[d,  "{\stringrep A \times \stringrep B}"] \\
+    \underline A^* \times \underline B^* 
+    \ar[d,
+    "{\idterm \times ((\idterm,[]))^*}"]\\
+    \underline A^* \times (\underline B \times \underline A^*)^* 
+    \ar[d,"\unblockterm"] \\
+    (\underline A + \underline B)^*.
+    \end{tikzcd}
+    \]
+    The first one is injective by the induction hypothesis, and because injective terms are closed under the product combinator. The last one is even an \kl{isomorphism}. The one-sided inverse of the middle one is left as an easy exercise for the reader. 
+
+    \item[Induction step for lists, $A^*$.] We define 
+    \begin{align*}
+    \underline{A^*} \eqdef \underline A + \onetype.
+    \end{align*}
+    The representation is defined to be the following composition of injective  terms:
+    \[
+    \begin{tikzcd}
+    A^*
+    \ar[d, "{(\stringrep A)^*}"] \\
+    \underline A^{**} \ar[d, "{([] , ((\onelement,\idterm))^*)}"] \\
+    \underline A^* \times (\onetype \times \underline A^*)^* \ar[d,"\unblockterm"] \\
+    (\underline A + \onetype)^*.
+    \end{tikzcd}
+    \]
+    The first one is injective by the induction hypothesis, and because injective terms are closed under the map combinator. Injectivity of the middle one is left as an easy exercise for the reader. As previously, the  last one is  an isomorphism.
+    \item[Induction step for coproducts, $A+B$.] This is the most challenging case. Define
+\begin{align*}
+    \underline{A+B} \eqdef    \underline A + \underline B + \onetype.
+\end{align*}
+We begin with the composition of the following terms, which is injective by Claim~\ref{claim:injective-terms-basic-facts}: 
+\[
+\begin{tikzcd}
+A + B  
+\ar[d,"\stringrep A + \stringrep B"] \\
+\underline A^* + \underline B^*  
+\ar[d, "(\leftterm)^* + (\rightterm)^*"] \\
+(\underline A + \underline B)^* + (\underline A + \underline B)^*.
+\end{tikzcd}
+\]
+To complete the proof, we establish an injective  term of type 
+\begin{align*}
+ C^* + C^* \to  (\onetype + C)^* \qquad \text{where }C = \underline A + \underline B.
+\end{align*}
+This is done by using the following composition of injective  terms:
+        \[
+        \begin{tikzcd}
+        C^* + C^* 
+        \ar[d,"{\idterm + (\onelement,\idterm)}"] \\
+        C^* + \onetype \times C^*
+        \ar[d, "{\idterm + ([], (\onelement, \idterm))}"] \\
+        C^* + C^* \times (\onetype \times C^*)
+        \ar[d, 
+        "{\either{(\idterm , [])}{\idterm \times [\idterm]}}"] \\
+         C^* \times (\onetype \times C^*)^*
+         \ar[d,"\unblockterm"] \\
+         (C + \onetype)^*.
+        \end{tikzcd}
+        \]
+    \end{description}
+
+\subsection{Proof of \cref{lem:provably-injective-string-representation-finite-alphabet-into-binary}}
+
+We start with constructing an \kl{injective} term $f : N \to \onetype^*$. Since $N$ is a \kl{finite alphabet}, this can be realised by providing a distinct \kl{value} for each of the summands with the sum operator. 
+The inverse is a term that inspects the value with an appropriate number of $\unconsterm$ applications. 
+By induction on the size of $N$ it is provably an inverse -- use functoriality of the sum operator and the isomorphism axiom for the pair $\consterm$ used for producing the values and $\unconsterm$ used to inspect it.   
+
+% \klc{Improve the proof above with better references to the axioms and maybe a full calculation.}
+
+We lift $f$ with the star operator to $f^* : N^* \to (\onetype^*)^*$, which preserves injectivity. 
+
+Then, we need to provide a term of the type $(\onetype^*)^* \to \twotype^*$.
+
+We define an injective term $g : (A^*)^* \to (A + \onetype)^*$ by the top path on the upper diagram.
+The lower path defines its inverse -- each arrow is an inverse of the corresponding arrow above it. 
+For the encoding proof we set $A=\onetype$.
+
+\[
+    \begin{tikzcd}[column sep=large]
+    (A^*)^* 
+    \ar[r, "\unitlterm^*"]
+    &
+    (\onetype \times A^*)^*
+    \ar[r, "{([],\idterm)}"]
+    &
+    A^* \times (\onetype \times A^*)^*
+    \ar[r, "\unblockterm"]
+    &
+    (A + \onetype)^*
+    \ar[dl, "\blockterm", end anchor=10]
+    \\
+    (A^*)^* 
+    \ar[u, equal]
+    &
+    (\onetype \times A^*)^*
+    \ar[l, "\sndterm^*"']
+    &
+    A^* \times (\onetype \times A^*)^*
+    \ar[l, "\sndterm"']
+    \end{tikzcd}
+\]
+

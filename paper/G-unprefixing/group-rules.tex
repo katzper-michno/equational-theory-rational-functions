@@ -1,0 +1,319 @@
+\section{Unprefixing}
+\label{sec:unprefix-commutes-with-concat}
+
+\newcommand{\functor}{\mathsf T}
+\newcommand{\functorplus}{\mathsf T_{\!+}}
+\newcommand{\inject}{\mathsf{rep}}
+\newcommand{\groupid}{1}
+\newcommand{\groupdiag}{\mathsf{repeat}}
+\newcommand{\groupdiv}{\mathsf{divide}}
+
+This part of the appendix is devoted to a study of the unprefixing term 
+\begin{align*}
+(A \times G)^* \xrightarrow \unprefterm (A \times G)^*,
+\end{align*}
+which is the inverse of the \kl{group prefix multiplication}. We begin by giving an explicit definition of this term, by using the \kl{atomic terms} and their combinators. (In the main body of the paper, we only said that it exists, by the expressive completeness of the system.) In fact, such an explicit definition is the formal content of the isomorphism axiom for $\unprefterm$, since this axiom must contain the source code of the unprefixing term.  As the reader will recall, the unprefixing term is defined denotationally as follows, with $g_0$ being the group identity:
+\begin{align*}
+[(a_1,g_1),\ldots,(a_n,g_n)] \in (A \times G)^* \xmapsto \unprefterm  [(a_1,g_0^{-1} g_1), (a_2,g_1^{-1} g_2), \ldots, (a_n,g_{n-1}^{-1} g_n)] \in (A \times G)^*
+\end{align*}
+This process is implemented by a term that is  described in the following definition.
+
+\begin{definition}[Unprefixing term]\label{def:unprefterm}
+    For a \kl{type} $A$ and a finite group $G$, the \intro{unprefixing term} $\unprefterm$ is defined to be  the composition of the following terms
+    \[
+    \begin{tikzcd}
+        (A \times G)^* 
+        \ar[d,"\text{$\groupdiag^*$ where $\groupdiag$ is defined by $(a,g) \mapsto (g,a,g)$}"]\\
+        (G \times A \times G)^*
+        \ar[d,"\text{$(\groupid, \idterm)$ where $\groupid : \onetype \to G$ represents the group identity}"]\\
+    G \times (G \times A \times G)^*
+    \ar[d,"\shiftlterm"]\\
+    (G \times G \times A)^* \times G
+    \ar[d,"\fstterm"]
+    \\
+    (G \times G \times A)^*
+            \ar[d,"\text{$\groupdiv^*$ where $\groupdiv$ is defined by $(h,g,a) \mapsto (a,h^{-1} \cdot g)$}"]
+    \\
+    (A \times G)^*
+    \end{tikzcd}
+    \]
+\end{definition}
+
+Before continuing, let us explain the $\groupdiag$ and $\groupdiv$ terms that were used in the above definition. In principle these terms look like they are not admissible in our system, since they use duplication and commutativity. However, duplication and commutativity are applied here in the special case of a \kl{finite alphabet}, and in this special case they are admissible. More formally, we use the \kl{isomorphisms} 
+\begin{equation}
+    \label{eq:finite-group-isomorphisms}
+A \times G \simeq 
+\sum_{g \in G} A 
+\qquad 
+G \times A \times G 
+\simeq 
+\sum_{g,h \in G} A 
+\qquad 
+G \times G \times A
+\simeq 
+\sum_{g,h \in G} A.
+\end{equation}
+In the presence of these isomorphisms, the terms $\groupdiag$ and $\groupdiv$ can be defined by using case reasoning and coprojections.
+
+
+\subsection{Naturality of the Group Prefix Multiplication}
+\label{sec:naturality-of-group-prefix-operation}
+Using the explicit definition of the \kl{unprefixing term}, we can prove that the \kl{group prefix multiplication} is a natural transformation, as was stated in \cref{fn:naturality-of-group-prefix-operation}.
+
+
+\begin{lemma}\label{lem:naturality-of-group-prefix-operation}
+    Let $A \xrightarrow f B$ be a term between \kl{types} and let $G \xrightarrow h H$ be a group homomorphism between groups whose underlying sets are \kl{types}. Then the following diagram commutes: 
+\[
+\begin{tikzcd}
+    (A \times G)^* \arrow[r, "{(f \times h)^*}"] \arrow[d, "\prefterm"'] & (B \times H)^* \arrow[d, "\prefterm"] \\
+    (A \times G)^* \arrow[r, "{(f \times h)^*}"'] & (B \times H)^*.
+\end{tikzcd}
+\]    
+\end{lemma}
+\begin{proof}
+    Since the group prefix multiplication is an \kl{isomorphism}, it suffices to prove that the diagram commutes when $\prefterm$ is replaced by its inverse $\unprefterm$, i.e.
+    \[
+\begin{tikzcd}
+    (A \times G)^* \arrow[r, "{(f \times h)^*}"]  & (B \times H)^*  \\
+    (A \times G)^* \arrow[r, "{(f \times h)^*}"']
+    \arrow[u, "\unprefterm"] & 
+    (B \times H)^* 
+    \arrow[u, "\unprefterm"'].
+\end{tikzcd}
+\]    
+To see that the diagram commutes provably, we can use the explicit definition of $\unprefterm$ from \cref{def:unprefterm}, and observe that each of the underlying steps commutes with a group homomorphism. 
+\end{proof}
+
+
+\subsection{Distributing Unprefixing over Concatenation}
+In this section we prove  some results in which unprefixing is distributed over concatenation. 
+Let us fix the \kl{type} $A$ and a finite group $G$ for the rest of this section. For our distributivity results, we will want to have a stronger typing for lists of pairs $(A \times G)$; namely we will want the last element of the list to have a fixed value. This is implemented by the following notation.
+We write 
+\begin{align*}
+\functor g \eqdef (A \times G)^* \times A \times \onetype.
+\end{align*}
+Although the group element $g$ does not appear on the right-hand side of the definition, we include it to underline our intention, which is to say that the type represents nonempty lists in $(A \times G)^*$ where the last pair has the group element $g$, and hence there is no need to write this group element explicitly. This intention is formalised by an injection
+\begin{align*}
+\functor g \hookrightarrow (A \times G)^*,
+\end{align*}
+which is denoted by $\iota_g$ and is formally defined  to be the following composition
+\begin{align*}
+\functor g \xrightarrow {\idterm \times (\idterm,g)} (A \times G)^* \times (A \times G) \concmap  (A \times G)^*,
+\end{align*}
+in which the group element $g$ is treated as a \kl{value} of type $\onetype \to G$. An important special case of this type will arise when $g$ is the identity of the group $G$, which we denote by $\groupid$. 
+
+
+% Under this annotated version, we can implement binary concatenation. More formally, for every group elements $g$ and $h$ we have a term, 
+% \[
+% \begin{tikzcd}
+%     \functor g \times \functor h 
+%     \ar[r]
+%     \ar[d,hookrightarrow] 
+%     &
+%     \functor h
+%     \ar[d,hookrightarrow]
+%     \\
+%     (A \times G)^* \times (A \times G)^* 
+%     \ar[r,\concar]
+%     & 
+%     (A\times G)
+% \end{tikzcd}
+% \]
+
+
+% \[
+% \begin{tikzcd}
+% (\functor 1)^* 
+% \ar[r]
+% \ar[d,hookrightarrow,"(\iota_1)^*"']
+% &
+% \functor 1
+% \ar[d,hookrightarrow,"\iota_1"]
+% \\
+% (A \times G)^{**}
+% \ar[r,\concar]
+% & 
+% (A \times G)^*.
+% \end{tikzcd}
+% \]
+The type $(A \times G)^*$ is isomorphic to 
+\begin{align*}
+\onetype + \sum_{g \in G} \functor g,
+\end{align*}
+with the \kl{isomorphism} being the \kl{copairing} of the empty list and the injections defined above.
+
+
+% \[
+% \begin{tikzcd}[column sep=2cm]
+%     (\functor \groupid)^* \times \functor g
+%     \ar[d,"\inject_\groupid^* \times \inject_g"']
+%     \\
+%     (A \times G)^{**} \times (A \times G)^{*}
+%     \ar[r,\concar] 
+%     \ar[d,"\unprefterm^* \times \unprefterm"']
+%     & 
+%     (A \times G)^{*}
+%         \ar[d,"\unprefterm"]
+%     \\
+%     (A \times G)^{**} \times (A \times G)^{*}
+%     \ar[r,\concar]
+%     & 
+%     (A \times G)^*.
+% \end{tikzcd}
+% \]
+
+We are now ready to prove our first distributivity result, which says that unprefixing commutes with binary concatenation, as long as the first list ends with the group identity. 
+\begin{lemma}\label{lem:unprefixing-distributed-binary-concat}
+    For every $g \in G$, the two paths from the source in the following diagram are provably equivalent (the inner square does not commute on its own):
+    \[
+\begin{tikzcd}
+\functor \groupid \times \functor g 
+\ar[d, hookrightarrow, "\iota_\groupid \times \iota_g"']
+\\
+(A \times G)^* \times (A \times G)^*
+\ar[d, "\unprefterm \times \unprefterm"']
+\ar[r,\concar]
+& 
+(A \times G)^*
+\ar[d, "\unprefterm"]
+\\
+(A \times G)^* \times (A \times G)^*
+\ar[r,\concar]
+& 
+(A \times G)^* 
+\end{tikzcd}
+\]
+\end{lemma}
+\begin{proof}
+    In the proof, it will be more convenient to use a variant of the type $\functor g$, in which the represented list has at least two elements (in $\functor g$ the list is guaranteed to have  at least one element, since the last element is fixed to be $g$). This variant is defined as follows:
+    \begin{align*}
+    \functorplus g \eqdef (A \times G) \times \functor g.
+    \end{align*}
+    This type also has an injection into $(A \times G)^*$, which we also denote by $\iota_g$.     We have an isomorphism 
+    \begin{align*}
+    \functor g \simeq A \times \onetype + \functorplus g
+    \end{align*}
+The interesting case of the lemma is when both input lists $\functor \groupid$ and $\functor g$ are covered by $\functorplus$, as described in diagram \eqref{eq:unprefixing-distributed-binary-concat-nonempty} below.
+The other case, when at least one of these lists is a singleton, is easy to prove and left to the reader as an exercise. 
+\begin{equation}
+\label{eq:unprefixing-distributed-binary-concat-nonempty}
+\begin{tikzcd}[ampersand replacement=\&]
+\functorplus \groupid \times \functorplus g
+\ar[d, hookrightarrow, "\iota_\groupid \times \iota_g"']
+\\
+(A \times G)^* \times (A \times G)^*
+\ar[d, "\unprefterm \times \unprefterm"']
+\ar[r,\concar]
+\& 
+(A \times G)^*
+\ar[d, "\unprefterm"]
+\\
+(A \times G)^* \times (A \times G)^*
+\ar[r,\concar]
+\& 
+(A \times G)^*
+\end{tikzcd}
+\end{equation}
+We begin by studying the right path in the diagram, in which the lists are first concatenated and then unprefixed.
+
+\begin{claim}\label{claim:right-path-in-binary-unprefixing-distributes-over-concat}
+    The right path in the diagram \eqref{eq:unprefixing-distributed-binary-concat-nonempty} is equivalent to the following composition:
+    \[
+\begin{tikzcd}
+\myoverbrace{(A \times G) \times (A \times G)^* \times (A \times \onetype)}{$\functorplus \groupid$} \times 
+\myoverbrace{
+(A \times G) \times (A \times G)^* \times (A \times \onetype)}{$ \functorplus g$}
+\ar[d,"\text{prepend $\onetype$ and duplicate group elements}"]
+\\
+\onetype \times (G \times A \times G) \times (G \times A \times G)^* \times (\onetype \times A \times \onetype) \times (G \times A \times G) \times (G \times A \times G)^* \times (\onetype \times A \times \onetype)
+\ar[d,"\text{rebracket and erase last $\onetype$}"]
+\\
+(\onetype \times G \times A) \times (G \times G \times A)^* \times (G  \times \onetype  \times A) \times (\onetype \times G \times A) \times (G \times G \times A)^* \times (G \times \onetype \times A)\phantom{\times \onetype}
+\ar[d,"\text{apply $\groupid$ to first three $\onetype$'s and $g$ to last  $\onetype$}"]
+\\
+(G \times G \times A) \times (G \times G \times A)^* \times (G  \times G  \times A) \times (G \times G \times A) \times (G \times G \times A)^* \times (G \times G \times A)
+\phantom{ \times G} 
+\ar[d,\concar,"\text{concatenate}"]
+\\
+( G \times G \times A)^* 
+\ar[d,"\groupdiv^*"]
+\\
+(A \times G)^*
+\end{tikzcd}
+\]
+\end{claim}
+\begin{proof}[Proof sketch]
+    Using naturality and the uniqueness of \kl{rebracketing} from \cref{lem:uniqueness-of-rebracketings}. To apply the latter result, we need to show that all types in the statement of the claim are \kl[injective type]{injective}. The corresponding calculation uses the fact that $\onetype$ appears a constant number of times, and hence each copy of $\onetype$ can be identified uniquely when computing a one-sided inverse.
+\end{proof}
+
+A similar argument can be applied to  the left path in the diagram, in which the lists are first unprefixed and then concatenated.
+\begin{claim}\label{claim:left-path-in-binary-unprefixing-distributes-over-concat}
+    The left path in the diagram \eqref{eq:unprefixing-distributed-binary-concat-nonempty} is equivalent to the following composition (we use colours to help distinguish the two parts of the product):
+    \[
+\begin{tikzcd}
+\myoverbrace{(A \times G) \times (A \times G)^* \times (A \times \onetype)}{$\functorplus \groupid$} \times 
+\blue{\myoverbrace{(A \times G) \times (A \times G)^* \times (A \times \onetype)}{$ \functorplus g$}}
+\ar[d,"\text{in each part, prepend $\onetype$ and duplicate group elements}"]
+\\
+\onetype \times (G \times A \times G) \times (G \times A \times G)^* \times (\onetype \times A \times \onetype) \times \blue{\onetype \times  (G \times A \times G) \times (G \times A \times G)^* \times (\onetype \times A \times \onetype)}
+\ar[d,"\text{in each part, rebracket and remove last $\onetype$}"]
+\\
+(\onetype \times G \times A) \times (G \times G \times A)^* \times (G  \times \onetype  \times A)  \phantom{ \times \onetype}  \times \blue{(\onetype \times G \times A) \times (G \times G \times A)^* \times (G \times \onetype \times A) \phantom{\times \onetype}}
+\ar[d,"\text{apply $\groupid$ to first three $\onetype$'s and $g$ to last  $\onetype$}"]
+\\
+(G \times G \times A) \times (G \times G \times A)^* \times (G  \times G  \times A) \phantom{\times G} \times \blue{(G \times G \times A) \times (G \times G \times A)^* \times (G \times G \times A)}
+\phantom{ \times G}
+\ar[d,"\text{in each part, concatenate}"]
+\\
+( G \times G \times A)^* \times \blue{( G \times G \times A)^*}
+\ar[d,"\text{in each part, $\groupdiv^*$}"]
+\\
+( G \times G \times A)^* \times \blue{( G \times G \times A)^*}
+\ar[d,\concar] 
+\\
+(A \times G)^*
+\end{tikzcd}
+\]
+\end{claim}
+\begin{proof}
+    Similar to the proof of \cref{claim:right-path-in-binary-unprefixing-distributes-over-concat}.
+\end{proof}
+To finish the proof of the lemma, it remains to show that the two compositions from \cref{claim:right-path-in-binary-unprefixing-distributes-over-concat,claim:left-path-in-binary-unprefixing-distributes-over-concat} are provably equivalent. By uniqueness of rebracketing, the first two steps are the same in both compositions. The third step (where $\onetype$'s are replaced by group elements) is the same. Finally, the double concatenation in the last three steps of the diagram from \cref{claim:left-path-in-binary-unprefixing-distributes-over-concat} can be replaced by a   single concatenation as in the last two steps of the diagram from \cref{claim:right-path-in-binary-unprefixing-distributes-over-concat}, thanks to
+\[
+\begin{tikzcd}
+A^* \times A^* \ar[r,"f^* \times f^*"]
+\ar[d,\concar]
+& 
+B^* \times B^* 
+\ar[d,\concar]
+\\
+A^* \ar[r,"f^*"]
+&
+B^*
+\end{tikzcd}
+\]
+which is an instance of the naturality axioms. This finishes the proof of the lemma.
+\end{proof}
+
+We now state  a similar result for concatenations of an arbitrary number of lists, as long as each list ends with the group identity. The proof is similar to the proof of \cref{lem:unprefixing-distributed-binary-concat}, and is left to the reader as an exercise.
+\begin{lemma}\label{lem:unprefixing-distributed-general-concat}
+    The two paths from the source are provably equivalent in the following diagram:
+    \[
+\begin{tikzcd}
+(\functor \groupid)^*
+\ar[d, hookrightarrow, "(\iota_\groupid)^*"']
+\\
+(A \times G)^{**}
+\ar[d, "\unprefterm^*"']
+\ar[r,\concar]
+& 
+(A \times G)^*
+\ar[d, "\unprefterm"]
+\\
+(A \times G)^{**}
+\ar[r,\concar]
+& 
+(A \times G)^* 
+\end{tikzcd}
+\]
+\end{lemma}

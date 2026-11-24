@@ -1,0 +1,190 @@
+\section{Compositional Syntax of Rational Functions}
+\label{sec:syntax}
+As explained in \cref{sec:intro}, in order to have an equational axiomatisation, we need a compositional (algebraic) syntax for the \kl{rational functions} -- the \kl{rational terms} which are constructed from certain \kl{atomic terms} by applying certain combinators. We describe such a system in this section.
+
+\subsection{Atomic Terms and Combinators}
+\label{sec:atomic-terms-and-combinators}
+% the notion is introduced here, without printing it in italics in the heading
+\phantomintro{atomic terms}%
+Our system of  atomic terms and combinators  is not entirely new, since it can be seen as a  part of a system that was described in~\cite{BojanczykDaviaudKrishna2018}. However, the system from~\cite{BojanczykDaviaudKrishna2018} was designed for a larger class of functions -- the regular functions -- and thus it contained terms representing functions that are not rational (such as string reversal) or combinators that do not preserve rationality (such as pairing of terms). For this reason, we will now carefully isolate the rational fragment of the system from~\cite{BojanczykDaviaudKrishna2018}. At each step of the discussion, we briefly argue about soundness of the system, understood in the sense that all atomic terms represent \kl{rational functions}, and that all combinators preserve rationality. We do this informally here; we refer to lecture notes~\cite[Section C.5.2]{Bojanczyk2026} for a formal treatment.
+
+\subsubsection{Composition}
+Arguably the most important combinator is  composition of terms: 
+\begin{align*}
+    \combinator{
+        A \xrightarrow  f B \quad B \xrightarrow g C
+    } {
+        A \xrightarrow {f \comp g} C
+    }{\ (composition)}
+\end{align*}
+As we have argued in \cref{sec:definition-of-rational-functions}, \kl{rational functions} are closed under composition, and hence the combinator $\comp$ preserves rationality. Also, for every \kl{type} $A$ we have an \kl{atomic term} for the identity:
+\begin{atomicterm}
+    \label{atomic:identity}
+    \aliaslabel{atomic:first}{atomic:identity}
+\describeterm{\idterm}{A}{A}.
+\end{atomicterm}
+\subsubsection{Coproducts}
+\label{sec:atomic-for-co-products}
+To deal with coproducts, we introduce coprojections:
+\begin{atomicterm}
+    \label{atomic:coprojections}
+\describeterm{\leftterm} {A}{A + B}
+\qquad
+\describeterm{\rightterm} {B}{A + B},
+\end{atomicterm}
+whose \kl{denotations} are easily seen to be rational.
+Under \kl{string representation}, the denotation of a coprojection simply prepends one letter to the input, which is a \kl{rational function}.  We also have two combinators for coproducts:
+\begin{align*}
+\combinator{A_1 \xrightarrow {f_1} B \quad A_2 \xrightarrow {f_2} B }{A_1 + A_2 \xrightarrow {\either{f_1}{f_2}} B}{\ (copairing)}
+\qquad 
+\combinator{A_1 \xrightarrow {f_1} B_1 \quad A_2 \xrightarrow {f_2} B_2}{A_1 + A_2 \xrightarrow {{f_1 + f_2}} B_1 + B_2}{\ (functoriality of $+$)}.
+\end{align*}
+Note that copairing was already used in the definition of \kl{simple terms} (\cref{def:simple-rational-terms}).
+Both combinators preserve rationality. For copairing, we modify the regular expressions for $\sem{f_1}$ and $\sem{f_2}$ so that they require the $\leftterm$ and $\rightterm$ letters at the beginning of the input, respectively, and then we take their union. For $+$, the construction is the same, except that we need to keep the $\leftterm$ and $\rightterm$ letters in the output as well. 
+
+One can derive $+$ from copairing, since $f_1 + f_2$ is obtained by copairing terms that are obtained by composing $f_1$ and $f_2$ with the corresponding coprojections. To obtain copairing from $+$, we need an extra \kl{atomic term} for the codiagonal:
+\begin{atomicterm}
+    \label{atomic:co-diagonal}   
+    \codiagterm : A + A \to A.
+\end{atomicterm}
+% lax begin Lax149335.DerivedTerms
+In terms of string representations, the denotation of the codiagonal simply deletes the first letter of the input string. As a result, in our system we can have either copairing, or $+$ and the codiagonal. Since we will use the functorial approach for the remaining \kl{type} constructors (pairs and lists), we choose the second option, and hence \intro{copairing} becomes a derived combinator:
+\begin{align*}
+\either {f_1} {f_2} \quad \eqdef \quad (f_1 + f_2)\comp \codiagterm.
+\end{align*}
+More generally, we have the \emph{$n$-fold copairing}:
+\begin{align*}
+A_1 + \dots + A_n \xrightarrow{\eithermany{n}{f_1 \cdots f_n}} B \qquad \text{ where } A_i \xrightarrow{f_i} B \text{ for every } i \in [n].
+\end{align*}
+We can assume that $n$-fold coproducts (and products) are right-associated, although it is not important -- all bracketings are equivalent. We justify this in \appref{sec:distributivity}.
+% lax end
+
+\subsubsection{Products}
+\label{sec:atomic-for-products}
+We now discuss  \kl{rational terms} that operate on products. Our system for rational terms deviates from the system for regular terms in~\cite{BojanczykDaviaudKrishna2018} when products are concerned. In particular, products in the rational system will be noncommutative, unlike in the regular system. The first \kl{atomic terms} for the product \kl{type} are the projections:
+\begin{atomicterm}
+    \label{atomic:projections}
+\describeterm{\fstterm} {A \times B}{A}
+\qquad 
+\describeterm{\sndterm} {A \times B}{B}.
+\end{atomicterm}
+These represent \kl{rational functions}, although the proof is a bit more difficult than for coprojections, since the function must identify the separating comma in a pair $(a,b)$. This is possible because, by a simple induction on the type, for every type $A$ the language $\setbuild{ \text{string representation of $a$}}{$a \in A$}$ is regular. Thanks to this observation, the unique decomposition of the \kl{string representation} $(a,b)$ into the string representations of $a$ and $b$ can be guessed by the function, and thus $\sem{\fstterm}$ and $\sem{\sndterm}$ are rational.
+
+Things get more interesting with the combinators for products:
+\begin{align*}
+\red{\myunderbrace{\combinator{A \xrightarrow {f_1} B_1 \quad A \xrightarrow {f_2} B_2}{A \xrightarrow{(f_1,f_2)} B_1 \times B_2}{\ (pairing)}}{not a part of our system}} \qquad  
+\combinator{A_1 \xrightarrow {f_1} B_1 \quad A_2 \xrightarrow {f_2} B_2}{A_1 \times A_2 \xrightarrow {{f_1 \times f_2}} B_1 \times B_2}{\ (functoriality of $\times$)}.
+\end{align*}
+The combinator $\times$ preserves rationality, which is proved by finding the separating comma in the input string, and calling $\sem{f_1}$ and $\sem{f_2}$ on the corresponding parts of the input. However, the pairing combinator \emph{does not} preserve rationality. The reason is that in the conclusion of the pairing combinator, the input string is used twice, which is a form of copying that is not available to rational functions.  The failure of pairing is connected to other functions that are not rational, namely duplication and commutativity of products:
+    \begin{align*}
+\red{ \myunderbrace{\describeterm{\diagterm} {A}{A \times A}}{not a part of our system}
+    \qquad 
+    \myunderbrace{A \times B \xrightarrow{\mathtt{swap}} B \times A.}{not a part of our system}}
+    \end{align*}
+A formal proof of nonrationality for these functions can be obtained by running the algorithm for deciding rationality from~\cite[Theorem 2]{FiliotGauwinReynierServais2013}.
+Because pairing fails in our system, we will need explicit operations for associativity and unit for products (in the presence of pairing, these could be derived): 
+    \begin{atomicterm}
+        \label{atomic:monoidal}
+\describeterm{\appendoneterm} {A}{A \times \onetype} \qquad
+\describeterm{\prependoneterm} {A}{\onetype \times A}
+\qquad
+ \begin{tikzcd}[ampersand replacement=\&, column sep=large]
+A \times (B \times C)
+\ar[r,"\assoclterm", shift left=0.6ex]
+\&
+\ar[l,"\assocrterm", shift left=0.6ex]
+(A \times B) \times C.
+\end{tikzcd}
+    \end{atomicterm}
+In categorical terminology, the \kl{denotations} of these terms show that the \kl{category of rational functions} is a monoidal category with respect to the product, with unit $\onetype$. However, it is not a symmetric monoidal category, since the swap function is not rational.\footnote{The coproduct almost gives a symmetric monoidal category, except there is no neutral element. The neutral element for coproduct could be recovered by having a type $0$ with no elements, which would have limited effect on our system.} As a corollary, $\times$ is not a categorical product.
+
+\subsubsection{Distributivity}
+\label{sec:atomic-for-distributivity}
+    We can distribute product over coproduct.  Because products are not symmetric, we need to have two variants of distribution, on the left and on the right: 
+    \begin{atomicterm}
+        \label{atomic:distributivity}
+\describeterm{\distrterm} {A \times (B + C)}{(A \times B) + (A \times C)} \qquad 
+\describeterm{\distlterm} {(A + B) \times C}{(A \times C) + (B \times C)}.
+    \end{atomicterm}
+    Both  denote \kl{rational functions}, since they  amount to finding the separating comma in the input string, and then shifting $\leftterm$ or $\rightterm$ out to the front of the string.  The \kl{denotation} of each of the two distribution terms is an isomorphism, and hence it has an inverse; these inverses can be derived using the previous constructions (see \cref{sec:theory:isomorphism-axioms}), and therefore they are not included as \kl{atomic terms}.
+
+\subsubsection{Lists}
+\label{sec:atomic-for-lists}
+The most important \kl{type} constructor for our system is the list constructor $A^*$. We begin with the map combinator:
+\begin{align*}
+\combinator{A \xrightarrow f B}{A^* \xrightarrow {f^*} B^*}{\ (functoriality of $*$)}
+\end{align*}
+The combinator $*$ preserves rationality by an argument similar to the one for $\times$: the \kl{string representation} of the input list is split into the representations of its elements, by identifying the separating commas, and then $\sem{f}$ is applied to each element.
+Let us  now describe the \kl{atomic rational terms} that operate on lists. All of them denote functions that are easily seen to be rational. There are four terms that describe the inductive definition of lists, since we have both constructors and destructors, and lists can be oriented in two directions:
+    \begin{atomicterm}
+        \label{atomic:cons-snoc}
+    \begin{tikzcd}[ampersand replacement=\&, column sep=large]
+\onetype + A \times A^*
+\ar[r,"\consterm", shift left=0.6ex]
+\&
+\ar[l,"\unconsterm", shift left=0.6ex]
+A^*
+\ar[r,"\unsnocterm", shift left=0.6ex]
+\&
+\ar[l,"\snocterm", shift left=0.6ex]
+\onetype + A^* \times A.
+\end{tikzcd}
+    \end{atomicterm}
+Apart from the constructors and destructors, we also have a term for concatenating lists of lists:
+\begin{atomicterm}
+    \label{atomic:concat}
+A^{**} \xrightarrow{\concatterm} A^*.
+\end{atomicterm}
+There is an atomic term which clusters the elements of a list over a coproduct type:
+\begin{atomicterm}
+    \label{atomic:split}
+(A + B)^* 
+\xrightarrow{\blockterm}
+A^* \times (B \times A^*)^*.
+\end{atomicterm}
+A defining property of this term is that its \kl{denotation} is an isomorphism, whose inverse is defined by injecting $A$ and $B$ into $A+B$, and then concatenating all list elements. This inverse can be derived using the previous terms (see \cref{sec:theory:isomorphism-axioms}), and is hence not included as an atomic term. Finally, we have two terms with mutually inverse denotations:
+    \begin{atomicterm}
+        \label{atomic:shift}
+    \begin{tikzcd}[ampersand replacement=\&, column sep=large]
+(A \times B)^* \times A
+\ar[r,"\shiftrterm", shift left=0.6ex]
+\&
+\ar[l,"\shiftlterm", shift left=0.6ex]
+A \times (B \times A)^*,
+    \end{tikzcd}
+    \end{atomicterm}
+which shift brackets in the expected way. These two terms are something of a curiosity, since they can be derived from the previous terms. However, the derivation is not natural -- in the technical sense of the word -- and hence it will be more convenient for the equational axiomatisation to have these terms as atomic terms.
+
+\subsubsection{Groups}
+\label{sec:atomic-for-groups}
+The system defined so far can only describe a fragment of the \kl{rational functions}, which is the \intro{first-order definable rational functions}~\cite[p.2]{Filiot2016}. In order to escape this fragment, we need an \kl{atomic term} whose \kl{denotation} is not first-order definable (see \cite[C.4]{Bojanczyk2026} for more on this topic). This term  is based on group multiplication. 
+Consider a finite group $G$ whose underlying set is a \kl{finite alphabet}. (Every finite group can be obtained this way up to group isomorphism.) For example, the underlying set could be $\onetype + \onetype$, and the group could be the cyclic group of order two.\footnote{Group operations (identity, inverse, and multiplication) are all rational functions, since their domains are finite \kl{types}.} For every such finite group and every type $A$, we have a \intro{prefix multiplication term}:
+\begin{atomicterm}
+    \label{atomic:group-cut}
+    \aliaslabel{atomic:last}{atomic:group-cut}
+(A \times G)^* \xrightarrow{\prefterm} (A \times G)^*,
+\end{atomicterm}
+which is defined as follows: the output list has the same length as the input list, the elements from $A$ are not changed,  and the $i$-th group element in the output list is obtained by multiplying the first $i$ group elements of the input list, using the group structure. The denotation of this term is rational, since it can be computed by a transducer that reads the \kl{string representation} of the input list from left to right, and stores in its state the product of the group elements that have been read so far.
+
+\input{3-compositional-syntax/fo-primes-combinators}
+
+\subsection{Expressive Completeness}
+\label{sec:expressive-completeness}
+We have now described the whole compositional syntax we will use to denote \kl{rational functions}. The complete list of \kl{atomic terms} and combinators is shown on~\cref{fig:atomic-rational-terms}.
+
+% lax begin Lax149335.Terms
+\begin{definition}[Rational terms]
+    \label{def:rational-terms}
+    A \emph{\intro{rational term}} is any expression built from the \kl{atomic terms}~\ref{atomic:identity}--\ref{atomic:group-cut} by applying the combinators: composition, and functoriality of coproducts, products and lists.
+\end{definition}
+
+\AP{}A rational term that does not use the \kl{prefix multiplication term} $\prefterm$ is called an \emph{\intro{aperiodic term}}. Each rational term $f$ represents a rational function $\sem{f}$ of the same \kl{type}, because, as shown earlier in this section, every atomic term is rational and every combinator preserves rationality. 
+% lax end
+
+One can show that all rational functions arise as \kl{denotations} of \kl{simple terms}. This was first proved implicitly in~\cite[Theorems 3.6 and 6.1]{BojanczykDaviaudKrishna2018}. The difference with our system is that the result from~\cite{BojanczykDaviaudKrishna2018} is for a  more powerful system that has nonrational features. However, its part that deals with rational functions does not use any of the nonrational features, although it is not explicitly stated. A formal proof dedicated to the rational fragment can be found in~\cite[Theorem C.5.18]{Bojanczyk2026}.
+
+% lax begin Lax149335.ExpressiveCompleteness
+\begin{theorem}[{Expressive completeness, \cite[Theorem C.5.18]{Bojanczyk2026}}]\label{thm:atomics-and-combinators-completeness}
+    Let $A$ and $B$ be  \kl{types}. A function of type $A \to B$ is rational if and only  if it is the \kl{denotation} of some \kl{rational term}.
+\end{theorem}
+% lax end

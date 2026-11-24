@@ -1,0 +1,290 @@
+\section{Proofs for Soundness of the Conjugacy Rule}
+In this part of the appendix, we prove the lemmas that we used in the proof of \cref{lem:completeness-for-simple-rational-terms}, whose main goal was to show the soundness of the conjugacy rule for \kl{simple rational terms}. 
+
+
+
+\subsection{Proof of \cref{lem:conjugacy-fixed-middle-equational}}\label{sec:proof-of-lem:conjugacy-fixed-middle-equational}
+We begin with the proof of \cref{lem:conjugacy-fixed-middle-equational}, which says that 
+    \begin{align*}
+        \hom(w \wdot h) \wdot w \equiv w \wdot \hom(h \wdot w)
+        \qquad \text{for every term $A \xrightarrow h B^*$ and value $\onetype \xrightarrow w B^*$.}
+    \end{align*}
+As we have remarked in the main paper, this can be seen as  a weaker version of the conjugacy rule, where the assumption is strengthened from provable conjugacy  to syntactic conjugacy. 
+
+The proof is based on the following diagram.
+\begin{equation}
+\label{eq:housie-housie}
+    \begin{tikzcd}
+        [column sep=huge]
+ &  A^*
+    \ar[dl, "{\appendoneterm^*\comp \prependoneterm}"']
+    \ar[dr, "{\prependoneterm^*\comp \appendoneterm}"]
+   \\
+    \onetype \times (A \times\onetype)^* 
+    \ar[dd,"w \times (f \times w)^*"']
+    \ar[r, \concar ]
+    &
+            (A + \onetype)^*
+    \ar[dd,"{\hom{(\either{f}{w})}}"]    
+    &
+    (\onetype \times A)^* \times \onetype    % \ar[ddl, bend left,"(w \fdot f)^* \fdot w"]
+    \ar[dd,"(w \times f)^* \times w"]
+    \ar[l, \concar]
+    \\
+    &
+\ 
+    \\
+    B^* \times (B^* \times B^*)^*
+    \ar[r,\concar]
+    &
+    B^*
+    & 
+    (B^* \times B^*)^* \times B^*
+    \ar[l,\concar]
+    \end{tikzcd}
+\end{equation}
+The top face commutes by \cref{lem:shift-ones}.
+To complete the proof of the lemma, we will show that: (a) the lower two rectangular faces commute provably and hence the entire diagram commutes, (b) the leftmost and rightmost paths from $A^*$ to $B^*$ are provably equivalent to the terms in the conclusion of the lemma, which are $w \wdot \hom(f \wdot w)$ and  
+$\hom(w \wdot f) \wdot w$, respectively. 
+We begin with (b), which is the following calculation (we only do the leftmost path, since the rightmost path is symmetric):
+\begin{align*}
+\text{leftmost path from $A^*$ to $B^*$ in \eqref{eq:housie-housie}}  & = \\
+\appendoneterm^*\comp \prependoneterm\comp w \times (f \times w)^*\comp \concmap  \equalbecause{naturality}\\
+\prependoneterm\comp \idterm \times \appendoneterm^*\comp  w \times (f \times w)^*\comp \concmap  \equalbecause{functoriality}\\
+\prependoneterm\comp  w \times (\appendoneterm\comp f \times w)^*\comp \concmap  \equalbecause{concatenation axioms}\\
+\prependoneterm\comp  w \times (\appendoneterm\comp f \times w\comp \concmap)^*\comp \concmap  &= \why{definition of $f \wdot w$}\\
+\prependoneterm\comp  w \times (f \wdot w)^*\comp \concmap  &= \why{definition of $w \wdot \hom(f \wdot w)$}\\
+w \wdot \hom(f \wdot w)
+\end{align*}
+It remains to prove (a). We only consider the lower-left rectangular face, since the lower-right rectangular face is symmetric. This face is expanded in upside-down form in  the following diagram.
+    \[
+\begin{tikzcd}
+    [column sep=5cm]
+\onetype \times (A \times \onetype)^*
+\ar[dr,"w \times (f \times w)^*"]
+\ar[d,"{\rightterm \times (\leftterm \times \rightterm)^*}"']
+\\
+(A+\onetype) \times ((A + \onetype) \times (A + \onetype))^*
+\ar[d,\concar]
+\ar[r,"{\either{f}{w} \times (\either{f}{w} \times \either{f}{w})^*}"']
+& 
+B^* \times (B^* \times  B^*)^*
+\ar[d, \concar]
+\ar[dd, bend left, \concar]
+\\ 
+(A + \onetype)^*
+\ar[dr,"{\hom(\either{f}{w})}"']
+\ar[r,"(\either f w)^*"]
+& 
+B^{**}
+\ar[d,\concar]& 
+\ \\
+& B^*
+\end{tikzcd}
+\]
+The middle rectangular face commutes  provably by naturality of \kl{concatenation maps}. The lower triangular face commutes by definition of $\hom$. The upper triangular face commutes by \cref{lem:case-equivalence}. The rightmost face with three concatenation maps commutes by the list axioms. 
+Summing up, the entire diagram commutes provably, which proves (a).
+
+\subsection{Proof of \cref{lem:constants-and-guarded}}
+\label{sec:proof-of-lem:constants-and-guarded}
+In this part of the appendix, we prove \cref{lem:constants-and-guarded},
+which says that in the proof of the induction step for~\eqref{eq:conjugacy-rule-for-simple-rational-terms}, one can assume without loss of generality that the input \kl{type} is a coproduct 
+\begin{align*}
+A = A_1 + \cdots + A_n,
+\end{align*}
+and each of the terms $f$ and $g$ is a \kl{copairing} of $k$-guarded terms.  To prove this reduction, it is enough to show the following lemma. 
+\begin{lemma} [Value extraction] \label{lem:value-extraction}
+    Let $k \in \set{1,2,\ldots}$ and let 
+    \begin{align*}
+    A \xrightarrow {f,g} B^*
+    \end{align*}
+    be \kl{simple rational terms} that are  denotationally conjugate. Then there is  an \kl{isomorphism} 
+    \begin{align*}
+ C_1 + \cdots + C_n \xrightarrow \pi A
+    \end{align*}
+    such that for every $i \in \set{1,\ldots,n}$, the \kl{type} $C_i$ has the same or smaller nesting of lists as $A$, and both compositions $\pi\comp{}f$ and $\pi\comp{}g$ are provably equivalent to \kl{copairings} of $k$-guarded terms.
+\end{lemma}
+
+\begin{proof}
+    Induction on the structure of the input type $A$. The induction is on two parameters: (a) more important is the nesting depth of the list constructor; (b) less important is the size of (syntax tree of) the type. This means that we can progress in the induction by decreasing the nesting depth of the list constructor, even if we increase the size of the type. We prove the lemma for only one term $f$, but during the proof we will  observe that the same isomorphism will arise if $f$ is replaced by a conjugate term. 
+
+    \begin{description}
+    \item[Induction basis and induction step for coproducts.]
+    The induction basis when $A = \onetype$ is trivial, since the term is already a \kl{value}. If the input type is a coproduct $A_1 + A_2$, then the result follows immediately from the induction hypothesis. The more interesting cases are for products and lists. 
+    
+   \item[Product type.] Suppose now that the input type is a product $A_1 \times A_2$. In this case, we simply apply distributivity. Nevertheless, we present a more detailed argument, to show that all equivalences are provable in this case.  A simple rational term with a product domain $A_1 \times A_2$ is provably equivalent to a concatenation $f_1 \fdot f_2$ of two simple rational terms 
+    \begin{align*}
+    A_1 \xrightarrow {f_1} B^* \quad \text{and} \quad A_2 \xrightarrow {f_2} B^*.
+    \end{align*}
+    Apply the induction hypothesis to these two terms, yielding isomorphisms 
+    \begin{align*}
+    \sum_{i_1 \in I_1} C_{1,i_1} \xrightarrow{\pi_1} A_1 \qquad \text{and} \qquad \sum_{j_2 \in J_2} C_{2,j_2} \xrightarrow{\pi_2} A_2.
+    \end{align*}
+    Define $\pi$ to be the isomorphism which is the composition
+    \begin{align*}
+    \sum_{(i_1,j_2) \in I_1 \times J_2} C_{1,i_1} \times C_{2,j_2} \xrightarrow{\undistlterm}
+    \left(\sum_{i_1 \in I_1} C_{1,i_1}\right) \times \left(\sum_{j_2 \in J_2} C_{2,j_2}\right)
+    \xrightarrow{
+    (\pi_1 \times \pi_2)} A_1 \times A_2.
+    \end{align*}
+    To prove the conclusion of the lemma, we will show that  the composition 
+    \begin{align*}
+    C_{1,i_1} \times C_{2,j_2} 
+    \xrightarrow {\text{coprojection}}
+    \sum_{(i_1,j_2) \in I_1 \times J_2} C_{1,i_1} \times C_{2,j_2} 
+    \xrightarrow{\pi} A_1 \times A_2 
+    \xrightarrow{f_1 \fdot f_2} B^*
+    \end{align*}
+    is provably equivalent to a $k$-guarded term. 
+    By suitable use of distributivity, see \cref{lem:distributivity}, the above composition is provably equivalent to
+    \begin{align*}
+    C_{1,i_1} \times C_{2,j_2} 
+    \xrightarrow{\text{coprojection} \times \text{coprojection}}
+    \left(\sum_{i_1 \in I_1} C_{1,i_1}\right) \times \left(\sum_{j_2 \in J_2} C_{2,j_2}\right)
+    \xrightarrow{\pi_1 \times \pi_2} A_1 \times A_2 
+    \xrightarrow{f_1 \fdot f_2}
+    B^*,
+    \end{align*}
+    which is by induction hypothesis provably equivalent to a concatenation of two $k$-guarded terms. Finally, we observe that  $k$-guarded terms are closed under concatenation, up to provable equivalence, which follows from \cref{lem:concatenation-monoidality}.
+
+
+    % \[
+    % \begin{tikzcd}
+    % (\sum_{i \in I} A_i) \times A
+    % \ar[r,"{}"]
+
+    % \end{tikzcd}
+    % \]
+
+
+    
+    
+    \item[List type.]
+    The essential case is when the domain is a list type, and hence the  term is 
+    \begin{align*}
+    A^* \xrightarrow {w_0 \wdot \hom f \wdot w_1} B^*.
+    \end{align*}
+    Since $k$-guarded terms are closed under concatenation with values, we can assume without loss of generality that $w_0$ and $w_1$ are both empty, and hence the term is simply 
+    \begin{align*}
+    A^* \xrightarrow {\hom f} B^*.
+    \end{align*}
+    Apply the induction hypothesis to $f$, leading to an isomorphism
+    \begin{align*}
+     C_1 + \cdots + C_n \xrightarrow{\pi} A.
+    \end{align*}
+    For some cases in $C_1,\ldots,C_n$, the outputs are guarded because they are constant, and for others they are guarded on both sides by strings of length $k$ . Some of the constants are empty, i.e.~the corresponding term always outputs the empty list. Using the same proof as in \cref{lem:nonempty-summands}, we can assume without loss of generality that the constants are always nonempty. (An important observation is that if we take some other term $g$ that is conjugate to $f$, then the same constants will be nonempty, and thus applying the same proof as in \cref{lem:nonempty-summands} will lead to the same isomorphism.) We will now consider a finite number of cases: either the input list from $A^*$ has length $<2k$, or otherwise one can identify a prefix of length $k$ and a suffix of length $k$. This is the content of the following lemma. 
+
+\begin{lemma}\label{lem:fixed-lengths-extracted}
+    For every \kl{type} $C$ and $k \in \set{0,1,\ldots}$, the \kl{concatenation map}
+        \begin{align*}
+    \left(\sum_{\ell < 2k} C^\ell \right) +  C^k \times C^* \times C^k \concmap C^*
+    \end{align*}
+    is an \kl{isomorphism}.
+\end{lemma}
+\begin{proof}
+    Induction on $k$. For the base case of $k=0$, there is nothing to do, since the concatenation map is the identity. 
+    Suppose now that we have proved the lemma for $k$ and we want to prove it for $k+1$. We need to define the inverse of the concatenation map in the statement of the lemma. This is done by using the  list destructors, as in the following composition:
+    \[
+    \begin{tikzcd}
+    C^* 
+    \ar[d, "\unconsterm"] 
+    \\
+    \onetype + C \times C^* 
+    \ar[d, "\idterm + \idterm \times (\unsnocterm)"]
+    \\
+    \onetype  + C \times (\onetype + C^* \times C) 
+    \ar[d,"\idterm + \distrterm"]
+    \\
+    \onetype + C \times \onetype + C \times C^* \times C
+    \ar[d,"\text{induction hypothesis}"]
+    \\
+    \onetype + C \times \onetype + C \times (    (\sum_{\ell < 2k} C^\ell) +  C^k \times C^* \times C^k) \times C
+    \ar[d,"\text{distributivity}"]
+    \\
+    \sum_{\ell < 2k+2} C^\ell + C^{k+1} \times C^* \times C^{k+1}.
+    \end{tikzcd}
+    \]
+    We need to prove that the inverse of the above is the  concatenation map. To see this, we observe that in each step we use a term whose inverse is obtained by  applying the type constructors to concatenation maps. Hence the inverse of the composition of all steps is like this as well, and hence it is a concatenation map.  
+\end{proof}
+
+Apply the above lemma and   distributivity, yielding an isomorphism to $C^*$ from the following type:
+\begin{align*}
+\sum_{\ell < 2k} \sum_{\alpha \in n^\ell} C_{\alpha(1)} \times \cdots \times C_{\alpha(\ell)}
+\qquad + \qquad 
+\sum_{\alpha, \beta \in n^k} C_{\alpha(1)} \times \cdots \times C_{\alpha(k)} \times C^* \times C_{\beta(1)} \times \cdots \times C_{\beta(k)}.
+\end{align*}
+When we apply $\hom f$ precomposed with this isomorphism, in each of the cases we get  a $k$-guarded term by the induction hypothesis, and closure of $k$-guarded terms under concatenation, which follows from \cref{lem:concatenation-monoidality}.
+    \end{description}
+Hence, we have proved the lemma. 
+\end{proof}
+
+% \subsection{Proof of Lemma~\ref{lem:must-be-guarded}}
+% \begin{proof}
+%     To prove the lemma, we distribute out the coproduct of $A$ over the product of $k$ copies of $A$, and then prove the claim for each summand after the distribution.
+%     Since $A$ is a coproduct $A_1 + \cdots + A_n$, its $k$-th power is isomorphic to 
+%     \begin{align*}
+%     \sum_{\alpha \in \set{1,\ldots,n}^k} A_{ \alpha(1)} \times \cdots \times A_{\alpha(k)}.
+%     \end{align*}
+% The following claim proves the lemma in each summand after distribution. Together with the results about concatenation commuting with coproducts from \cref{lem:distributivity-of-concatenation}, this proves the lemma.
+% \begin{claim}\label{claim:}
+%     Consider a summand $\alpha$ in the above sum, and let $f_\alpha$ and $g_\alpha$ be the two compositions  
+%     \[
+%     \begin{tikzcd}
+%     A_{ \alpha(1)} \times \cdots \times A_{\alpha(k)}
+%     \ar[r,"\text{injection}"]
+% &
+% A
+%  \ar[r,bend left,"{f^{\fdot k}}"]   
+%  \ar[r,bend right,"{g^{\fdot k}}"']
+% &
+% B^*.
+%     \end{tikzcd}
+%     \]
+%     There is some simple rational term $h_\alpha$ such that $f_\alpha \equiv w \wdot h_\alpha$ and $g_\alpha \equiv h_\alpha \wdot w$.
+% \end{claim}
+% \begin{proof}
+%     By the assumption that all constants are nonempty, we know that both $f_\alpha$ and $g_\alpha$ are  guarded  on both sides by strings of length at least $k$. For the $f_\alpha$  we will only care about the first $k$ letters in the  guard on the left, and for the $g_\alpha$, we will only care about the last $k$ letters in the  guard on the right. Summing up, we know that
+% \begin{align*}
+% f_\alpha  \equiv w_{f,\alpha} \wdot h_{f,\alpha} 
+% \quad \text{and} \quad 
+% g_\alpha \equiv h_{g,\alpha} \wdot w_{g,\alpha}
+% \end{align*}
+% holds for some values $w_{f,\alpha}$ and $w_{g,\alpha}$ of length exactly $k$, and some simple rational terms $h_{f,\alpha}$ and $h_{g,\alpha}$. 
+% By the conjugacy assumption, we know that $f_\alpha \wdot w \equiv g_\alpha \wdot w$, which implies that: 
+% \begin{align*}
+% w_{f,\alpha} \equiv w \equiv w_{g,\alpha}
+% \quad \text{and} \quad h_{f,\alpha} \equiv h_{g,\alpha},
+% \end{align*}
+% as required in the statement of the claim.
+% To prove that above equivalences, we first observe that they must hold denotationally, and then we use the already proved part of~\eqref{eq:completeness-for-simple-rational-terms} to conclude that they are provable in the system. (Here, it is important that distribution does not affect the nesting depth of the list constructor.)
+% \end{proof}
+% \end{proof}
+
+\subsection{Proof of \cref{claim:ignore-empty-lists}}
+\label{sec:proof-of-claim:ignore-empty-lists}
+The proof of the claim is based on the following diagram.
+            \[
+    \begin{tikzcd}
+        [column sep=huge]
+        (E+N)^* 
+        \ar[d,"\blockterm"']
+        \ar[drr, bend left = 17, "\hom f \equiv \hom(\either {f_E}  {f_N})"]
+        \\
+        E^* \times (N \times E^*)^* 
+        \ar[rr, "{\hom f_E \fdot \hom ( f_N \fdot \hom f_E)}"] 
+        \ar[d,"1 \times (\idterm \times 1)^*"']
+        & & 
+         B^*
+                  \\
+         \onetype \times (N \times \onetype)^*
+                 \ar[urr, "{[] \fdot \hom ( f_N \fdot [])}"'] 
+        \ar[rr,"\sndterm \times \fstterm^*"']
+         &  & 
+         N^*
+         \ar[u,"{\hom f_N}"']
+        %  \ar[urr, bend right=17, "\hom f_N"']
+    \end{tikzcd}
+    \]
+    Let us explain why all faces in this diagram commute. The uppermost face commutes by naturality of $\blockterm$.  The middle face commutes by \cref{ax:concatenation-of-empty-lists}. The lowermost face commutes by \cref{ax:concatenation-monoid}.  Summing up, the entire diagram commutes, which proves the claim.
+
+

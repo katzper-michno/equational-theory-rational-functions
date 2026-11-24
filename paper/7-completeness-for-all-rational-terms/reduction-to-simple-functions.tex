@@ -1,0 +1,133 @@
+\section{Completeness for All Rational Terms}
+\label{sec:completeness-for-all-rational-terms}
+In this section, we finish the proof of \cref{thm:main}, by reducing to the case of \kl{simple rational terms}. To implement this reduction, we introduce two auxiliary classes of terms.
+
+% lax begin Lax149335.LiftsAndDrops
+\begin{definition}[Lifts and drops]
+    \label{def:lift-drop}
+    \intro{Lift} terms (respectively, \intro{drop} terms) are those which can be obtained from the \kl{atomic lift} (respectively, \kl[atomic drop]{drop}) terms
+    in \cref{tab:atomic-drops-and-lifts} by applying composition, as well as the functoriality combinators for  coproducts, products, and lists.
+\end{definition}
+% lax end
+
+We use arrows $\liftmap$ for lifts and $\dropmap$ for drops. 
+Lift terms are meant to denote functions that annotate the input with some structure, while drop terms are meant to denote functions that erase this annotation. Drops are meant to be a mild generalisation of simple rational terms; one can show that simple rational terms are a special case of drops, up to an \kl{isomorphism} on the domain. A key property of  lift terms is that they are isomorphisms, and their inverses are drops. (Drops are not necessarily isomorphisms, and not every drop arises as an inverse of a lift.) 
+
+\begin{table}[t]
+% lax begin Lax149335.LiftsAndDrops
+    \centering
+    \caption{Atomic terms for the \kl{lift} and \kl{drop} classes. Note that we explicitly include atomic lift terms for coproduct commutativity and associativity -- this is because they are derived using coprojections, to which lifts have no access. Apart from that, the notable atomic lift and drop terms are $\shiftterm$ and $\unshiftterm$: they are not atomic rational terms, but are derivable in a natural way. In particular, they are natural transformations by \cref{ax:naturality}. Moreover, they are not exactly each other's inverses, but one can prove that $\shiftterm$ and $\either{[]}{\unshiftterm}$ are (see \cref{lem:lift-provable-inverse}).}
+    \label{tab:atomic-drops-and-lifts}
+    \renewcommand{\arraystretch}{1.4}
+    \begin{tabular}{c | c}
+        % \intro uses \emph; make it a no-op here so the headers stay upright
+        {\renewcommand\emph[1]{#1}\footnotesize\sffamily\MakeUppercase{\intro{Atomic lift terms}}} & {\renewcommand\emph[1]{#1}\footnotesize\sffamily\MakeUppercase{\intro{Atomic drop terms}}} \\[2pt]
+        \hline
+        \\[-12pt]
+        $A \lift{\idterm} A \qquad A + B \lift{\commterm} B + A$
+            & $A \drop{\idterm} A \qquad A \drop{1 \comp v} B$ \\
+        $A \lift{\unitrterm} A \times \onetype \qquad A \lift{\unitlterm} \onetype \times A$
+            & $A \times B \drop{\fstterm} A \qquad A \times B \drop{\sndterm} B$ \\
+        $A \times (B \times C) \lift{\assoclterm} (A \times B) \times C$
+            & $A \drop{\leftterm} A + B \qquad B \drop{\rightterm} A + B$ \\
+        $(A \times B) \times C \lift{\assocrterm} A \times (B \times C)$
+            & $A \times (B \times C) \drop{\assoclterm} (A \times B) \times C$ \\
+        $A + (B + C) \lift{\sumassoclterm} (A + B) + C$
+            & $(A \times B) \times C \drop{\assocrterm} A \times (B \times C)$ \\
+        $(A + B) + C \lift{\sumassocrterm} A + (B + C)$
+            & $A + A \drop{\codiagterm} A$ \\
+        $(A + B) \times C \lift{\distlterm} (A \times C) + (B \times C)$
+            & $A \drop{\pureterm} A^*$ \\
+        $A \times (B + C) \lift{\distrterm} (A \times B) + (A \times C)$
+            & $A^{**} \drop{\concatterm} A^*$ \\
+        $(A + B)^* \lift{\blockterm} A^* \times (B \times A^*)^*$
+            & $A^* \times A^* \drop{\binconcatterm} A^*$ \\
+        $(A \times B)^* \lift{\shiftterm} \onetype + A \times (B \times A)^* \times B$
+            & $A \times (B \times A)^* \times B \drop{\unshiftterm} (A \times B)^*$ \\
+    \end{tabular}%
+% lax end
+\end{table}
+
+% lax begin Lax149335.LiftInverses
+\begin{lemma}\label{lem:lift-provable-inverse}
+    Every lift is an \kl{isomorphism}, and its inverse is a \kl{drop}. 
+\end{lemma}
+% lax end
+\begin{proof}
+    Induction on the structure. The induction steps of combinators are straightforward, since drops are closed under the same combinators as lifts, and the same is true for inverses, which is a consequence of the functoriality axiom (\cref{ax:functoriality-of-type-constructors}). We are left with the base cases of the \kl{atomic lift} terms.
+    For most of the \kl{atomic lift} terms, the lemma is a direct consequence of the isomorphism axioms. For $\blockterm$, we observe that its inverse $\unblockterm$ (\cref{ax:isomorphisms}) is a \kl{concatenation map}, and all \kl{concatenation maps} are \kl{drops}. For $\shiftterm$, we leave as an exercise to show that $\either{[]}{\unshiftterm}$ is the inverse.
+\end{proof}
+
+As we have remarked above, \kl{drops} are a mild generalisation of \kl{simple rational terms}.  This is formalised in the following lemma, which says that if a \kl{drop} has type $A \to N^*$ for a \kl{finite alphabet} $N$, then it is provably equivalent to a \kl{simple rational term}, up to an isomorphism of its input type. The lemma is proved in \appref{sec:appendix:joint-drops-simplification} using a syntactic analysis of the structure of \kl{drops}.
+% lax begin Lax149335.DropsJointSimplification
+\begin{lemma}[Provable simplification of drops]\label{lem:joint-drops-normalisation} Let $N$ be a \kl{finite alphabet}, and let  $
+    f, g : A \dropmap N^*
+$ be drops.
+   There is $\pi : A \liftmap C$ and its inverse $\inv \pi$, such  that $\inv \pi\comp{}f$ and $\inv \pi\comp{}g$ are both equivalent to simple rational terms.
+\end{lemma}
+% lax end
+
+Since all \kl{lifts} are isomorphisms and our equational axiomatisation is complete for simple rational terms by \cref{lem:completeness-for-simple-rational-terms}, the above lemma shows that it is also complete for drops. We now show how all rational terms can be reduced to drops. This will be proved by factorising rational terms as lifts followed by drops. We begin the reduction with the special case of \kl{aperiodic terms}.
+
+% lax begin Lax149335.LiftDropFactorisation
+\begin{lemma}[Lift-drop factorisation]\label{lem:lift-then-drop}
+	Every aperiodic rational term is provably equivalent to a composition of a lift followed by a drop.
+\end{lemma}
+% lax end
+\begin{proof}
+The  base case is an easy case analysis, which is left to the reader. In the induction step when the rational term is constructed by using one of the functorial combinators, we use the induction hypothesis to factorise the subterms, and then functoriality.
+
+The essential case is the induction step for composition, i.e.~obtaining a lift-drop factorisation for a composition  $f = f_1 \comp f_2$. The induction hypothesis alone is not enough here: applying it gives  a decomposition for $f$ of the form lift-drop-lift-drop. To resolve this issue, we use the following lemma, which will swap the order of the inner drop and lift.
+% lax begin Lax149335.Exchange
+\begin{lemma}[Exchange]\label{lem:exchange} Every drop-lift composition is equivalent to a lift-drop composition.
+\end{lemma}
+% lax end
+\cref{lem:exchange} is proved in \appref{sec:appendix:exchange-proof}. By applying it to the inner drop-lift in the factorisation of $f$, we get a factorisation of $f$ of the form lift-lift-drop-drop, which can be combined into a single lift and a single drop, using the closure of lifts and drops under composition. 
+\end{proof}
+
+Using the lift-drop factorisation, we finish the completeness proof for aperiodic rational terms. 
+
+% lax begin Lax149335.AperiodicCompleteness
+\begin{corollary}[Aperiodic completeness]\label{cor:aperiodic-completeness}
+    If aperiodic rational terms $f$ and $g$ have the same denotation, then $f \equiv g$.
+\end{corollary}
+% lax end
+
+\begin{proof}
+    By postcomposing with the aperiodic and injective binary encoding term from \cref{lem:provably-injective-string-representation} we can assume without loss of generality that the two terms have type $A \to \twotype^*$.
+    We apply \cref{lem:lift-then-drop} to obtain a lift-drop decomposition $f \equiv \gamma \comp f'$. Then, we apply \cref{lem:lift-then-drop} again to decompose $\inv{\gamma} \comp g \equiv \sigma \comp g'$. Since $\inv \sigma$ is a drop, the composition $\inv \sigma \comp f'$ is also a drop. We obtain lift-drop factorisations of $f$ and $g$ with a common lift, as presented on the following diagram:
+        \[
+    \begin{tikzcd}
+        [row sep=small]
+        A
+        \ar[r, "{f, \, g}"]
+        \ar[d, blue, \liftar, "\gamma"']
+        \ar[dd, blue, bend right = 90, \liftar, "\text{common lift} \ (\gamma \, \comp \, \sigma)"']
+        & \twotype^*
+        \\
+        \blue{C}
+        \ar[ur, blue, Rightarrow, "f'"']
+        \ar[d, blue, \liftar, "\sigma"']
+        \\
+        \blue{D}
+        \ar[uur, blue, Rightarrow, bend right, "{(\inv{\sigma} \, \comp \, f'), \, g'}"']
+    \end{tikzcd}
+    \]
+    Consider the two drop terms $g'$ and $\inv{\sigma}\comp f'$ of type $D \to \twotype^*$. These two terms are denotationally equal, and they are drop terms whose codomain is the list type over a \kl{finite alphabet}. Thus, they are provably equivalent by \cref{lem:joint-drops-normalisation}, together with completeness for simple rational terms (\cref{lem:completeness-for-simple-rational-terms}) and the fact that lifts are isomorphisms. We can now use \cref{lem:pre-postcompose-with-injective-surjective} to cancel out the common lift, yielding $f \equiv g$. 
+\end{proof}
+
+The aperiodic case is arguably more natural than the general one, since the \kl{atomic terms} for groups are a bit artificial. Unfortunately, its completeness proof does use groups (although only cyclic ones) -- this is hidden in the proof of \cref{lem:bundles}, where a cyclic group is used to prove \kl{surjectivity} of the \kl{concatenation map}
+\begin{align*}
+(A^k)^* \times A^{<k} \concmap A^*.
+\end{align*}
+We do not know how to avoid this. The only solution that we see is an implication rule asserting surjectivity of the above concatenation map: if two terms are equivalent when precomposed with it, then they are equivalent. Such a rule would replace \cref{ax:window}, and make the completeness proof for \kl{aperiodic rational terms} purely aperiodic.
+
+\paragraph*{The General Case.} To finish the completeness proof, we need to account for the \kl{group prefix multiplication}. This is done in \appref{sec:completeness-in-the-presence-of-groups}, and we only give a rough description here. The general idea is to extend the lift terms with two kinds of terms: (a) a certain restricted kind of injections into the group \kl{type}, called \emph{group injections}, and (b) the term $\prefterm$ wrapped into a composition chain which has a drop one-sided inverse, which we call \emph{Simon lift}. The new kinds of lifts are no longer \kl{isomorphisms}, but they are still \kl{injective}, and their one-sided inverses are drops. The crucial step is a version of \cref{lem:exchange} adjusted to the setting of newly introduced lift (see \appref{lem:group-exchange}). The completeness proof then proceeds as in the aperiodic case (\cref{cor:aperiodic-completeness}). Using the exact same construction, we obtain the following provable version of \cref{thm:simplification-of-rational-terms}.
+
+% lax begin Lax149335.ProvableSimplification
+\begin{theorem}[Provable simplification of rational terms]\label{thm:provable-simplification}
+    Consider \kl{rational terms} $f, g : A \to N^*$, where $N$ is a \kl{finite alphabet}. There is a \kl{type} $B$ and a \kl{surjective} \kl{rational term} $\pi : B \to A$, such that $\pi \comp f$ and $\pi \comp g$ are equivalent to \kl{simple rational terms}.
+\end{theorem}
+% lax end
+
+Finally, combining \cref{thm:provable-simplification} with completeness for simple rational terms (\cref{lem:completeness-for-simple-rational-terms}), and arguing exactly as in the aperiodic case (\cref{cor:aperiodic-completeness}), we obtain completeness of the equational axiomatisation, which finishes the proof of \cref{thm:main}.

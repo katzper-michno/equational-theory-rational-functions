@@ -1,0 +1,229 @@
+\subsection{Rational Functions on Types}
+    As mentioned in our introduction, we think of \kl{rational functions} as operating on types that are built from a unit type by applying constructors for products, coproducts, and lists. 
+A formal definition of these types  is given below.
+% lax begin Lax149335.Types
+\begin{definition}
+    [Types]\label{def:types} \intro{Types} are expressions built using the following constructors:
+\begin{align*}
+    \myunderbrace{\onetype}{unit  type \\ which contains \\ a unique element $1 \in \onetype$} 
+\qquad
+\myunderbrace{A \times B}{product \\ type}
+\qquad
+\myunderbrace{A + B}{coproduct \\ type}
+\qquad
+\myunderbrace{A^*}{list \\ type}.
+\end{align*}
+\end{definition}
+
+Instead of considering only string-to-string rational functions, we will consider type-to-type rational functions, i.e.~rational functions of type $A \to B$ where the input type  $A$ and the output type  $B$ are constructed as in the above definition. To extend the notion of rationality to such functions, we  use string representations. As the output alphabet for these representations,  we use  an eight-letter alphabet that we denote by $8$:
+\begin{align*}
+( \quad ) \quad [ \quad ] \quad , \quad \onelement \quad \leftterm \quad \rightterm.
+\end{align*}
+ The \intro{string representation} for elements of types is defined by induction:  the unique element of $\onetype$ is represented by  $\onelement$; elements of $A + B$ are represented by $\leftterm\  a$ or $\rightterm\  b$; pairs are represented by $(a,b)$, and lists are represented by $[a_1,\ldots,a_n]$.
+% lax end
+
+% lax begin Lax149335.RationalFunctions
+\begin{definition}[Rational type-to-type functions]\label{def:rational-functions-on-types}
+    Let $A$ and $B$ be \kl{types}. A function $A \xrightarrow f  B$ is called rational if  the following diagram commutes:
+    \[
+    \begin{tikzcd}
+    A 
+    \ar[r,"f"]
+    \ar[d,"\text{string representation}"']
+    &
+    \ar[d,"\text{string representation}"]
+    B
+    \\
+    8^* 
+    \ar[r,"f'"']
+    &
+    8^*
+    \end{tikzcd}
+    \qquad \text{for some rational string-to-string function $f'$.}
+    \]
+\end{definition}
+% lax end
+Although \cref{def:rational-functions-on-types} is simple, it is also robust. In particular, no information is lost by passing to string representations, since the string representation can be inverted by a rational function (see the proof of \cref{lem:provably-injective-string-representation}). Moreover, in \cref{sec:syntax} we give a syntax of \kl{rational terms}, which represent exactly the rational functions on types.
+
+As we mentioned in \cref{sec:definition-of-rational-functions}, rational functions are closed under composition. Since the identity is also a rational function, it follows that the rational functions on types  form a category, which we call the \intro{category of rational functions}. The objects of this category are types, and the morphisms are rational functions. As we will see in \cref{sec:syntax}, this is a somewhat peculiar category: $+$ is a proper coproduct, but $\times$ is not a categorical product, since there is no pairing. In fact, $\times$ is not even symmetric, since swapping the components of a pair is not a rational function in general.
+
+\subsection{Simple Rational Terms} Before we define general \kl{rational terms} in \cref{sec:syntax}, in this section, we study a restricted class of them, which we call the \emph{simple rational terms}. The rough idea behind simple terms is that these represent type-to-string functions that are executed recursively over the structure of the input \kl{type}, with no states, and in each step they can only add some string constants. This class of terms is very limited, but we will show in \cref{thm:simplification-of-rational-terms} that every \kl{rational function} can be reduced in a certain way to a function represented by a simple term. 
+
+From now on, the letters $f, g, h,\ldots$ refer to terms rather than functions. The rational function represented by a term $f$ is called its \intro{denotation}, and is written $\sem{f}$. Simple rational terms output strings over a finite alphabet, which is represented as a type as follows.
+
+% lax begin Lax149335.Types
+\begin{definition}[Finite alphabet]\label{def:finite-alphabet}
+    A \kl{type} is called a \intro{finite alphabet} if it has the form $\onetype + \cdots + \onetype$.
+\end{definition}
+% lax end
+In other words, a finite alphabet is a coproduct of several copies of $\onetype$, with one copy for each letter. For example, $\twotype$ is the \intro{binary alphabet}.
+
+% lax begin Lax149335.SimpleRationalTerms
+\begin{definition}[Simple rational terms]\label{def:simple-rational-terms}  Let $B$ be a \kl{finite output alphabet}. 
+    \emph{\intro{Simple rational terms}} with outputs in $B^*$ are constructed using the following rules:
+    \begin{itemize}
+        \item \textbf{Empty.} The  term $[] :\onetype \to B^*$ with empty output is a \kl{simple rational term}.
+        \item \textbf{Combinators.} If $w \in B^*$ is a string constant (by $\varepsilon$ we denote the empty string), and 
+        \begin{align*}
+        A_1 \xrightarrow {f_1} B^* \quad \text{and} \quad  A_2 \xrightarrow {f_2} B^*
+        \end{align*}
+        are  \kl{simple rational terms}, then the following are also \kl{simple rational terms}:
+        \begin{align*}
+        \myunderbrace{A_1 + A_2 \xrightarrow{\either {f_1} {f_2}}  B^*}{\textbf{copairing} \\ apply $\sem{f_1}$ to inputs from $A_1$\\ and $\sem{f_2}$ to inputs from $A_2$} 
+        \quad 
+        \myunderbrace{A_1 \times A_2 \xrightarrow { f_1 \, \fdot \, f_2 } B^*}{\textbf{concatenation} \\ concatenate the \\  outputs of \\ $\sem{f_1}$ and $\sem{f_2}$}
+        \quad 
+        \myunderbrace{A_1^* \xrightarrow { \hom f_1 } B^*}{\textbf{homomorphism} \\ apply $\sem{f_1}$ to each \\ list element and then \\ concatenate the outputs}
+        \quad 
+        \myunderbrace{A_1 \xrightarrow { w \, \wdot \, f_1 } B^*}{\textbf{prepend} \\ apply $\sem{f_1}$ \\ and prepend $w$}
+        \quad
+        \myunderbrace{A_1 \xrightarrow { f_1 \, \wdot \, w} B^*}{\textbf{append} \\ apply $\sem{f_1}$ \\ and append $w$}.
+        \end{align*}
+    \end{itemize}
+\end{definition} 
+% lax end
+
+Note that $\fdot$ combines the domains of the two terms using product, while $\wdot$ does not change the domain. One could also imagine a combinator that concatenates pointwise two terms of the same type $A \to B^*$, but as we will see in \cref{sec:atomic-for-products}, it is not admissible for rational terms, since it would require a form of input duplication that cannot be implemented by a rational function.
+
+\begin{myexample}(Simple rational terms).
+Let us discuss the possible simple rational terms of type $N^* \to M^*$, where $N$ and $M$ are finite alphabets. Such a term is necessarily of the form $w \wdot \hom f \wdot v$, where $f : N \to M^*$ is an arbitrary letter-to-string simple term. In other words, the simple rational terms of type $N^* \to M^*$ represent exactly the string-to-string homomorphisms, with some fixed constants at the beginning and at the end of the output string.
+\end{myexample}
+
+The main results of this section are: in Section~\ref{sec:canonical-form-for-simple-rational-terms} we show that functions represented by simple rational terms have a canonical form, which is unique up to a certain form of conjugacy, and in Section~\ref{sec:simplification-of-rational-terms} we show that every rational function is represented by a simple term after lifting the domain. Putting these two results together, we will obtain a certain canonical form for rational functions.
+\subsection{Equivalence for Simple Rational Terms}
+\label{sec:canonical-form-for-simple-rational-terms}
+% In \cref{thm:simplification-of-rational-terms} we have seen that the equality problem for rational terms can be reduced to the equality problem for simple rational terms. In this section we show that the latter problem can be solved in polynomial time. More importantly, the solution uses canonicity of simple rational terms: up to a certain form of associativity, simple rational terms have a unique representation, i.e.~one cannot write the same simple rational term in two different ways. 
+
+
+
+The definition of \kl{simple rational terms} is inductive: each simple rational term is constructed from the empty term $[]$ by using the five combinators in the definition. It is possible to define the same function with two different terms. One reason is monoidality of string concatenation, e.g.~$f$ and $\varepsilon \wdot f$  both describe the same function. Another related reason is an iterated form of associativity, which we call conjugacy, as illustrated in the following example.
+
+
+\begin{myexample}(Conjugacy).
+Consider the following two simple rational terms of type $\onetype^* \to \set{a,b}^*$, where $\set{a,b}$ denotes a two-letter alphabet:
+\begin{align*}
+    \hom (1 \mapsto ab) \wdot a \quad \text{and} \quad a \wdot \hom (1 \mapsto ba),
+\end{align*}
+where $1 \mapsto ab$ denotes the simple term $ab \wdot []$.
+We adopt the notational convention that $\hom$ binds more strongly than $\wdot$, and hence in the first term we first apply the homomorphism and then we append $a$.
+Both terms describe the same function, namely $1^n \mapsto (ab)^na = a(ba)^n$.
+\end{myexample}
+
+As the following theorem shows, conjugacy is the only nontrivial reason why two simple rational terms could describe the same function.
+% lax begin Lax149335.ConjugacyCompleteness
+\begin{theorem}[Conjugacy completeness]\label{thm:conjugacy-completeness} For every two \kl{simple rational terms} $f$ and $g$, we have that $\sem{f} = \sem{g}$ if and only if $f \equiv g$, where $\equiv$ is defined using the following rules:
+    \begin{enumerate}
+        \item \label{item:congruence-rule} \textbf{Congruence:} $\equiv$ is stable under applying the constructors of \kl{simple rational terms}.
+        \item \label{item:concatenation-monoidality-rule} \textbf{Concatenation monoidality:} for all \kl{simple rational terms} $f,g,h$ and strings $w,v$ we have
+        \begin{gather*}
+            f \wdot \varepsilon \equiv f \equiv \varepsilon \wdot f \qquad [] \wdot w \equiv w \wdot [] \\ 
+            (f \wdot w) \wdot v \equiv f \wdot (w \cdot v) \qquad
+            w \wdot (v \wdot f) \equiv (w \cdot v) \wdot f \qquad
+            (w \wdot f) \wdot v \equiv w \wdot (f \wdot v) \\
+            (f \wdot w) \fdot g \equiv f \fdot (w \wdot g) \qquad
+            w \wdot (f \fdot g) \equiv (w \wdot f) \fdot g \qquad
+            (f \fdot g) \wdot w \equiv f \fdot (g \wdot w).
+        \end{gather*}
+        % \item \label{item:empty-list-homomorphism} \textbf{Empty homomorphism:} $\hom{[]} \equiv []$
+        \item \label{item:constants-copairing} \textbf{Constants and copairing:} for all \kl{simple rational terms} $f_1, f_2$ and strings $w$ we have
+              \begin{align*}
+                  w \wdot (\either {f_1} {f_2}) \equiv \either {(w \wdot f_1)} {(w \wdot f_2)} \qquad
+                  (\either {f_1} {f_2}) \wdot w \equiv \either {(f_1 \wdot w)} {(f_2 \wdot w)}.
+              \end{align*}
+        \item \label{item:distributivity-rule} \textbf{Case splitting:} for all \kl{simple rational terms} $f_1,f_2,g_1,g_2,h$ we have
+              \begin{align*}
+                  \either {(f_1 \fdot h)} {(f_2 \fdot h)} \equiv \either {(g_1 \fdot h)} {(g_2 \fdot h)} \enspace \text{implies} & \enspace (\either {f_1} {f_2}) \fdot h \equiv (\either {g_1} {g_2}) \fdot h \\
+                  \either {(h \fdot f_1)} {(h \fdot f_2)} \equiv \either {(h \fdot g_1)} {(h \fdot g_2)} \enspace \text{implies} & \enspace h \fdot (\either {f_1} {f_2}) \equiv h \fdot (\either {g_1} {g_2}).
+              \end{align*}
+        \item \label{item:conjugacy-rule} \textbf{Conjugacy:} for all \kl{simple rational terms} $f,g$ and string $w$ we have
+              \begin{align*}
+                  f \wdot w \equiv w \wdot g \quad \text{implies} \quad  \hom f \wdot w \equiv w \wdot \hom g.
+              \end{align*}
+    \end{enumerate}
+\end{theorem}
+% lax end
+
+Before proving the theorem, we underline how it falls short of a full completeness result. The first issue is that it concerns only the simple rational terms, which are too restricted to capture all \kl{rational functions}. The second issue is that it is based on implications, while we would like our system to be based only on equalities. Extension to all rational functions will be addressed informally in \cref{sec:simplification-of-rational-terms}, and formally in \cref{sec:completeness-for-all-rational-terms}, while the issue with implications will be resolved in \cref{sec:simple-rational-equationally}.
+
+\begin{proof}[Proof of \cref{thm:conjugacy-completeness}]
+    The soundness part of the theorem, which says that $f \equiv g$ implies that $f$ and $g$ define the same function, is straightforward. The soundness of the conjugacy rule is proved by induction on the length of the input list for the terms $\hom f \wdot w$ and $w \wdot \hom g$.
+    
+    We now turn to the completeness part, which says that if the terms $f$ and $g$ define the same function, then one can prove $f \equiv g$. This is shown by induction on the structure of the input \kl{type}. In the induction basis, when the input type is $A = \onetype$, both terms are necessarily constructed from the empty term $[]$ by prepending and appending constants. Hence, $f \equiv g$ can be proved using the rules for concatenation monoidality, where the rule $[] \wdot w \equiv w \wdot []$ is used to bring both terms to the form $w \wdot []$, with $w$ being their common output. In the induction step for coproducts, we first use the rules for constants and \kl{copairing} to push all string constants inside the copairing, so that $f = \either {f_1} {f_2}$ and $g = \either {g_1} {g_2}$. Then $f_1 \equiv g_1$ and $f_2 \equiv g_2$ follow from the induction hypothesis, and we finish by congruence.
+    
+    The interesting case is the induction step for products, which also treats the case of a list. By the monoidality and case-splitting rules, we can assume that the input type is a product of lists, possibly with some factors of the unit type:
+    \begin{align*}
+    A = (A_1)^* \times \cdots \times (A_n)^*.
+    \end{align*}
+    By monoidality, we can assume without loss of generality that $f$ and $g$ are of the form
+    \begin{align*}
+    f & = w_0 \wdot (\hom f_1 \wdot w_1) \fdot \cdots \fdot (\hom f_n \wdot w_n) \\
+    g & = v_0 \wdot (\hom g_1 \wdot v_1) \fdot \cdots \fdot (\hom g_n \wdot v_n).
+    \end{align*}
+    The proof uses  a new nested induction, which is on the sum of lengths of the constants $w_i$ and $v_i$. If both constants $w_0$ and $v_0$ are nonempty, then they must begin with the same letter. Hence, we can strip away this letter, and then apply the induction hypothesis in the nested induction. The interesting case is when one of the constants $w_0$ or $v_0$ is empty; by symmetry we assume that $v_0$ is empty. We now  observe that  the lengths of the outputs need to be synchronised across each of the components $A_1,\ldots,A_n$. 
+% lax begin Lax149335.SynchronisedLengths
+\begin{claim}
+    For every $i \in \set{1,\ldots,n}$ and  $a \in A_i$, the strings $\sem{f_i}(a)$ and $\sem{g_i}(a)$ have the same length.
+\end{claim}
+% lax end
+\begin{proof}
+    Toward a contradiction, suppose that there is some counterexample $a \in A_i$. Consider some input from $A$, and modify it by appending one copy of $a$ to the list on the $i$-th component. After this modification, the output lengths change in a different way, and hence the two functions cannot be equal.
+\end{proof}
+Apply the above claim to $i=1$, concluding that $\sem{f_1}$ and $\sem{g_1}$ have the same output lengths.
+Consider an input from $A$ where all lists are empty. Then the two outputs will be  $w_0 \cdots w_n$ and $v_1 \cdots v_n$, since we have assumed that $v_0$ is empty.  Therefore, $w_0$  is a prefix of  $v_1 \cdots v_n$.
+Now consider an input from $A$ where the first list has one item and all remaining lists are empty: 
+\begin{align*}
+([a],[],\ldots,[])  \qquad \text{for $a \in A_1$.}
+\end{align*}
+For this input, the two outputs will be 
+\begin{align*}
+w_0 \cdot \sem{f_1}(a) \cdot w_1 \cdots w_n \quad \text{and} \quad
+\sem{g_1}(a) \cdot v_1 \cdots v_n.
+\end{align*}
+Since the outputs $\sem{f_1}(a)$ and $\sem{g_1}(a)$ have the same length by the  claim, and  $v_1 \cdots v_n$ begins with $w_0$, it follows that
+\begin{align*}
+w_0 \cdot \sem{f_1}(a) = \sem{g_1}(a) \cdot w_0.
+\end{align*}
+This holds for every $a \in A_1$, and hence $\sem{w_0 \cdot f_1} = \sem{g_1 \cdot w_0}$. These are simple rational terms with domain $A_1$, which is strictly simpler than $A$. Therefore, by induction hypothesis, denotational equality implies provable equality. Thus, we have $w_0 \wdot f_1 \equiv g_1 \wdot w_0$. By conjugacy rule, we further have $w_0 \wdot \hom f_1 \equiv \hom g_1 \wdot w_0$. After this replacement, we can strip away $\hom{g_1}$ which appears as a prefix on both sides, and then apply the induction hypothesis in the main induction.
+\end{proof}
+
+One way of presenting the above theorem is that a simple rational term for a given function is unique up to conjugacy (with rules~\ref{item:congruence-rule}--\ref{item:distributivity-rule} being implicit).
+A simple corollary of the above theorem is a polynomial time equivalence test for  simple rational terms.
+% lax begin Lax149335.DecidableEquivalence
+\begin{corollary}
+    Equivalence for \kl{simple rational terms} is decidable in polynomial time.
+\end{corollary}
+% lax end
+\begin{proof}
+We can check equivalence under $\equiv$ in polynomial time. As witnessed by the proof of \cref{thm:conjugacy-completeness}, the only conjugacies which are needed are those that use an infix of the constant string $w_0 \cdots w_n$, and there is a quadratic number of such choices.  
+\end{proof}
+
+\subsection{Reduction to Simple Rational Terms}
+\label{sec:simplification-of-rational-terms}
+In \cref{thm:conjugacy-completeness}, we showed that \kl{simple rational terms} are unique up to conjugacy, and their equivalence can be decided in polynomial time. One could think that this is an irrelevant result, because there are very few functions represented by simple rational terms. However, as the following theorem shows, every \kl{rational term} can be made simple by suitably lifting the domain.
+
+% lax begin Lax149335.Simplification
+\begin{theorem}
+    [Simplification of rational terms]
+    \label{thm:simplification-of-rational-terms}
+    Consider \kl{rational terms}
+    $f, g: N^* \to M^*$
+    where $N$ and $M$ are \kl{finite alphabets}. There is a \kl{type} $C$ and a \kl{rational term}
+    $\pi: C \to N^*$
+    with surjective \kl{denotation}, such that  $\sem{\pi\comp{}f}$ and $\sem{\pi\comp{}g}$ are represented by \kl{simple rational terms}.
+\end{theorem}
+% lax end
+
+We do not give  a proof of \cref{thm:simplification-of-rational-terms} here for three reasons: (a) we have not yet defined rational terms; this is done in \cref{sec:syntax}, (b) we will prove a strictly stronger statement in the following sections (\cref{thm:provable-simplification}), and (c) an alternative proof can be obtained by modifying the proof of~\cite[Theorem 3.6]{BojanczykDaviaudKrishna2018}, which itself is based on a result from semigroup theory that is called   the Factorisation Forest Theorem~\cite[Theorem 6.1]{Simon1990}. 
+The theorem is illustrated below, with its conclusion in blue:
+\[
+    \forall \; \blue \exists \qquad
+    \begin{tikzcd}
+        N^*
+        \ar[r,"{f,\,g}"]
+        & M^* \\
+        \blue{C}
+        \ar[two heads, blue, u,"\pi"{xshift=-0.5ex, yshift=-0.5ex}]
+        \ar[ur,blue, "{\pi \comp f, \, \pi  \comp  g}"']
+    \end{tikzcd}
+\]
+Since $\sem{\pi}$ is surjective, $f$ and $g$ describe the same function if and only if $\pi\comp{}f$ and $\pi\comp{}g$ do. Therefore, the theorem reduces the equivalence problem for rational terms to that for simple rational terms. To use this reduction in a completeness proof, however, it needs to be carried out within the equational system, i.e.~the conclusion of \cref{thm:simplification-of-rational-terms} needs to be derivable from the axioms. This is exactly what we do in \cref{sec:completeness-for-all-rational-terms}.

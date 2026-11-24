@@ -1,0 +1,152 @@
+\section{Preliminaries for the Completeness Proof}
+\label{sec:proof-overview}
+The soundness of our axioms should be clear, and hence the rest of this paper is devoted to proving completeness: if two \kl{rational terms} $f, g$ represent the same function, then  $f \equiv g$ follows from the axioms. The heart of the completeness proof is in the next two sections,  where we follow an approach similar to \cref{sec:rational-functions}, which is to prove completeness for \kl{simple terms} (\cref{sec:simple-rational-equationally}) and then use it to prove the general case (\cref{sec:completeness-for-all-rational-terms}). However, this time, all of our arguments must be formalised in the equational axiomatisation, which  will make the proof considerably more involved. In this section, we present some preliminary notions that will be used in the completeness proof.
+
+\subsection{Concatenation Maps}
+\label{sec:concatenation-maps}
+% lax begin Lax149335.DerivedTerms
+Many terms that we consider do nothing but concatenate the input elements into a single list, without deleting or adding any elements. Examples include:
+\begin{align*}
+\myunderbrace{\consterm, \snocterm, \concatterm}{atomic terms}
+\qquad 
+\myunderbrace{\prependterm, \appendterm, [], \pureterm, \binconcatterm}{derived in \cref{sec:list-axioms} }.
+\end{align*}
+To simplify notation, instead of having a separate name for every such operation, we will think of them as instances of a single generic operation called \intro{concatenation map}. We have already used concatenation maps informally in \cref{sec:equational-theory}; here is the formal definition. Consider a \kl{type} $F(A)$ constructed from a type $A$ using type constructors, for example:
+\begin{align*}
+F(A) = ((A+A)^* \times (A+ \onetype))^*.
+\end{align*}
+The \emph{concatenation map of type $F(A) \to A^*$}, denoted using the tail arrow notation $F(A) \concmap A^*$ is defined by induction on the structure of $F$ as follows:
+\begin{align*}
+    A \concmap A^*              & \quad \eqdef \quad  \pureterm                                         \\
+    F_1(A) + F_2(A) \concmap A^*      & \quad \eqdef \quad  \either {(F_1(A) \concmap A^*)} {(F_2(A) \concmap A^*)} \\
+    F_1(A) \times F_2(A) \concmap A^* & \quad \eqdef \quad {(F_1(A) \concmap A^*)} \fdot {(F_2(A) \concmap A^*)}    \\
+    F(A)^* \concmap A^*            & \quad \eqdef \quad \hom{\left( F(A) \concmap A^* \right)}                               \\
+    \onetype \concmap A^*       & \quad \eqdef \quad [],
+\end{align*}
+where $f \odot g$ is syntactic sugar for $(f \times g)\comp \binconcatterm$ and $\hom f$ is syntactic sugar for $f^*\comp\concatterm$, similarly as in the definition of \kl{simple terms} (\cref{def:simple-rational-terms}). From now on, we will prefer the notation of concatenation maps over the \kl{atomic terms}. For example, we will write
+\begin{align*}
+\onetype + A^* \times A \concmap A^* 
+\qquad \text{instead of} \qquad
+\onetype + A^* \times A \xrightarrow{\snocterm} A^*.
+\end{align*}
+The input type of a concatenation map can be seen as a functor, which inputs some type parameter $A$ and outputs a type $F(A)$. Under this perspective, for each choice of $F$, the concatenation map is a natural transformation, which is expressed in the following diagram:
+\[
+    \begin{tikzcd}
+        F(A)
+        \ar[r,"F(f)"]
+        \ar[d,\concar]
+        &
+        F(B)
+        \ar[d,\concar]
+        \\
+        A^*
+        \ar[r,"{f^*}"']
+        &
+        B^*
+    \end{tikzcd}
+    \qquad \text{for every term $f: A \to B$.}
+\]
+
+The notion of concatenation maps can be generalised to multiple parameters. An example would be the inverse of $\blockterm$ mentioned in \cref{sec:theory:isomorphism-axioms}, which is of type $A^* \times (B \times A^*)^* \to
+(A+B)^*$. We call such terms \intro{multivariate concatenation maps}.
+For a formal definition, consider a functor $F(A_1, \dots, A_n)$ that inputs $n$ type parameters and outputs a type, and which is built using the type constructors. Such a functor is called \intro{multivariate list-polynomial functor}. For such a functor, we define the \reintro{multivariate concatenation map}:
+\begin{align*}
+F(A_1,\ldots,A_n) \concmap (A_1 + \cdots + A_n)^*
+\end{align*}
+in the same way as for the single-parameter case, except that in the base case we use
+\begin{align*}
+A_i \xrightarrow{\text{coprojection}} (A_1 + \cdots + A_n) \xrightarrow \pureterm (A_1 + \cdots + A_n)^*.
+\end{align*}
+Equivalently, the multivariate concatenation map is the composition of two steps: first, the coprojections inject each type $A_i$ into $A_1 + \cdots + A_n$, and then the single-parameter concatenation map is applied. Multivariate concatenation maps are a crucial tool in our proofs. In particular, in \appref{sec:rebracketings} we use them to formally define rebracketings, i.e.~terms that do nothing except for rebracketing the input, or in other words, terms that commute with concatenation maps. An example is $\shiftrterm$, which is a rebracketing by \cref{ax:shift-concatenation}.
+% lax end
+
+\subsection{Values}
+% lax begin Lax149335.DerivedTerms
+\begin{definition}
+    [\intro{Value}] \label{def:value}
+    A \kl{value} is a term of type $\onetype  \to A$.
+\end{definition}
+
+Values represent elements of \kl{types}. We begin the completeness proof with values, which is also an opportunity to introduce notation used throughout the rest of the proof.
+
+We use the letters $u, v, w, \ldots$ to denote values. To combine two values of types $\onetype \to A_1$ and $\onetype \to A_2$ into a value of type $\onetype \to A_1 \times A_2$, the natural idea would be to use pairing of terms. Although general pairing is not allowed in \kl{rational terms} (see \cref{sec:atomic-for-products}), in this case, it is available thanks to $\unitlterm : \onetype \to \onetype \times \onetype$. Therefore, we can pair two values into a value of product type. In fact, we can do a bit more: we can pair a value with a term that is not necessarily a value, as follows: if $f$ is a term of type $A \to B$  and  $v$ is a value of type $\onetype  \to C$, then we define
+\begin{align*}
+A \xrightarrow{(v,f)} C \times B \eqdef \prependoneterm\comp (v \times f)  
+\qquad 
+A \xrightarrow {(f,v)} B \times C \eqdef \appendoneterm\comp (f \times v).
+\end{align*}
+On the face of it, this notation is ambiguous, since pairing two values $(v,w)$ could be matched to the above definition in two ways to create a new value. However,
+\begin{align*}
+\prependoneterm\comp(v \times w) \equalbecause{\cref{ax:unit-type} says that $\appendoneterm\comp\sndterm$ is the identity on $\onetype$}\\
+\appendoneterm\comp \sndterm\comp \prependoneterm\comp(v \times w) \equalbecause{\cref{ax:isomorphisms} says that $\sndterm\comp \prependoneterm$ is the identity on $\onetype \times \onetype$}\\
+\appendoneterm\comp(v \times w),
+\end{align*}
+so we can pair values $(v,w)$ without any risk of ambiguity.
+
+We now introduce some notation for concatenation with values of list types. To construct singleton lists, we use the combinator  defined by $[v] = v\comp\pureterm$. To concatenate two list values -- in fact more generally, a list value $v$ together with an arbitrary term $f$ that has  list outputs -- we use the following notation: $v \wdot f$ is defined to be the composition of the pair $(v,f)$ with the \kl{concatenation map}, and $f \wdot w$ is defined similarly.
+By  the above,   there is no ambiguity when concatenating two list values $v \wdot w$, and the result corresponds to string concatenation.
+% lax end
+We now state the relevant monoidality laws, which are the same as in \cref{thm:conjugacy-completeness}. The proof of the following lemma is a straightforward application of our axioms, and is left to the reader.
+
+% lax begin Lax149335.ValueConcatenation
+\begin{lemma}\label{lem:concatenation-monoidality}
+    For all \kl{rational terms} $A \xrightarrow{f} B^*$ and $A' \xrightarrow{g} B^*$, and \kl{values} $\onetype \xrightarrow{w,v} B^*$, we have
+    \begin{gather*}
+        f \wdot [] \equiv f \equiv [] \wdot f \quad \;\;
+        (f \wdot w) \wdot v \equiv f \wdot (w \cdot v) \quad \;\;
+        w \wdot (v \wdot f) \equiv (w \cdot v) \wdot f \quad \;\;
+        (w \wdot f) \wdot v \equiv w \wdot (f \wdot v) \\
+        (f \wdot w) \fdot g \equiv f \fdot (w \wdot g) \qquad
+        w \wdot (f \fdot g) \equiv (w \wdot f) \fdot g \qquad
+        (f \fdot g) \wdot w \equiv f \fdot (g \wdot w).
+    \end{gather*}
+\end{lemma}
+% lax end
+
+Equipped with the above notation, in \appref{sec:proof-of-normalisation-of-values} we show that every value is provably equivalent to one built using the constructors listed below.
+% lax begin Lax149335.ValueNormalisation
+\begin{lemma}[Normalisation of values]\label{lem:value-completeness}
+    Every \kl{value} is provably equivalent to one constructed using 
+        \begin{align*}
+    \myunderbrace{\idterm}{identity on $\onetype $} \qquad \qquad
+    \myunderbrace{v\comp\leftterm \quad v\comp\rightterm}{constructors for coproduct values}
+    \qquad  \qquad \qquad 
+    \myunderbrace{(v,w)}{constructor for product values}
+    \qquad \qquad \qquad 
+    \myunderbrace{v \wdot w \quad [v] \quad []}{constructors for list values}.
+    \end{align*}
+\end{lemma}
+% lax end
+As a corollary, our equational axiomatisation is complete for values. This is because the only ambiguity in writing a value in normal form is the bracketing of concatenation of values that represent lists, and different bracketings are provably equivalent by \cref{lem:concatenation-monoidality}.
+
+\subsection{Injective, Surjective and Isomorphic Terms}
+\label{sec:reduction-to-string-outputs}
+We finish this section by introducing some \kl{injective}, \kl{surjective}, and \kl[isomorphism]{isomorphic} terms that will be used throughout the completeness proof.
+% lax begin Lax149335.InjectiveSurjectiveTerms
+\begin{definition}[Injective, surjective, and isomorphic terms]\label{def:injective-surjective-terms}
+    \AP{}A \kl{rational term} $A \xrightarrow f B$ is called
+    \begin{align*}
+        \text{\emph{injective}} \label{def:injective} & \quad \text{if } f \comp \inv f \equiv \idterm \text{ for some term } B \xrightarrow{\inv f} A, \tag*{}\\
+        \text{\emph{surjective}} \label{def:surjective} & \quad \text{if } \inv f \comp f \equiv \idterm \text{ for some term } B \xrightarrow{\inv f} A, \tag*{}\\
+        \text{an \emph{isomorphism}} \label{def:isomorphism} & \quad \text{if } f \comp \inv f \equiv \idterm \text{ and } \inv f \comp f \equiv \idterm \text{ for some term } B \xrightarrow{\inv f} A. \tag*{}
+    \end{align*}
+\end{definition}
+% lax end
+In categorical terms, an injective term is a \emph{section} (i.e.~a split monomorphism) and a surjective term is a \emph{retraction} (i.e.~a split epimorphism) in the \kl{category of rational terms}. However, we prefer the name injective (surjective), since it agrees with the intuition that the function represented by an injective (surjective) term is injective (surjective) in the usual sense.\footnote{As a curiosity, the converse is also true: if $\sem{f}$ is injective (surjective), then $f$ is injective (surjective) in the sense of \cref{def:injective-surjective-terms}. This is a consequence of the fact that the category of rational terms is isomorphic to the \kl{category of rational functions} (a corollary of Theorems~\ref{thm:atomics-and-combinators-completeness} and \ref{thm:main}), in which the notions of injectivity and surjectivity coincide with sections and retractions. For injective functions, this is because the inverse of a \kl{rational relation} is rational, and the image of a \kl{rational function} is a regular set, outside of which the left inverse can output an arbitrary fixed value; for surjective functions, it is a simple consequence of Eilenberg's uniformisation theorem for rational relations~\cite[Proposition IX.8.2]{Eilenberg1974}.} Because of their one-sided inverses, injective and surjective terms can be cancelled out in equivalence proofs, which is an instance of the general fact that sections and retractions are in particular monomorphisms and epimorphisms, respectively. We leave the proof of this fact as an exercise to the reader. 
+
+% lax begin Lax149335.Cancellation
+\begin{lemma}\label{lem:pre-postcompose-with-injective-surjective}
+    Let $A \xrightarrow {g_1,g_2} B$ be \kl{rational terms}. Then 
+    \begin{align*}
+g_1 \equiv g_2 \quad \text{iff} \quad g_1\comp{}f \equiv g_2\comp{}f \qquad &\text{for every \kl{injective} }f : B \to C \\ 
+g_1 \equiv g_2 \quad \text{iff} \quad f\comp{}g_1 \equiv f\comp{}g_2 \qquad &\text{for every \kl{surjective}  }f : C \to A.
+\end{align*}
+\end{lemma}
+% lax end
+By a standard argument, a term that is both \kl{injective} and \kl{surjective} is an \kl{isomorphism}, and its inverse is unique up to $\equiv$. As an application of injectivity, we are able to reduce the completeness proof to the special case of terms whose codomains are lists over the \kl{binary alphabet} ${\twotype}$. The reduction uses the following lemma, which is proved in \appref{sec:provably-injective-string-representations}, together with \cref{lem:pre-postcompose-with-injective-surjective} (see \cref{cor:aperiodic-completeness}).
+
+% lax begin Lax149335.StringRepresentations
+\begin{lemma}\label{lem:provably-injective-string-representation}
+    For every \kl{type} $A$ there is an \kl{injective} \kl{aperiodic term} $A \xrightarrow{\stringrep{A}} {\twotype}^*$.
+\end{lemma}
+% lax end

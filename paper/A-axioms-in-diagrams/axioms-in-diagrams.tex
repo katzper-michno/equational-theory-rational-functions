@@ -1,0 +1,357 @@
+\section{The Axioms as Commutative Diagrams}
+\label{sec:axioms-in-diagrams}
+
+% a cell of a table of diagrams: #2 is the diagram
+\newcommand{\axcell}[2][0.48]{%
+    \begin{minipage}[b]{#1\linewidth}\centering #2\end{minipage}}
+% horizontal separator followed by the name of a group of axioms
+\newcommand{\axgroup}[1]{\par\medskip\noindent\rule{\linewidth}{0.4pt}\par\smallskip
+    \noindent{\footnotesize\sffamily\MakeUppercase{#1}}\par\medskip}
+
+\axgroup{Derived terms}
+
+{\allowdisplaybreaks
+\begin{align*}
+    A \xrightarrow{1} \onetype \quad & \eqdef \quad \appendoneterm \comp \sndterm \\
+    (A \times B) + (A \times C) \xrightarrow{\undistrterm} A \times (B + C) \quad & \eqdef \quad \either{(\idterm \times \leftterm)}{(\idterm \times \rightterm)} \\
+    (A \times C) + (B \times C) \xrightarrow{\undistlterm} (A + B) \times C \quad & \eqdef \quad \either{(\leftterm \times \idterm)}{(\rightterm \times \idterm)} \\
+    A \times A^* \xrightarrow{\prependterm} A^* \quad & \eqdef \quad \rightterm \comp \consterm \\
+    A^* \times A \xrightarrow{\appendterm} A^* \quad & \eqdef \quad \rightterm \comp \snocterm \\
+    \onetype \xrightarrow{[]} A^* \quad & \eqdef \quad \leftterm \comp \consterm \\
+    A \xrightarrow{\pureterm} A^* \quad & \eqdef \quad \appendoneterm \comp (\idterm \times []) \comp \prependterm \\
+    A^* \times A^* \xrightarrow{\binconcatterm} A^* \quad & \eqdef \quad (\idterm \times \pureterm) \comp \prependterm \comp \concatterm \\
+    F(A, B) \xrightarrowtail{\,\text{concatenation map}\,} (A+B)^* \quad & \eqdef \quad \text{\cref{sec:concatenation-maps}} \\
+    (A \times G)^* \xrightarrow{\unprefterm} (A \times G)^* \quad & \eqdef \quad \text{\cref{def:unprefterm}} \\
+    2^{**} \xrightarrow{\bundleterm} (2^* \times 2^*)^* \times (\onetype + 2^*) \quad & \eqdef \quad \text{\cref{def:bundle-term}} 
+\end{align*}
+}
+
+\axgroup{Category axioms (\ref{ax:associativity-of-composition})}
+
+\noindent
+\axcell[0.32]{$(f \comp g) \comp h \equiv f \comp (g \comp h)$\par\medskip}
+\hfill
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"\idterm"] \ar[dr,"f"'] \& A \ar[d,"f"] \\
+    \& B
+\end{tikzcd}}
+\hfill
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"f"] \ar[dr,"f"'] \& B \ar[d,"\idterm"] \\
+    \& B
+\end{tikzcd}}
+
+\axgroup{Functoriality axioms (\ref{ax:functoriality-of-type-constructors})}
+
+\noindent
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&]
+    A_1 \times A_2 \ar[r, shift left, "\idterm \times \idterm"] \ar[r, shift right, "\idterm"'] \& A_1 \times A_2
+\end{tikzcd}}
+\hfill
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&]
+    A_1 + A_2 \ar[r, shift left, "\idterm + \idterm"] \ar[r, shift right, "\idterm"'] \& A_1 + A_2
+\end{tikzcd}}
+\hfill
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&]
+    A^* \ar[r, shift left, "\idterm^*"] \ar[r, shift right, "\idterm"'] \& A^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&, column sep=small]
+    A_1 \times A_2 \ar[r,"f_1 \times f_2"] \ar[dr,"(f_1 \comp g_1) \times (f_2 \comp g_2)"', near end] \& B_1 \times B_2 \ar[d,"g_1 \times g_2"] \\
+    \& C_1 \times C_2
+\end{tikzcd}}
+\hfill
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&, column sep=small]
+    A_1 + A_2 \ar[r,"f_1 + f_2"] \ar[dr,"(f_1 \comp g_1) + (f_2 \comp g_2)"', near end] \& B_1 + B_2 \ar[d,"g_1 + g_2"] \\
+    \& C_1 + C_2
+\end{tikzcd}}
+\hfill
+\axcell[0.32]{\begin{tikzcd}[ampersand replacement=\&]
+    A^* \ar[r,"f^*"] \ar[dr,"(f \comp g)^*"'] \& B^* \ar[d,"g^*"] \\
+    \& C^*
+\end{tikzcd}}
+
+\axgroup{Naturality axioms (\ref{ax:naturality})}
+
+\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"f"] \ar[d,"\idterm"'] \& B \ar[d,"\idterm"] \\
+    A \ar[r,"f"'] \& B
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A + A \ar[r,"f + f"] \ar[d,"\codiagterm"'] \& B + B \ar[d,"\codiagterm"] \\
+    A \ar[r,"f"'] \& B
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A_1 \ar[r,"f_1"] \ar[d,"\leftterm"'] \& B_1 \ar[d,"\leftterm"] \\
+    A_1 + A_2 \ar[r,"f_1 + f_2"'] \& B_1 + B_2
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A_2 \ar[r,"f_2"] \ar[d,"\rightterm"'] \& B_2 \ar[d,"\rightterm"] \\
+    A_1 + A_2 \ar[r,"f_1 + f_2"'] \& B_1 + B_2
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A_1 \times A_2 \ar[r,"f_1 \times f_2"] \ar[d,"\fstterm"'] \& B_1 \times B_2 \ar[d,"\fstterm"] \\
+    A_1 \ar[r,"f_1"'] \& B_1
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A_1 \times A_2 \ar[r,"f_1 \times f_2"] \ar[d,"\sndterm"'] \& B_1 \times B_2 \ar[d,"\sndterm"] \\
+    A_2 \ar[r,"f_2"'] \& B_2
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"f"] \ar[d,"{\appendoneterm}"'] \& B \ar[d,"{\appendoneterm}"] \\
+    A \times \onetype \ar[r,"f \times \idterm"'] \& B \times \onetype
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"f"] \ar[d,"{\prependoneterm}"'] \& B \ar[d,"{\prependoneterm}"] \\
+    \onetype \times A \ar[r,"\idterm \times f"'] \& \onetype \times B
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    A_1 \times (A_2 \times A_3) \ar[r,"f_1 \times (f_2 \times f_3)"] \ar[d,"\assoclterm"'] \& B_1 \times (B_2 \times B_3) \ar[d,"\assoclterm"] \\
+    (A_1 \times A_2) \times A_3 \ar[r,"(f_1 \times f_2) \times f_3"'] \& (B_1 \times B_2) \times B_3
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    (A_1 \times A_2) \times A_3 \ar[r,"(f_1 \times f_2) \times f_3"] \ar[d,"\assocrterm"'] \& (B_1 \times B_2) \times B_3 \ar[d,"\assocrterm"] \\
+    A_1 \times (A_2 \times A_3) \ar[r,"f_1 \times (f_2 \times f_3)"'] \& B_1 \times (B_2 \times B_3)
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&, column sep=huge]
+    A_1 \times (A_2 + A_3) \ar[r,"f_1 \times (f_2 + f_3)"] \ar[d,"\distrterm"'] \& B_1 \times (B_2 + B_3) \ar[d,"\distrterm"] \\
+    (A_1 \times A_2) + (A_1 \times A_3) \ar[r,"(f_1 \times f_2) + (f_1 \times f_3)"'] \& (B_1 \times B_2) + (B_1 \times B_3)
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&, column sep=huge]
+    (A_1 + A_2) \times A_3 \ar[r,"(f_1 + f_2) \times f_3"] \ar[d,"\distlterm"'] \& (B_1 + B_2) \times B_3 \ar[d,"\distlterm"] \\
+    (A_1 \times A_3) + (A_2 \times A_3) \ar[r,"(f_1 \times f_3) + (f_2 \times f_3)"'] \& (B_1 \times B_3) + (B_2 \times B_3)
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    \onetype + A \times A^* \ar[r,"\idterm + f \times f^*"] \ar[d,"\consterm"'] \& \onetype + B \times B^* \ar[d,"\consterm"] \\
+    A^* \ar[r,"f^*"'] \& B^*
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    A^* \ar[r,"f^*"] \ar[d,"\unconsterm"'] \& B^* \ar[d,"\unconsterm"] \\
+    \onetype + A \times A^* \ar[r,"\idterm + f \times f^*"'] \& \onetype + B \times B^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    \onetype + A^* \times A \ar[r,"\idterm + f^* \times f"] \ar[d,"\snocterm"'] \& \onetype + B^* \times B \ar[d,"\snocterm"] \\
+    A^* \ar[r,"f^*"'] \& B^*
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    A^* \ar[r,"f^*"] \ar[d,"\unsnocterm"'] \& B^* \ar[d,"\unsnocterm"] \\
+    \onetype + A^* \times A \ar[r,"\idterm + f^* \times f"'] \& \onetype + B^* \times B
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A^{**} \ar[r,"f^{**}"] \ar[d,"\concatterm"'] \& B^{**} \ar[d,"\concatterm"] \\
+    A^* \ar[r,"f^*"'] \& B^*
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    (A_1 + A_2)^* \ar[r,"(f_1 + f_2)^*"] \ar[d,"\blockterm"'] \& (B_1 + B_2)^* \ar[d,"\blockterm"] \\
+    A_1^* \times (A_2 \times A_1^*)^* \ar[r,"f_1^* \times (f_2 \times f_1^*)^*"'] \& B_1^* \times (B_2 \times B_1^*)^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    (A_1 \times A_2)^* \times A_1 \ar[r,"(f_1 \times f_2)^* \times f_1"] \ar[d,"\shiftrterm"'] \& (B_1 \times B_2)^* \times B_1 \ar[d,"\shiftrterm"] \\
+    A_1 \times (A_2 \times A_1)^* \ar[r,"f_1 \times (f_2 \times f_1)^*"'] \& B_1 \times (B_2 \times B_1)^*
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    A_1 \times (A_2 \times A_1)^* \ar[r,"f_1 \times (f_2 \times f_1)^*"] \ar[d,"\shiftlterm"'] \& B_1 \times (B_2 \times B_1)^* \ar[d,"\shiftlterm"] \\
+    (A_1 \times A_2)^* \times A_1 \ar[r,"(f_1 \times f_2)^* \times f_1"'] \& (B_1 \times B_2)^* \times B_1
+\end{tikzcd}}
+
+\axgroup{Isomorphism axioms (\ref{ax:isomorphisms})}
+
+\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"{\appendoneterm}"] \ar[dr,"\idterm"'] \& A \times \onetype \ar[d,"\fstterm"] \ar[dr,"\idterm"] \& \\
+    \& A \ar[r,"{\appendoneterm}"'] \& A \times \onetype
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"{\prependoneterm}"] \ar[dr,"\idterm"'] \& \onetype \times A \ar[d,"\sndterm"] \ar[dr,"\idterm"] \& \\
+    \& A \ar[r,"{\prependoneterm}"'] \& \onetype \times A
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&]
+    A \times (B \times C) \ar[r,"\assoclterm"] \ar[dr,"\idterm"'] \& (A \times B) \times C \ar[d,"\assocrterm"] \ar[dr,"\idterm"] \& \\
+    \& A \times (B \times C) \ar[r,"\assoclterm"'] \& (A \times B) \times C
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&]
+    A \times (B \times A)^* \ar[r,"\shiftlterm"] \ar[dr,"\idterm"'] \& (A \times B)^* \times A \ar[d,"\shiftrterm"] \ar[dr,"\idterm"] \& \\
+    \& A \times (B \times A)^* \ar[r,"\shiftlterm"'] \& (A \times B)^* \times A
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&]
+    (A + B) \times C \ar[r,"\distlterm"] \ar[dr,"\idterm"'] \& (A \times C) + (B \times C) \ar[d,"\undistlterm"] \ar[dr,"\idterm"] \& \\
+    \& (A + B) \times C \ar[r,"\distlterm"'] \& (A \times C) + (B \times C)
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&]
+    A \times (B + C) \ar[r,"\distrterm"] \ar[dr,"\idterm"'] \& (A \times B) + (A \times C) \ar[d,"\undistrterm"] \ar[dr,"\idterm"] \& \\
+    \& A \times (B + C) \ar[r,"\distrterm"'] \& (A \times B) + (A \times C)
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    \onetype + A \times A^* \ar[r,"\consterm"] \ar[dr,"\idterm"'] \& A^* \ar[d,"\unconsterm"] \ar[dr,"\idterm"] \& \\
+    \& \onetype + A \times A^* \ar[r,"\consterm"'] \& A^*
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    \onetype + A^* \times A \ar[r,"\snocterm"] \ar[dr,"\idterm"'] \& A^* \ar[d,"\unsnocterm"] \ar[dr,"\idterm"] \& \\
+    \& \onetype + A^* \times A \ar[r,"\snocterm"'] \& A^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    (A + B)^* \ar[r,"\blockterm"] \ar[dr,"\idterm"'] \& A^* \times (B \times A^*)^* \ar[d, \concar, "\unblockterm"] \ar[dr,"\idterm"] \& \\
+    \& (A + B)^* \ar[r,"\blockterm"'] \& A^* \times (B \times A^*)^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    (A \times G)^* \ar[r,"\prefterm"] \ar[dr,"\idterm"'] \& (A \times G)^* \ar[d,"\unprefterm"] \ar[dr,"\idterm"] \& \\
+    \& (A \times G)^* \ar[r,"\prefterm"'] \& (A \times G)^*
+\end{tikzcd}}
+
+\axgroup{Listless axioms (\ref{ax:unit-type}--\ref{ax:triangle})}
+
+\noindent
+\axcell[0.18]{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r, shift left, "f"] \ar[r, shift right, "g"'] \& \onetype
+\end{tikzcd}}
+\hfill
+\axcell[0.36]{\begin{tikzcd}[ampersand replacement=\&, column sep=large, row sep=large]
+    A \ar[r,"\leftterm"] \ar[dr,"\idterm"'] \& A + A \ar[d,"\codiagterm" description] \& A \ar[l,"\rightterm"'] \ar[dl,"\idterm"] \\
+    \& A \&
+\end{tikzcd}}
+\hfill
+\axcell[0.42]{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    A + B \ar[r,"\leftterm + \rightterm"] \ar[dr,"\idterm"'] \& (A + B) + (A + B) \ar[d,"\codiagterm"] \\
+    \& A + B
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[0.56]{\begin{tikzcd}[ampersand replacement=\&, column sep=-1.5em]
+    \& A \times (B \times (C \times D)) \ar[dl,"\idterm \times \assoclterm"'] \ar[dr,"\assoclterm"] \& \\
+    A \times ((B \times C) \times D) \ar[d,"\assoclterm"'] \& \& (A \times B) \times (C \times D) \ar[d,"\assoclterm"] \\
+    (A \times (B \times C)) \times D \ar[rr,"\assoclterm \times \idterm"'] \& \& ((A \times B) \times C) \times D
+\end{tikzcd}}
+\hfill
+\axcell[0.435]{\begin{tikzcd}[ampersand replacement=\&, column sep=small]
+    A \times (\onetype \times C) \ar[rr,"\assoclterm"] \ar[dr,"\idterm \times \sndterm"'] \& \& (A \times \onetype) \times C \ar[dl,"\fstterm \times \idterm"] \\
+    \& A \times C \&
+\end{tikzcd}}
+
+\axgroup{List axioms (\ref{ax:cons-snoc-symmetry}--\ref{ax:window})}
+
+\noindent
+\axcell[0.4]{\begin{tikzcd}[ampersand replacement=\&]
+    \onetype \ar[r,"\leftterm"] \ar[d,"\leftterm"'] \& \onetype + A \times A^* \ar[d,"\consterm"] \\
+    \onetype + A^* \times A \ar[r,"\snocterm"'] \& A^*
+\end{tikzcd}}
+\hfill
+\axcell[0.58]{\begin{tikzcd}[ampersand replacement=\&]
+    A \ar[r,"\prependoneterm"] \ar[d,"\appendoneterm"'] \& \onetype \times A \ar[r,"{[] \times \idterm}"] \& A^* \times A \ar[d,"\appendterm"] \\
+    A \times \onetype \ar[r,"{\idterm \times []}"'] \& A \times A^* \ar[r,"\prependterm"'] \& A^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&]
+    A^* \times A^* \ar[r,"\pureterm \times \idterm"] \ar[d,"\idterm \times \pureterm"'] \& A^{**} \times A^* \ar[r,"\appendterm"] \& A^{**} \ar[d,"\concatterm"] \\
+    A^* \times A^{**} \ar[r,"\prependterm"'] \& A^{**} \ar[r,"\concatterm"'] \& A^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[0.49]{\begin{tikzcd}[ampersand replacement=\&, column sep=5em]
+    (A^* \times A^*) \times A^* \ar[r,"\binconcatterm \times \idterm"] \ar[d,"\assocrterm"'] \& A^* \times A^* \ar[dd,"\binconcatterm"] \\
+    A^* \times (A^* \times A^*) \ar[d,"\idterm \times \binconcatterm"'] \& \\
+    A^* \times A^* \ar[r,"\binconcatterm"'] \& A^*
+\end{tikzcd}}
+\hfill
+\axcell[0.49]{\begin{tikzcd}[ampersand replacement=\&]
+    A^* \ar[r,"\appendoneterm"] \ar[drr,"\idterm"'] \& A^* \times \onetype \ar[r,"{\idterm \times []}"] \& A^* \times A^* \ar[d,"\binconcatterm"] \\
+    \& \& A^* \\
+    A^* \ar[r,"\prependoneterm"'] \ar[urr,"\idterm"] \& \onetype \times A^* \ar[r,"{[] \times \idterm}"'] \& A^* \times A^* \ar[u,"\binconcatterm"']
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[0.35]{\begin{tikzcd}[ampersand replacement=\&]
+    \onetype \ar[r,"{[]}"] \ar[dr,"{[]}"'] \& A^{**} \ar[d,"\concatterm"] \\
+    \& A^*
+\end{tikzcd}}
+\hfill
+\axcell[0.63]{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    A^{**} \times A^{**} \ar[r,"\binconcatterm"] \ar[d,"\concatterm \times \concatterm"'] \& A^{**} \ar[d,"\concatterm"] \\
+    A^* \times A^* \ar[r,"\binconcatterm"'] \& A^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[0.35]{\begin{tikzcd}[ampersand replacement=\&]
+    A^{***} \ar[r,"\concatterm^*"] \ar[d,"\concatterm"'] \& A^{**} \ar[d,"\concatterm"] \\
+    A^{**} \ar[r,"\concatterm"'] \& A^*
+\end{tikzcd}}
+\hfill
+\axcell[0.6]{\begin{tikzcd}[ampersand replacement=\&, column sep=large, row sep=large]
+    A^* \ar[r,"\pureterm"] \ar[dr,"\idterm"'] \& A^{**} \ar[d,"\concatterm" description] \& A^* \ar[l,"\pureterm^*"'] \ar[dl,"\idterm"] \\
+    \& A^* \&
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A \times A^* \ar[r,"\pureterm \times \idterm"] \ar[dr,"\prependterm"'] \& A^* \times A^* \ar[d,"\binconcatterm"] \\
+    \& A^*
+\end{tikzcd}}
+\hfill
+\axcell{\begin{tikzcd}[ampersand replacement=\&]
+    A^* \times A \ar[r,"\idterm \times \pureterm"] \ar[dr,"\appendterm"'] \& A^* \times A^* \ar[d,"\binconcatterm"] \\
+    \& A^*
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[0.4]{\begin{tikzcd}[ampersand replacement=\&]
+    \onetype^* \ar[r,"{[]^*}"] \ar[d,"1"'] \& A^{**} \ar[d,"\concatterm"] \\
+    \onetype \ar[r,"{[]}"'] \& A^*
+\end{tikzcd}}
+\hfill
+\axcell[0.58]{\begin{tikzcd}[ampersand replacement=\&]
+    (A \times B)^* \times A \ar[rr,"\shiftrterm"] \ar[dr,\concar] \& \& A \times (B \times A)^* \ar[dl,\concar] \\
+    \& (A + B)^* \&
+\end{tikzcd}}
+
+\medskip\noindent
+\axcell[1]{\begin{tikzcd}[ampersand replacement=\&, column sep=large]
+    2^{**} \ar[r,"{\bundleterm}"] \ar[dr,"\idterm"'] \& (2^* \times 2^*)^* \times (\onetype + 2^*) \ar[d,\concar] \\
+    \& 2^{**}
+\end{tikzcd}}

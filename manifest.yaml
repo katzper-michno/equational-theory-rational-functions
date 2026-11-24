@@ -11,12 +11,19 @@ authors:
   - name: "Claude Opus 5.5 (Anthropic)"
 bibEntries:
   - |
-    @unpublished{BojanczykLewandowskiMichno2026,
-      author = {Boja{\'n}czyk, Miko{\l}aj and Lewandowski, Kacper and Michno, Katzper},
-      title  = {The equational theory of rational string-to-string functions},
-      note   = {Manuscript},
-      year   = {2026}
+    @article{BojanczykLewandowskiMichno2027,
+      author    = {Boja{\'n}czyk, Miko{\l}aj and Lewandowski, Kacper and Michno, Katzper},
+      title     = {The Equational Theory of Rational String-to-String Functions},
+      journal   = {Proc. ACM Program. Lang.},
+      volume    = {11},
+      number    = {POPL},
+      articleno = {101},
+      year      = {2027},
+      doi       = {10.1145/3871803}
     }
+paper:
+  folder: "paper"
+  main: "main.tex"
 issue:
   repositoryId: 1320232165
   number: 206

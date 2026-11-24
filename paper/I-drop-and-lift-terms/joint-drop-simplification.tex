@@ -1,0 +1,86 @@
+\subsection{Proof of Joint Simplification}\label{sec:appendix:joint-drops-simplification}
+
+We will represent a simple drop term $f$ as a functor $F$ and a vector of \kl{values}  $\vec v$ in $N^*$,
+where $f = F(\vec v) \comp \concmap $ is of type $F(\vec \onetype) \drop{} N^*$. In particular, values can only be produced in the leaves, not in arbitrary places, and all those leaves are $\onetype$.
+This form is equivalent to the definition of \kl{simple rational terms} (\cref{def:simple-rational-terms}), up to introducing some additional $\onetype$s to realise values as explicit subterms rather than appending them.
+
+
+We begin with a simplification lemma for a single term:
+
+\begin{lemma}[Drop simplification]\label{lem:drop-normalization}
+    Suppose that $N$ is a \kl{finite alphabet} and $A \drop{f} N^*$. There exists a functor $F(X_1, \dots, X_n)$, a \kl{lift term} $ A \lift{\delta} F(\vec \onetype)$ and \kl{values} $\vec v_i$ such that $f \equiv \delta \comp F(\vec v_i) \comp \concmap$.
+\end{lemma}
+\begin{proof}
+    First, apply \cref{lem:drops-with-list-co-domain}. This deconstructs $f$ into constant terms of the form $1\comp v_i$, singletons of the form $[h_i]$ and terms of the form $(g_i)^*$, where all $g_i$'s are simpler than $f$.
+
+    Apply \cref{lem:drops-with-sum-co-domain} to the singletons, since each $h_i$ has output in $N$ which is a finite sum \kl{type}.
+    We obtain a decomposition of $h_i$ into a case-split of constant terms.
+
+    In the terms of the form $(g_i)^*$, we simplify $g_i$'s by induction, since the lemma ensures that they are simpler than $f$. 
+    From this we obtain functors $G_1, ...., G_k$ and a vector of values for each of them. Merge those into the main functor.
+
+    We finish by pushing values down the type tree, so that they are produced on $\onetype$ instead of any other type. 
+    This is possible for sum type (produce the value in all cases separately) and in the product case (produce the value in first component, and empty in the other). In the case of a list there is an issue, as we cannot push nonempty value down -- it would be repeated many times by the map combinator. Instead, in the place of this list we make a product of it with $\onetype$, push the value to this $\onetype$ and empty value to the list -- this is obtained by lifting the input with $\unitlterm$. 
+\end{proof}
+
+Now we prove \cref{lem:joint-drops-normalisation}. 
+
+\begin{proof}
+    Simplify the term $f$ first. By precomposing with $\delta$ we can assume that $g$ is defined on $F(\onetype)$ -- the lifted type on which $f$ becomes simple. 
+    We will now simplify $g$, and prove that this procedure does not interfere with simplicity of $f$.
+    
+    This process is summarised on the diagram below. When simplifying $g$ we obtain a new lifted type $T$.
+    We represent it by two functors: $T = G(\vec\onetype) = G'(\vec\onetype)$, depending on our perspective. The functor $G$ is obtained by manipulating $F$ with lift terms, it uses the same input parameters as $F$. The functor $G'$ is the functor given by simplification procedure for $g$. It differs from $G$ in this way, that some additional input parameters were added. We can extend the vector $\vec v$ to $\vec v'$ by following the origin of each added parameter -- if it was added to represent a $\onetype$ created by $G$ without parameter, then apply empty value and where multiple new parameters are used in place of single one, they all inherit the same value.
+
+    This difference between $G$ and $G'$ can be illustrated on the type $\onetype^*$ to which $\unconsterm$ is applied resulting in $T = \onetype  + \onetype \times \onetype^*$. We have $G(A) = \onetype + A \times A^*$ and $G'(A, B, C) = A + B \times C$, so $G(\onetype) = T = G(\onetype, \onetype, \onetype)$. A term $f$ that was simple on $\onetype^*$ with representation $F(v)$ has representation $G(v)$ and a corresponding representation $G([], v, v)$ -- this is because the first parameter of $G'$ corresponds to the empty list case, on which $f$ produces empty output, and the second and third to elements of the list, on which $f$ produces $v$. The term $g$ has access to more specific information, so it can make separate decision for each input parameter.
+
+    The diagram commutes: face I because the lift is a \kl{rebracketing}, faces II and III are two instances of naturality of $\concmap$, and faces $IV$ and $V$ because the corresponding arrows describe the same terms, but with different notation.
+
+    In this way on $G'(\vec \onetype)$ we have a simple representation of both terms $f, g$, proving the lemma.
+      
+    \[
+    \begin{tikzcd}
+    F(\vec \onetype)
+    \ar[rr, Rightarrow, "F(\vec v) = f"]
+    \ar[d, \concar]
+    \ar[dd, bend right=90, \liftar, ""{name=U1}]
+    \ar[drr, phantom, "\blue{II}"]
+    & \ 
+    & F(\vec N^*) 
+    \ar[d, \concar]
+    \\
+    |[alias=U2]| \left(\sum_1^k\onetype\right)^*
+    \ar[r, Rightarrow, "\casesterm (\vec v)"]
+    \ar[from=U1, to=U2, phantom, "\blue{I}"]
+    & (\sum_1^kN^*)^*
+    \ar[d, phantom, "\blue{III}"]
+    \ar[r, \concar] 
+    & N^*
+    \\
+    G(\vec \onetype)
+    \ar[u, \concar]
+    \ar[d, equal]
+    \ar[r, Rightarrow, "G(\vec v)"]
+    \ar[drr, phantom, "\blue{IV}"]
+    & |[alias=U4]| G(\vec N^*)
+    \ar[ur, \concar]
+    \ar[dr, equal]
+    & \ 
+    \\
+    G'(\vec \onetype)
+    % \ar[r, \concar]
+    \ar[rr, Rightarrow,"G'(\vec v')"]
+    & \
+    & 
+    G'(\vec N^*)
+    % \left(\sum_1^l\onetype\right)^*
+    % \ar[u, Rightarrow, "\casesterm (\vec v')"]
+    \ar[uu, \concar, ""{name=U3}]
+    \ar[from=U4, to=U3, phantom, "\blue{V}"]
+    \end{tikzcd}
+    \] 
+
+    
+\end{proof}
+
+

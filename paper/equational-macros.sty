@@ -1,0 +1,231 @@
+\usepackage{xcolor}
+
+% inverse function
+\newcommand{\inv}{\overline}
+
+% concatenation
+\newcommand{\wdot}{\cdot} %concatenate with a string constant
+\newcommand{\fdot}{\odot} %concatenate two functions taking a product of their domains
+
+% for double-headed xrightarrow
+\let\Bbbk\relax  % for reasons of incompatibility with acmart
+% only the stmaryrd symbols we need: \fatsemi (composition) and \Yright (for \xrightarrowtail)
+\usepackage[only,fatsemi,Yright]{stmaryrd}
+% extensible two-headed arrow (formerly from extpfeil, which is not on ACM's list of accepted packages)
+\providecommand*\xtwoheadrightarrow[2][]{\ext@arrow 0579\twoheadrightarrowfill@{#1}{#2}}
+\newcommand*\twoheadrightarrowfill@{\arrowfill@\relbar\relbar\twoheadrightarrow}
+
+% sequential composition; TeX puts no space around binary operators in script styles
+% (e.g. arrow labels in diagrams), so there we add thin spaces explicitly
+\newcommand{\comp}{\mathchoice{\fatsemi}{\fatsemi}{\mathbin{\,\fatsemi\,}}{\mathbin{\,\fatsemi\,}}}
+
+% blackboard bold 1 for the unit type; \varmathbb comes from newtxmath, which acmart loads
+% under pdflatex (a Type 1 font, unlike the bitmap fonts of the bbm package); under lualatex,
+% which the Lax archive uses for the web view of the paper, acmart loads unicode-math instead
+\ifdefined\varmathbb
+  \newcommand{\onetype}{\varmathbb{1}}
+\else
+  % (braced, so that \vec\onetype still gets a single argument)
+  \newcommand{\onetype}{{\mathbb{1}}}
+\fi
+\newcommand{\twotype}{\left( \onetype + \onetype \right)}
+\newcommand{\zerotype}{\mathcal{E}}
+\newcommand{\onelement}{1}
+\newcommand{\rk}{\mathrm{rk}}
+
+\newcommand{\reverseterm}{\mathtt{reverse}}
+\newcommand{\leftterm}{\mathtt{Left}}
+\newcommand{\rightterm}{\mathtt{Right}}
+\newcommand{\fstterm}{\mathtt{fst}}
+\newcommand{\sndterm}{\mathtt{snd}}
+\newcommand{\casesterm}{\mathtt{cases}}
+
+% full version (with appendix) vs. short version (without appendix);
+% the short version sets \fullversionfalse in its preamble
+\newif\iffullversion
+\fullversiontrue
+% reference to the appendix: \cref in the full version, ``the full version'' otherwise
+\newcommand{\appref}[1]{\iffullversion\cref{#1}\else the full version\fi}
+% the place where appendix material can be found, for use in prose
+\newcommand{\appendixplace}{\iffullversion the appendix\else the full version\fi}
+
+% various kinds of block
+\newcommand{\blockterm}{\mathtt{block}}
+\newcommand{\unblockterm}{\mathtt{unblock}}
+\newcommand{\blockrterm}{\mathtt{blockR}}
+\newcommand{\unblockrterm}{\mathtt{unblockR}}
+\newcommand{\blocklterm}{\mathtt{blockL}}
+\newcommand{\unblocklterm}{\mathtt{unblockL}}
+% the related shifts
+\newcommand{\shiftterm}{\mathtt{shift}}
+\newcommand{\unshiftterm}{\mathtt{unshift}}
+
+\newcommand{\multterm}{\mathtt{mult}}
+\newcommand{\headtailterm}{\mathtt{headtail}}
+\newcommand{\concatterm}{\mathtt{concat}}
+\newcommand{\headterm}{\mathtt{head}}
+\newcommand{\tailterm}{\mathtt{tail}}
+\newcommand{\unconsterm}{\mathtt{uncons}}
+\newcommand{\consterm}{\mathtt{cons}}
+\newcommand{\unsnocterm}{\mathtt{unsnoc}}
+\newcommand{\snocterm}{\mathtt{snoc}}
+\newcommand{\diagterm}{\mathtt{diag}}
+\newcommand{\codiagterm}{\mathtt{codiag}}
+\newcommand{\distrterm}{\mathtt{distR}}
+\newcommand{\distlterm}{\mathtt{distL}}
+\newcommand{\undistrterm}{\mathtt{undistR}}
+\newcommand{\undistlterm}{\mathtt{undistL}}
+\newcommand{\idterm}{\mathtt{id}}
+\newcommand{\appendoneterm}{(\idterm,\onelement)}
+\newcommand{\prependoneterm}{(\onelement,\idterm)}
+\newcommand{\cutterm}{\mathtt{cut}}
+\newcommand{\pureterm}{\mathtt{pure}}
+\newcommand{\emptyterm}{\mathtt{empty}}
+\newcommand{\assoclterm}{\mathtt{assocL}}
+\newcommand{\assocrterm}{\mathtt{assocR}}
+\newcommand{\sumassoclterm}{\mathtt{sumAssocL}}
+\newcommand{\sumassocrterm}{\mathtt{sumAssocR}}
+\newcommand{\commterm}{\mathtt{comm}}
+\newcommand{\prefterm}{\mathtt{pref}}
+\newcommand{\unprefterm}{\mathtt{unpref}}
+\newcommand{\binconcatterm}{\mathtt{binconcat}}
+\newcommand{\prependterm}{\mathtt{prepend}}
+\newcommand{\appendterm}{\mathtt{append}}
+\newcommand{\shiftlterm}{\mathtt{shiftL}}
+\newcommand{\shiftrterm}{\mathtt{shiftR}}
+\newcommand{\bundleterm}{\mathtt{bundle}}
+
+\newcommand{\unitlterm}{(1, \idterm)}
+\newcommand{\unitrterm}{(\idterm, 1)}
+%\newcommand{\unitlterm}{\mathtt{unitIntroL}}
+%\newcommand{\unitrterm}{\mathtt{unitIntroR}}
+
+\newcommand{\assoc}{\mathtt{assoc}}
+\newcommand{\distribute}{\mathtt{distribute}}
+\newcommand{\undistribute}{\mathtt{undistribute}}
+
+
+\newrobustcmd\concmap{%
+  \mathrel{%
+    \withkl{\kl[concatenation map]}{\cmdkl{\textcolor{black}{\rightarrowtail}}}
+    }
+  }%
+\newcommand{\concar}{rightarrowtail}
+%concmap with labels
+\makeatletter
+\newcommand*\rightarrowtailfill@{%
+  \arrowfill@{\mkern2mu\Yright\joinrel\relbar}\relbar\rightarrow}
+\newcommand*\xrightarrowtail[2][]{%
+  \ext@arrow 0359\rightarrowtailfill@{#1}{#2}}
+\makeatother
+
+\newcommand{\paircollect}{\mathtt{pair\text{-}collect}}
+\newcommand{\shiftcollect}{\mathtt{shift\text{-}collect}}
+
+% copyful concatenation
+\newcommand{\copyconc}{+\!\!+\ }
+\newcommand{\conc}{\fdot}
+
+% equivalent because of some axiom
+\newcommand{\axequiv}[1]{\ \stackrel{\text{Ax~\ref{#1}}}\equiv\ }
+% equivalent because of functoriality
+\newcommand{\funcequiv}[1]{\ \stackrel{#1}\equiv\ }
+% equivalent with justification
+\newcommand{\why}[1]{\quad \text{\scriptsize{(#1)}}}
+\newcommand{\equalbecause}[1]{& \equiv \why{#1}}
+% equivalent modulo associativity
+\newcommand{\equivassoc}{\red{\equiv}}
+
+\newcommand{\stringify}{\mathrm{enc}}
+\newcommand{\describeterm}[3]{#2 \xrightarrow{#1} #3}
+\newcommand{\combinator}[3]{
+\frac{#1}{#2}{\text{\small #3}}
+}
+
+\newcommand{\purecomb}{\mathsf{pure}}
+\newcommand{\either}[2]{\mathsf{either}\ #1\ #2 }
+\newcommand{\eithermany}[2]{\mathsf{either}_{#1}\, #2}
+
+
+% a lolipop arrow, which will be used for lifts
+% (under lualatex, where acmart sets the math font with unicode-math, Libertinus Math has no
+% such arrow, so it is taken from STIX Two Math)
+\ifdefined\setmathfont
+  \setmathfont[range={"22B8}, Scale=MatchUppercase]{STIXTwoMath-Regular.otf}
+\fi
+\makeatletter
+\newcommand{\multimapfill@}{\arrowfill@\relbar\relbar\multimap}
+\newcommand{\xmultimap}[2][]{\ext@arrow 0359\multimapfill@{#1}{#2}}
+\makeatother
+\usetikzlibrary{arrows.meta}
+\tikzset{
+  multimap/.style={-{Circle[length=2.5pt, open, sep=1pt]}}
+}
+
+% Arrows for various morphisms
+\newcommand{\drop}[1]{\xRightarrow{#1}}
+\newcommand{\lift}[1]{\xmultimap{#1}}
+\newcommand{\dropar}{Rightarrow}
+\newcommand{\liftar}{multimap}
+\newcommand{\liftmap}{\multimap}
+\newcommand{\dropmap}{\Rightarrow}
+
+% Names of classes of morphisms
+\newcommand{\Value}{\mathsf{Value}}
+\newcommand{\Drop}{\mathsf{Drop}}
+\newcommand{\Lift}{\mathsf{Lift}}
+
+% cleveref name for labels created inside the axiom environment
+\crefname{axiom}{Axiom}{Axioms}
+\Crefname{axiom}{Axiom}{Axioms}
+
+% string representation function 
+\newcommand{\stringrep}[1]{\mathtt{enc}_{#1}}
+
+
+% right-aligned lines followed by a right brace; use aligned inside for alignment
+\newenvironment{casesright}{%
+  \left.\def\arraystretch{1.2}\begin{array}{@{}r@{\enspace}}%
+}{%
+  \end{array}\right\rbrace%
+}
+
+%  --------------------------
+% environements for atomic terms and axioms
+
+\newcounter{ouraxiomcounter}
+\newenvironment{axiomgroup}{
+\medskip
+\refstepcounter{ouraxiomcounter}
+\smallskip\noindent{\textbf{{Axiom \arabic{ouraxiomcounter}. }}}}{
+$\Box$ \smallskip
+}
+
+\newtagform{axiomtag}{(Axiom~}{)}
+\newenvironment{axiom}{%
+\begingroup
+\crefalias{equation}{axiom}%
+\usetagform{axiomtag}%
+\align
+}{%
+\endalign
+\endgroup
+}
+
+\newcounter{atomictermcounter}
+\renewcommand{\theatomictermcounter}{\arabic{atomictermcounter}}
+\newenvironment{atomicterm}{%
+\refstepcounter{atomictermcounter}%
+\begin{equation*}\tag{\theatomictermcounter}%
+}{%
+\end{equation*}%
+\ignorespacesafterend
+}
+
+
+\usepackage{crossreftools}
+\pdfstringdefDisableCommands{%
+    \let\Cref\crtCref
+    \let\cref\crtcref
+    % \let\intro\relax
+}

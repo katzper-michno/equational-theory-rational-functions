@@ -1,0 +1,269 @@
+\subsection{Shift Exchange Lemma}\label{sec:appendix:shift-exchange}
+
+In this section we prove a special case of the exchange lemma (\cref{lem:exchange}) where the drop-lift composition consists of a \kl{drop term} in \kl[normalised drop term]{normal form} followed by $\shiftterm$. This special case will be used in the proof of the normalisation lemma for drops with list codomain (\cref{lem:drops-with-list-co-domain}), which in turn will be used in the general proof of \cref{lem:exchange}. 
+
+We start with the observation that the codomain of $\shiftterm$ is \kl[injective type]{injective}.
+
+\begin{lemma}\label{lem:shift-type-is-injective}
+    The \kl{type} $\onetype + S \times (T \times S)^* \times T$ is \kl[injective type]{injective}.
+\end{lemma}
+
+\begin{proof}
+    Note that the \kl{concatenation map} of type $\onetype + S \times (T \times S)^* \times T \rightarrow (S + T)^*$ is equal to
+    \[ 
+        \either{[]}{\left( [\leftterm] \times ((T \times S)^* \concmap (S + T)^*) \times [\rightterm] \right)}.
+    \] 
+    Injectivity translates through type constructors and $\mathtt{either}$ by \cref{ax:eval-codiag}. The term $[] : \onetype \rightarrow (S + T)^*$ is \kl{injective} by \cref{ax:unit-type} with $\unitlterm \comp \fstterm$ as the inverse. Both $\pureterm$ and the coprojections $\leftterm, \rightterm$ are injective, although the inverse must be built in a nonnatural way, i.e.~they involve ``choosing'' a \kl{value} of type $S$ or $T$, which is always possible because all types are inhabited. Injectivity of $\pureterm$ is discussed in the proof of \cref{lem:injectivity-of-cyclic-annotation}. For $\leftterm : S \rightarrow S + T$, choose any value $\onetype \xrightarrow{w} S$ and observe that 
+    \begin{align*} 
+        \leftterm \comp \idterm + (1\comp{}w) \comp \codiagterm \equalbecause{naturality of $\leftterm$, \cref{ax:naturality}} \\
+        \idterm \comp \leftterm \comp \codiagterm \equalbecause{\cref{ax:eval-codiag}} \\ 
+        \idterm.
+    \end{align*}
+    Therefore, it suffices to show that the type $(T \times S)^*$ is injective.
+    Due to \cref{lem:uniqueness-of-rebracketings} (the type $(S + T)^*$ is trivially injective), it further suffices to construct an injective \kl{rebracketing} of the type $(T \times S)^* \rightarrow (S + T)^*$. This rebracketing is given by:
+    \[ 
+        (T \times S)^* \xrightarrow{([], \left( \idterm \times \pureterm \right)^*)} S^* \times (T \times S^*)^* \xrightarrow{\unblockterm} (S + T)^*.
+    \]
+    The term $([], \idterm)$ is injective by \cref{ax:concatenation-monoid} and $\unblockterm$ is injective by \cref{ax:isomorphisms}. The fact that this term is a rebracketing follows from \cref{lem:rebracketing-basic-facts}.
+\end{proof}
+
+We now proceed to the special case of the exchange lemma (\cref{lem:exchange}) with $\shiftterm$. Note that the conclusion of the following statement is stronger than the general conclusion of \cref{lem:exchange} -- this will be needed to wrap the induction step in the proof of \cref{lem:drops-with-list-co-domain}.
+
+\begin{lemma}[Shift exchange]\label{lem:exchange-normal-shift}
+    Suppose that $\left( F(\vec f) \comp \concmap \right): F(\vec A) \dropmap (S \times T)^*$ is in \kl[normalised drop term]{normal form}. There exists a \kl{lift} $\alpha$ and \kl{drop terms} $\vec g$ such that 
+    \[
+        \left( F(\vec f) \comp \concmap \right) \comp \shiftterm \equiv \alpha \comp \eithermany{i}{(g_i)},
+    \]
+    and every $g_i$ is equal to one of:
+    \[
+        (1 \comp 1) \comp \leftterm \qquad \text{or} \qquad (\sndterm \comp x_i) \times \left( \myunderbrace{H_i(\vec h_i) \comp \concmap}{\text{normal form}} \right) \times (\fstterm \comp y_i) \comp \rightterm,
+    \]
+    where in the second case, $H_i$ is a \kl{list-polynomial functor}, $\vec x, \vec y \preceq \vec f$ and every $h_i$ is a \kl{drop term} with codomain $(S \times T)^*$ of one of the following forms:
+    \[
+        (1 \comp v), \qquad [\fstterm \times \idterm \comp k_i], \qquad \text{or} \qquad (\fstterm \times \idterm \comp k_i)^*,
+    \]
+    where every $k_i$ is a \kl{drop term} with codomain $(S \times T)$ and $\vec k \preceq \vec f$.
+\end{lemma}
+\begin{proof}  
+    We proceed by induction on the structure of the list-polynomial functor $F$.
+    \begin{description}
+        \item[Unit node, $F = \onetype$.] Here $\left( F(\vec f) \comp \concmap \right) = []$. The statement holds with $\alpha = \idterm$ and $g = (1\comp1) \comp \leftterm$, because $[] \comp \shiftterm \equiv \leftterm$ by \cref{lem:uniqueness-of-rebracketings}, because the codomain is injective (\cref{lem:shift-type-is-injective}) and both terms are rebracketings by \cref{lem:rebracketing-basic-facts}. Moreover, $\leftterm \equiv (1\comp1) \comp \leftterm$ by terminality of $\onetype$ (\cref{ax:unit-type}).
+        
+        \item[Leaf node, $F = X_i$.] For simplicity we omit the index $i$ and write $f := f_i$. We consider three subcases depending on the shape of $f$, as described in the definition of normal form.
+        
+        \begin{description}
+            \item[Value, $f = (1 \comp v)$.] In this case, $\left( F(\vec f) \comp \concmap \right) \equiv (1 \comp v)$. If $v$ is equivalent to $[]$, then we can take $\alpha = \idterm$ and $g = (1 \comp 1) \comp \leftterm$, as in the unit case. Otherwise, there are values $s, u, t$ such that $v \comp \shiftterm \equiv (s, u, t) \comp \rightterm$ by \cref{lem:value-completeness}. The statement holds for a lift $\alpha$ which appends units $A \multimap (\onetype \times \onetype) \times A \times (\onetype \times \onetype)$, and $g = (\sndterm \comp s) \times (1\comp{}u) \times (\fstterm \comp t) \comp \rightterm$ by the choice of values $s, u, t$ and the fact that appending units is reversed by projections (\cref{ax:isomorphisms}).
+  
+            \item[Singleton, $f = {[g]}$.] We have $\left(F(\vec f) \comp \concmap \right) \equiv [g]$, where $g : A \dropmap S \times T$. By \cref{lem:drops-with-prod-co-domain} applied to $g$, there is a lift $\beta$ and drop terms $\vec x, \vec y \preceq f$ such that $g \equiv \beta \comp \eithermany{i}{(x_i \times y_i)}$. We obtain:
+            \begin{align*}
+                [g] \comp \shiftterm \equalbecause{\cref{lem:drops-with-prod-co-domain}} \\ 
+                [\beta \comp \eithermany{i}{(x_i \times y_i)}] \comp \shiftterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+                \beta \comp \eithermany{i}{\left([x_i \times y_i] \comp \shiftterm \right)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+                \beta \comp \left( \sum  x_i \times y_i \right) \comp \eithermany{i}{\left([\idterm \times \idterm] \comp \shiftterm \right)} \equalbecause{\cref{lem:uniqueness-of-rebracketings}} \\ 
+                \beta \comp \left( \sum  x_i \times y_i \right) \comp \eithermany{i}{\left( (\unitrterm \times \idterm) \comp (\idterm \times [] \times \idterm) \comp \rightterm \right)} \equalbecause{Lemmas \ref{lem:functoriality-of-either} and \ref{lem:functoriality-of-either-left}} \\
+                \beta \comp \eithermany{i}{\left( (x_i \times y_i) \comp (\unitrterm \times \idterm) \comp (\idterm \times [] \times \idterm) \right)} \comp \rightterm \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\ 
+                \beta \comp \eithermany{i}{\left( (x_i \comp \unitrterm \comp \idterm \times []) \times y_i \right)} \comp \rightterm \equalbecause{naturality of $\unitrterm$, \cref{ax:naturality}} \\ 
+                \beta \comp \eithermany{i}{\left( (\unitrterm \comp x_i \times []) \times y_i \right)} \comp \rightterm \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+                \beta \comp \left( \sum \unitrterm \times \idterm \right) \comp \eithermany{i}{\left( x_i \times [] \times y_i \right)} \comp \rightterm \equalbecause{$\onetype$ is terminal, \cref{ax:unit-type}} \\ 
+                \beta \comp \left( \sum \unitrterm \times \idterm \right) \comp \eithermany{i}{\left( x_i \times (1 \comp []) \times y_i \right)} \comp \rightterm.
+            \end{align*}
+            At the end, to formally match the required shape, we can append (by lifts) artificial units with $\unitlterm$ and $\unitrterm$ to have $(\sndterm \comp x_i)$ and $(\fstterm \comp y_i)$, instead of $x_i$ and $y_i$, which is valid by the fact that $\unitlterm \comp \sndterm \equiv \unitrterm \comp \fstterm \equiv \idterm$ by \cref{ax:isomorphisms}.
+
+            \item[List, $f = g^*$.] In this case, $\left(F(\vec f) \comp \concmap \right) \equiv g^*$, where $g : A \dropmap S \times T$. By \cref{lem:drops-with-prod-co-domain} applied to $g$, there is a lift $\beta$ and drop terms $\vec x, \vec y \preceq f$ such that $g \equiv \beta \comp \eithermany{i}{(x_i \times y_i)}$. We can intuitively see that after applying $\beta$, the domain is sufficiently ``granular'' to allow us to extract the leading $S$ and trailing $T$ of the codomain, but the technical details are a bit tricky. This is because of the \kl{copairing} in the normalisation of $g$: we have to proceed by induction on the number of its variants. 
+            
+            The base case where there is only one variant, i.e.~$g \equiv \beta \comp (x \times y)$, follows by naturality of $\shiftterm$:
+            \begin{align*}
+                g^* \comp \shiftterm \equalbecause{\cref{lem:drops-with-prod-co-domain}} \\ 
+                \beta^* \comp (x \times y)^* \comp \shiftterm \equalbecause{naturality of $\shiftterm$} \\
+                \beta^* \comp \shiftterm \comp \idterm + x \times (y \times x)^* \times y \equalbecause{\cref{ax:unit-type} and \cref{lem:either-uniqueness}} \\ 
+                \beta^* \comp \shiftterm \comp \either{\left( (1 \comp 1) \comp \leftterm \right)}{\left( x \times (y \times x)^* \times y \comp \rightterm \right)}.
+            \end{align*}
+            Again, to formally comply with the required shape, we can append (by lifts) artificial units which are then reversed by projections. 
+
+            Moving forward, we describe how to handle the case of two variants -- the general construction will then follow by iterative application of the same argument, which we omit for brevity. The case of two variants is already interesting because it involves $\blockterm$ as part of the lift. Suppose that $g \equiv \beta \comp \either{(x_1 \times y_1)}{(x_2 \times y_2)}$. We first demonstrate a sketch of the construction on the following diagram (let $Z = \onetype + S \times (T \times S)^* \times T$):
+            \[ 
+            \begin{tikzcd}[column sep = 1cm]
+                A^*
+                \ar[r, \dropar, "{g^*}"]
+                \ar[d, \liftar, "{\beta^*}"]
+                &(S \times T)^*
+                \ar[r, \liftar, "\shiftterm"]
+                &\onetype + S \times (T S)^* \times T
+                \\ 
+                (X_1 Y_1 + X_2 Y_2)^*
+                \ar[r, \dropar, "(x_1 y_1 + x_2 y_2)^*"]
+                \ar[d, \liftar, "\blockterm"]
+                &(S \times T + S \times T)^*
+                \ar[u, \dropar, "\eithermany{i}{\left( \idterm \times \idterm \right)}"']
+                \ar[d, \liftar, "\blockterm"]
+                \\ 
+                \bullet 
+                \ar[d, \liftar, "{\shiftterm \times (\idterm \times \shiftterm)^*}"]
+                &(S \times T)^* \times ((S \times T) \times (S \times T)^*)^*
+                \ar[d, \liftar, "{\shiftterm \times (\idterm \times \shiftterm)^*}"]
+                \\ 
+                \bullet 
+                \ar[d, \liftar, "\cong"]
+                &Z \times \left( (S \times T) \times Z \right)^*
+                \ar[d, \liftar, "\cong"]
+                \\ 
+                \bullet 
+                \ar[d, \liftar, "\idterm \times \shiftterm"]
+                &Z \times \left( S \times (T \times Z) \right)^*
+                \ar[d, \liftar, "\idterm \times \shiftterm"]
+                \\ 
+                \bullet 
+                \ar[d, \liftar, "\cong"]
+                &Z \times \left( \onetype + S ((T Z) S)^* (T Z) \right)
+                \ar[d, \liftar, "\cong"]
+                \\
+                \bullet 
+                \ar[d, \liftar, "\cong"]
+                &D_1 + D_2 + D_3 + D_4 + D_5 + D_6
+                \ar[d, \liftar, "\cong"]
+                \\
+                \bullet 
+                \ar[r, \dropar, "{x_i, y_i \text{ functorially}}"]
+                &E_1 + E_2 + E_3 + E_4 + E_5 + E_6
+                \ar[uuuuuuur, \dropar, "\eithermany{i}{(g_i)}"', bend right=40]
+            \end{tikzcd}
+            \] 
+            The last two steps consist of distributing the type and appending units to match the required shape of the drop terms. The types $D_i$ are as follows:
+            \begin{align*}
+                D_1 &= \onetype \times \onetype \\ 
+                D_2 &= (\onetype S) \times ((T \onetype) S)^* \times (T \onetype) \\ 
+                D_3 &= (\onetype S) \times (TZS)^* \times (T \onetype) \\ 
+                D_4 &= (\onetype S) \times ( (TZS)^* T S (TS)^* ) \times (T \onetype) \\ 
+                D_5 &= (\onetype S) \times ((TS)^* TS (TZS)^*) \times (T \onetype) \\ 
+                D_6 &= (\onetype S) \times ((TS)^* TS (TZS)^* TS (TS)^*) \times (T \onetype)
+            \end{align*}
+            The types $E_i$ are similar to types $D_i$, but with slight further lift modifications which we will describe in a moment.
+            
+            The term $g_1$ is $(1 \comp 1) \comp \leftterm$ (in particular, $E_1 = D_1$), and the other $g_i$ produce nonempty shifted lists and are of the form $(\sndterm \comp \idterm) \times (H_i(\vec h_i) \comp \concmap) \times (\fstterm \comp \idterm) \comp \rightterm$. We describe how $H_3(\vec h_3)$ should look, the other variants are analogous. We want a normal drop term which produces a list of pairs $(TS)^*$ from $(TZS)^*$ and complies with the required shape of the lemma. This is where we need to further modify the type $(TZS)^*$ with lifts to obtain $E_3$ which will be consumed in the end. What we need to do is to distribute the coproduct hidden under $Z$ and append units everywhere between $T$ and $S$. We obtain the following type: 
+            \[
+                (TZS)^* \xmultimap{\cong} T \onetype S + ((T \onetype) S) ((T \onetype) S)^* ((T \onetype) S).
+            \] 
+            This is then consumed with the following drop term: 
+            \[
+                \left( H_3(\vec h_3) \comp \concmap \right) = \either{[\fstterm \times \idterm]}{\left( [\fstterm \times \idterm] \odot (\fstterm \times \idterm)^* \odot [\fstterm \times \idterm] \right)}.
+            \]
+            There are two things to comment on. First, the bottom drop path of the diagram is a functorial combination of the drop terms $x_i, y_i$ and the drops we have just described, so it satisfies the required shape of the lemma by \cref{lem:functoriality-of-either-left} and naturality of projections (\cref{ax:naturality}). Second, the diagram commutes: the upper-left square commutes by \cref{lem:drops-with-prod-co-domain}, the lower-left face commutes by naturality of used lift terms, and the right face commutes by \cref{lem:uniqueness-of-rebracketings}, because both paths are rebracketings by \cref{lem:rebracketing-basic-facts} and the target type is injective by \cref{lem:shift-type-is-injective}. 
+        \end{description}
+
+        \item[Sum node, $F = F_1 + F_2$.] By definition of $\concmap$ on a sum, we have
+        \[
+            \left( F(\vec f) \comp \concmap \right) = \either{\left(F_1(\vec f) \comp \concmap \right)}{\left(F_2(\vec f) \comp \concmap \right)}.
+        \]
+        The construction proceeds by applying the induction hypothesis to $F_1$ and $F_2$ separately, and then combining the results by reassociating the nested coproducts. By induction, there are lifts $\alpha_1, \alpha_2$ and drop vectors $\vec g^{(1)}, \vec g^{(2)} \preceq \vec f$, with $F_k(\vec f_k) \comp \concmap \comp \shiftterm \equiv \alpha_k \comp \eithermany{i}{(g_i^{(k)})}$ for $k \in \{1, 2\}$. We get 
+        \begin{align*}
+            \either{(F_1(\vec f) \comp \concmap)}{(F_2(\vec f) \comp \concmap)} \comp \shiftterm \equalbecause{\cref{lem:functoriality-of-either}} \\
+            \either{(F_1(\vec f) \comp \concmap \comp \shiftterm)}{(F_2(\vec f) \comp \concmap \comp \shiftterm)} \equalbecause{induction} \\
+            \either{(\alpha_1 \comp \eithermany{i}{(g_i^{(1)})})}{(\alpha_2 \comp \eithermany{i}{(g_i^{(2)})})} \equalbecause{\cref{lem:functoriality-of-either-left}} \\ 
+            (\alpha_1 + \alpha_2) \comp \either{(\eithermany{i}{(g_i^{(1)})})}{(\eithermany{i}{(g_i^{(2)})})} \equalbecause{reassociation of coproducts} \\
+            (\alpha_1 + \alpha_2) \comp \assoc \comp \eithermany{i j}{(g^{(j)}_i)}.
+        \end{align*}
+
+        \item[Product node, $F = F_1 \times F_2$.] By definition of $\concmap$ on a product, we have
+        \[
+            \left( F(\vec f) \comp \concmap \right) = \left( F_1(\vec f) \comp \concmap \right) \odot \left( F_2(\vec f) \comp \concmap \right).
+        \]
+        The construction proceeds by applying the induction hypothesis to $F_1$ and $F_2$ separately, and then combining the results by distributing the outer product over the inner coproducts. Let $\mu = (\either{[]}{\unshiftterm})^2 \comp \binconcatterm \comp \shiftterm$.
+        
+        Now, observe that the following diagram commutes by induction, product functoriality and distribution naturality:
+        \[
+        \begin{tikzcd}[column sep = 1cm]
+            F_1(\vec A) \times F_2(\vec A)
+            \ar[rr, \dropar, "{(F_1(\vec f)\comp\concmap) \times (F_2(\vec f)\comp\concmap)}"]
+            \ar[d, \liftar, "\text{induction}"]
+            &\hspace*{2cm}
+            &\left((S \times T)^*\right)^2
+            \ar[r, \dropar, "\binconcatterm"]
+            \ar[d, \liftar, "{\shiftterm^2}"]
+            &(S \times T)^*
+            \ar[d, \liftar, "\shiftterm"]
+            \\ 
+            \sum_i B^{(1)}_i \times \sum_i B^{(2)}_i
+            \ar[rr, \dropar, "{\eithermany{i}{(g^{(1)}_i)} \times \eithermany{i}{(g^{(2)}_i)}}"]
+            \ar[d, \liftar, "\cong"]
+            &&(\onetype + S(TS)^* T)^2 
+            \ar[r, "\mu"]
+            &\onetype + S(TS)^* T
+            \\ 
+            \sum_{i j} B^{(1)}_i \times B^{(2)}_j 
+            \ar[urr, \dropar, "{\eithermany{i j}{(g^{(1)}_i \times g^{(2)}_j)}}"'{xshift=-0.7cm, yshift=-0.1cm}]
+        \end{tikzcd}
+        \]
+        Therefore, it remains to show every $g^{(1)}_i \times g^{(2)}_j$ can be further lifted by $\beta_{i j}$ into a drop term $g_{i j}$ of desired shape, so that $\beta_{i j} \comp g_{i j} \equiv g^{(1)}_i \times g^{(2)}_j \comp \mu$ -- the statement will then follow by a functorial combination for all $i,j$. We consider three cases (up to symmetry) depending on which coprojection of the coproduct each $g^{(1)}_i$ and $g^{(2)}_j$ is equal to. 
+
+        \begin{description}
+            \item[Both empty.] If $g^{(1)}_i = (1 \comp 1) \comp \leftterm$ and $g^{(2)}_j = (1 \comp 1) \comp \leftterm$, then we can take $\beta_{i j} = \idterm$ and $g_{i j} = (1 \comp 1) \comp \leftterm$:
+            \begin{align*}
+                ((1 \comp 1) \comp \leftterm)^2 \comp \mu \equalbecause{$\onetype$ is terminal, \cref{ax:unit-type}} \\ 
+                (1 \comp \leftterm)^2 \comp \mu &= \why{unfold $\mu$} \\
+                (1 \comp \leftterm)^2 \comp (\either{[]}{\unshiftterm})^2 \comp \binconcatterm \comp \shiftterm \equalbecause{\cref{lem:case-equivalence}} \\
+                (1 \comp [])^2 \comp \binconcatterm \comp \shiftterm \equalbecause{\cref{lem:discarding-pair-to-empty-list}} \\
+                (1 \comp []) \comp \shiftterm \equalbecause{\cref{lem:uniqueness-of-rebracketings}} \\
+                (1 \comp \leftterm) \equalbecause{$\onetype$ is terminal, \cref{ax:unit-type}} \\
+                (1 \comp 1) \comp \leftterm.
+            \end{align*}
+
+            \item[One nonempty.] Suppose that $g^{(1)}_i = (1 \comp 1) \comp \leftterm$ and $g^{(2)}_j = (\sndterm\comp{}x) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y) \comp \rightterm$ (the symmetric case is analogous). In this case we have 
+            \begin{align*} 
+                ((1 \comp 1) \comp \leftterm) \times ((\sndterm\comp{}x) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y)) \comp \mu \equalbecause{\cref{lem:case-equivalence} and \cref{ax:unit-type}} \\ 
+                (1 \comp []) \times ((\sndterm\comp{}x) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y) \comp \unshiftterm) \comp\binconcatterm \comp \shiftterm \equalbecause{\cref{lem:product-with-empty-list-fst-binconcat}} \\ 
+                (1 \comp []) \times ((\sndterm\comp{}x) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y) \comp \unshiftterm) \comp \sndterm \comp \shiftterm \equalbecause{naturality of $\sndterm$, \cref{ax:naturality}} \\ 
+                \sndterm \comp (\sndterm\comp{}x) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y) \comp (\unshiftterm \comp \shiftterm) \equalbecause{\cref{lem:uniqueness-of-rebracketings}} \\
+                \sndterm \comp (\sndterm\comp{}x) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y) \comp \rightterm \equalbecause{naturality of associativity} \\ 
+                \assoc \comp (\sndterm \comp (\sndterm\comp{}x)) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y) \comp \rightterm \equalbecause{\cref{lem:snd-snd-is-assocl-snd}} \\ 
+                \assoc \comp (\sndterm\comp{}x) \times (H(\vec h) \comp \concmap) \times (\fstterm\comp{}y) \comp \rightterm.
+            \end{align*}
+
+            \item[Both nonempty.] Suppose that $g^{(1)}_i = (\sndterm\comp{}x_1) \times (H_1(\vec h_1) \comp \concmap) \times (\fstterm\comp{}y_1) \comp \rightterm$ and $g^{(2)}_j = (\sndterm\comp{}x_2) \times (H_2(\vec h_2) \comp \concmap) \times (\fstterm\comp{}y_2) \comp \rightterm$. The construction consists of reassociating products so that the $T$ produced by $y_1$ and the $S$ produced by $x_2$ are combined into one pair $TS$. A sketch of the construction is illustrated on the diagram:
+            \[
+            \begin{tikzcd}[column sep = 1cm]
+                (\bullet X_1) H_1(\vec A_1) (Y_1 \bullet) \times (\bullet X_2) H_2(\vec A_2) (Y_2 \bullet)
+                \ar[r, \dropar, "{g^{(1)}_i \times g^{(2)}_j}"]
+                \ar[d, \liftar, "\cong"]
+                &(S(TS)^* T)^2 
+                \ar[r, "{\rightterm^2 \comp \mu}"]
+                \ar[d, \liftar, "\cong"]
+                &\onetype + S(TS)^* T
+                \\ 
+                (\bullet X_1) \left( H_1(\vec A_1) \times ((Y_1 (\bullet \bullet)) X_2) \times H_2(\vec A_2) \right) (Y_2 \bullet)
+                \ar[r, \dropar, "g"]
+                &S (TS)^* (TS) (TS)^* T 
+                \ar[ur, \dropar]
+            \end{tikzcd}
+            \]
+            The diagonal drop term is the obvious term which collects the $TS$ pairs and then applies the right coprojection. Therefore, the right-hand triangle commutes by \cref{lem:uniqueness-of-rebracketings}. The drop $g$ on the bottom is the functorial application of components of $g_i^{(1)}$ and $g_j^{(2)}$ after the reassociation lift. The left-hand square commutes by naturality of associativity (\cref{ax:naturality}) and \kl{projections coherence laws} (\cref{lem:projections-coherence-laws}). The composed bottom-path drop is equivalent to the following term, which satisfies the required shape of the lemma:
+            \[
+                (\sndterm \comp x_1) \times \left(H_1(\vec h_1) \times [\fstterm \times \idterm \comp y_1 \times x_2] \times H_2(\vec h_2) \comp \concmap \right) \times (\fstterm \comp y_2) \comp \rightterm.
+            \]
+        \end{description}
+
+        \item[List node, $F = G^*$.] By definition of $\concmap$ on a list, we have
+        \[
+            \left( F(\vec f) \comp \concmap \right) = \hom \left( G(\vec f) \comp \concmap \right).
+        \]
+        The construction proceeds by applying the induction hypothesis to $G$, and then ``folding'' many shifted sublists into one shifted list. First, let $\mu = (\either{[]}{\unshiftterm})^* \comp \concatterm \comp \shiftterm$. The following diagram commutes by induction:
+        \[
+        \begin{tikzcd}[column sep = 2.5cm]
+            G(\vec A)^*
+            \ar[r, \dropar, "{(G(\vec f) \comp \concmap)^*}"]
+            \ar[d, \liftar, "\text{induction}"]
+            &(S \times T)^{**}
+            \ar[r, \dropar, "\concatterm"]
+            \ar[d, \liftar, "{\shiftterm^*}"]
+            &(S \times T)^*
+            \ar[d, \liftar, "\shiftterm"]
+            \\ 
+            \left( \sum_i B_i \right)^*
+            \ar[r, \dropar, "{\left( \eithermany{i}{(g_i)} \right)^*}"]
+            &(\onetype + S(TS)^* T)^* 
+            \ar[r, "\mu"]
+            &\onetype + S(TS)^* T
+        \end{tikzcd}
+        \]
+        We now briefly describe how to further lift the bottom path of the diagram to obtain a lift-drop composition of required shape which is equivalent to $(\eithermany{i}{(g_i)})^* \comp \mu$. The idea is similar to the list subcase of the leaf node functor case described earlier: we proceed by induction on the number of variants $g_i$. We use $\blockterm$ to separate the domain list into uniform sublists, then apply $\shiftterm$ to each of them, and finally reassemble the shifted sublists into one with proper reassociating and concatenation maps. One additional technicality which was not present in the leaf node case is that some variants may produce outputs in the left summand (empty lists). The details are tedious but straightforward, and we omit them for brevity.
+    \end{description}
+\end{proof}

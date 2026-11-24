@@ -1,0 +1,613 @@
+\section{Completeness in the Presence of Groups}
+\label{sec:completeness-in-the-presence-of-groups}
+
+\newcommand{\checkterm}{\mathsf{check}}
+\newcommand{\precheckterm}{\mathsf{precheck}}
+\newcommand{\repairterm}{\mathsf{repair}}
+\newcommand{\postrepairterm}{\mathsf{postrepair}}
+
+In \cref{cor:aperiodic-completeness}, we have shown that our equational axiomatisation is complete for \kl{aperiodic terms}, i.e.~if two aperiodic terms are denotationally equal, then their equality can be proved in our theory. 
+In this part of the appendix, we finish the completeness proof, by taking into account terms that  use the \kl{group prefix multiplication} $\prefterm$. Since we already have completeness for aperiodic terms, we will no longer need to justify provability for equivalences on aperiodic terms, as long as they are denotationally true. This will spare us from the kind of low-level equational reasoning that we had to do in the aperiodic case.
+
+\subsection{A Single Group Suffices}
+
+\label{sec:single-group-suffices}
+We begin by showing that, without loss of generality for the completeness proof, there is only a single finite group in the system. 
+\begin{lemma}\label{lem:just-one-group}
+    Assume that for every finite group $G$, our equational axiomatisation is complete for terms that use $\prefterm$ only for $G$. Then our equational axiomatisation is complete for all terms.
+\end{lemma}
+\begin{proof}
+    Suppose that we want to prove equality $f \equiv g$ for two terms, which might use \kl{group prefix multiplication} for different groups. Take the product 
+    \begin{align*}
+    G = G_1 \times \cdots \times G_n.
+    \end{align*}
+    of all the groups that appear in $f$ and $g$. For each $i$ consider the two group homomorphisms 
+    \begin{align*}
+    G_i \xhookrightarrow {\text{$i$-th injection}} 
+    G \xtwoheadrightarrow {\text{$i$-th projection}}
+    G_i,
+    \end{align*}
+    which are the identity on $G_i$ when composed. By naturality of the group prefix multiplication in terms of the finite group, which we have shown in \cref{lem:naturality-of-group-prefix-operation},  the following diagram commutes provably for every \kl{type} $A$:
+    \[
+        \begin{tikzcd}[column sep=3cm]
+        (A \times G_i)^*
+        \ar[r,hookrightarrow, "{\text{$i$-th injection}}"]
+        \ar[d, "\prefterm"']
+        &
+        (A \times G)^*
+        \ar[r,twoheadrightarrow, "{\text{$i$-th projection}}"]
+        \ar[d, "\prefterm"]
+        &
+        (A \times G_i)^* 
+        \ar[d, "\prefterm"]
+        \\
+        (A \times G_i)^*
+        \ar[r,hookrightarrow, "{\text{$i$-th injection}}"]
+        &
+        (A \times G)^*
+        \ar[r,twoheadrightarrow, "{\text{$i$-th projection}}"]
+        &
+        (A \times G_i)^*. 
+        \end{tikzcd}
+    \]
+Therefore, the group prefix multiplication for $G_i$ can be expressed in terms of the group prefix multiplication for $G$, as well as some \kl{aperiodic terms} (the horizontal arrows). This means that we can find terms that are provably equivalent to $f$ and $g$, respectively, and which use the group prefix multiplication only for $G$. By the  assumption of the lemma, we can then prove equality of these new terms, and therefore also of $f$ and $g$.
+\end{proof}
+
+Thanks to the above lemma, in the rest of this section we will assume that there is a single finite group $G$ in the system, and we will show that the equational axiomatisation is complete for terms that use $\prefterm$ only for this group $G$. Fix the group $G$ for the rest of \cref{sec:completeness-in-the-presence-of-groups}.
+
+\subsection{Coproduct Notation}
+
+When defining the \kl{group prefix multiplication}, we used the input \kl{type} $(A \times G)^*$. However, in this section it will be more convenient to use coproducts ranging over $G$ instead of products with $G$. In this section, we present the corresponding notation. The type $A \times G$ is isomorphic to 
+\begin{align*}
+\Sigma A \eqdef \sum_{g \in G}A.
+\end{align*}
+The idea is that $\Sigma A$ is a type annotated with values in the group.
+Under this \kl{isomorphism}, the input and output types of the group prefix multiplication are isomorphic to $(\Sigma A)^*$, and therefore we can use the group prefix multiplication over this type. For the rest of this section, we assume that the group prefix multiplication is defined as 
+\[
+    \left( \Sigma A \right)^* \xrightarrow{\prefterm} \left( \Sigma A \right)^*.
+\]
+
+\subsection{Partial Prefix Multiplication}
+
+Suppose that $H \subseteq G$ is a (nonempty) subset of elements of the group $G$ and that $\sum_H A$ is a coproduct \kl{type}, where the variants are indexed by elements of $H$. Formally, unless $H = G$, we are not able to apply the prefix multiplication to the type $(\sum_H A)^*$, since the \kl{group prefix multiplication} is only defined for the full coproduct $(\Sigma A)^*$. However, we can first inject the coproduct into the full type $(\Sigma A)^*$, and then apply the prefix multiplication: 
+\[
+    \left( \sum_H A \right)^* \drop{\rho^*} (\Sigma A)^* \xrightarrow{\prefterm} (\Sigma A)^*.
+\]
+After that, we would like to go back to $(\sum_H A)^*$. To do this, consider the term
+\[
+    (\Sigma A)^* \xrightarrow{\checkterm_H} \myunderbrace{(\Sigma A)^*}{obtained from $H$} \hspace*{2mm} +  \hspace*{2mm} \myunderbrace{(\Sigma A)^*}{the rest} \xrightarrow{\either{\unprefterm}{(1\comp[])}} (\Sigma A)^* \drop{(\inv \rho)^*} \left( \sum_H A \right)^*,
+\]
+where $\inv \rho$ is a (nonnatural) drop one-sided inverse of $\rho$ and $\checkterm_H$ is a term which denotationally checks whether the input list has been obtained by prefix multiplication from a list of elements in $H$, and puts it in the left variant if so, the right variant otherwise. We leave it as an exercise to the reader to show that $\checkterm_H$ exists, and that it is aperiodic. 
+
+Our goal now is to show that this procedure works as expected, i.e.~that it creates a loop in $(\sum_H A)^*$ which is provably equivalent to $\idterm$. First, we prove that the term $\checkterm_H$ can be replaced by $\leftterm$.
+
+\begin{lemma}\label{lem:checkterm-leftterm}
+    The following diagram commutes provably:
+    \[
+    \begin{tikzcd}
+        (\sum_H A)^*
+        \ar[r, \dropar, "\rho^*"]
+        \ar[d, \dropar, "\rho^*"'{xshift=-0.5ex}]
+        &(\Sigma A)^*
+        \ar[r, "\prefterm"]
+        &(\Sigma A)^*
+        \ar[d, "\checkterm_H"]
+        \\ 
+        (\Sigma A)^*
+        \ar[r, "\prefterm"'{xshift=-0.5ex}]
+        &(\Sigma A)^*
+        \ar[r, \dropar, "\leftterm"]
+        &(\Sigma A)^* + (\Sigma A)^*
+    \end{tikzcd}
+    \]
+\end{lemma}
+\begin{proof}
+    Instead of applying $\checkterm_H$ after the list is already multiplied, we can first check whether the input list $(\Sigma A)^*$ consists of elements from $H$, based on this split it into two cases, and then apply the prefix multiplication to both of them. Concretely, consider the term \[
+        (\Sigma A)^* \xrightarrow{\precheckterm_H} (\Sigma A)^* + (\Sigma A)^*,
+    \]
+    which denotationally checks whether the input list consists only of elements from $H$ and puts it in the left variant if so, the right variant otherwise. The term $\precheckterm_H$ is clearly aperiodic. Moreover, we obtain the following diagram:
+    \[
+    \begin{tikzcd}[column sep=huge]
+        (\Sigma A)^* 
+        \ar[r, "\prefterm"]
+        \ar[d, "\precheckterm_H"'{xshift=-0.5ex}]
+        &(\Sigma A)^*
+        \ar[d, "\checkterm_H"]
+        \\ 
+        (\Sigma A)^* + (\Sigma A)^*
+        \ar[r, "\prefterm + \prefterm"']
+        &(\Sigma A)^* + (\Sigma A)^*
+    \end{tikzcd}
+    \]
+    The diagram clearly commutes denotationally, and by the isomorphism trick, is equivalent to the equality of \kl{aperiodic terms} $\unprefterm \comp \precheckterm_H$ and $\checkterm_H \comp (\unprefterm + \unprefterm)$. Therefore, it is provably commutative by \cref{cor:aperiodic-completeness}.
+
+    With this in hand, the top part of the diagram in the statement of the lemma is equivalent to 
+    $\rho^* \comp \precheckterm_H \comp (\prefterm + \prefterm)$. Now we can replace $\precheckterm_H$ by $\leftterm$ provably: the terms $\rho^* \comp \precheckterm_H$ and $\rho^* \comp \leftterm$ are denotationally equal, and hence provably equivalent by \cref{cor:aperiodic-completeness}. The last piece is the equivalence of $\leftterm \comp (\prefterm + \prefterm)$ and $\prefterm \comp \leftterm$, which follows from naturality of $\leftterm$ (\cref{ax:naturality}).
+\end{proof}
+
+With \cref{lem:checkterm-leftterm} in hand, we can now prove that the entire loop of partial prefix multiplication is provably equivalent to $\idterm$.
+
+\begin{lemma}\label{lem:partial-prefix-multiplication}
+    \[
+        \rho^* \comp \prefterm \comp \checkterm_H \comp \either{\unprefterm}{(1\comp[])} \comp (\inv \rho)^* \equiv \idterm.
+    \]
+\end{lemma}
+\begin{proof}
+    By \cref{lem:checkterm-leftterm}, the term $\checkterm_H$ in the left-hand side of the postulated equivalence can be provably replaced by $\leftterm$. The rest is computation:
+    \begin{align*}
+        \rho^* \comp \prefterm \comp \leftterm \comp \either{\unprefterm}{(1\comp[])} \comp (\inv \rho)^* \equalbecause{\cref{lem:case-equivalence}} \\
+        \rho^* \comp \prefterm \comp \unprefterm \comp (\inv \rho)^* \equalbecause{\cref{ax:isomorphisms}} \\ 
+        \rho^* \comp (\inv \rho)^* \equalbecause{the choice of $\inv \rho$} \\ 
+        \idterm.
+    \end{align*}
+\end{proof}
+
+\subsection{Group-Lifts}
+
+We will prove completeness of our system in the presence of $\prefterm$ analogously to the proof of completeness in the aperiodic case. The first step is to adjust the definition of \kl{lift} and \kl{drop terms}, as currently $\prefterm$ is not derivable as a composition of a lift followed by a drop, which invalidates \cref{lem:lift-then-drop} in the general setting. 
+
+We will not change the definition of drop terms, but lifts need to incorporate new primitive operations. What we want is to equip lifts with the ability to perform the (partial) \kl{group prefix multiplication}. This will unfortunately invalidate \cref{lem:lift-provable-inverse}, because lifts will no longer be \kl{surjective}. However, we still want them to be \kl{injective}, and have drop terms as their one-sided inverses -- this property is crucial for the proof of completeness.
+
+To achieve all of the above, we define a new kind of lift, called \emph{Simon lift} -- indirectly inspired by the Factorisation Forest Theorem of Simon~\cite{Simon1990} -- which is capable of partial group prefix multiplication (in some relaxed sense) and has a drop one-sided inverse.
+
+\begin{lemma}[Simon lift]\label{lem:simon-lift}
+    Suppose that $H \subseteq G$ is a subset of elements of the group $G$ and $A$ is a \kl{type}. There exists a term, called the \emph{Simon lift} associated to $H$ and $A$, which satisfies the following properties:
+    \begin{enumerate}
+        \item it is a composition of a \kl{drop}, $\prefterm$, and then a \kl{lift} $\lambda$,
+        \item it is \kl{injective}, and its one-sided inverse is a \kl{drop term} $\gamma$:
+        \[
+        \begin{tikzcd}[column sep=huge]
+            \left(\sum_H A \right)^* 
+            \ar[r, "\text{Simon lift}"]
+            \ar[dr, "\idterm"'{xshift=-0.5ex}]
+            &S
+            \ar[d, \dropar, "\gamma"]
+            \\
+            &\left(\sum_H A \right)^*
+        \end{tikzcd}
+        \]
+        \item there exists a \kl{drop term} $\delta$ such that the following diagram commutes provably:
+        \[
+        \begin{tikzcd}
+            (\sum_H A)^* 
+            \ar[r, \dropar, "\rho^*"]
+            &(\Sigma A)^*
+            \ar[d, "\prefterm"]
+            \\ 
+            S
+            \ar[r, \dropar, "\delta"']
+            \ar[u, \dropar, "\gamma"{xshift=-0.5ex}]
+            &(\Sigma A)^*
+        \end{tikzcd}
+        \]
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    Consider the term $\checkterm_H$ from the previous section. By the \kl{lift-drop factorisation} for \kl{aperiodic terms} (\cref{lem:lift-then-drop}) and the fact that lifts are \kl{isomorphisms} with drop inverses (\cref{lem:lift-provable-inverse}), there is a lift $\lambda$ and drop terms $f, g$ such that the following diagram commutes provably:
+    \[
+    \begin{tikzcd}[column sep=huge, row sep=huge]
+        (\Sigma A)^* 
+        \ar[r, "\checkterm_H"]
+        \ar[dr, \liftar, "\lambda"'{xshift=-0.5ex}]
+        &(\Sigma A)^* + (\Sigma A)^*
+        \ar[r, "\unprefterm + \unprefterm"]
+        &(\Sigma A)^* + (\Sigma A)^*
+        \\ 
+        &S
+        \ar[u, \dropar, "f"{xshift=-0.5ex}]
+        \ar[ur, \dropar, "g"']
+    \end{tikzcd}
+    \]
+    With this in hand, we define the \kl{Simon lift} and drops $\gamma, \delta$ as follows: 
+    \begin{align*}
+        \text{Simon lift} &\eqdef \rho^* \comp \prefterm \comp \lambda \\
+        \gamma            &\eqdef g \comp \either{\left( \inv \rho \right)^*}{(1\comp[])} \\
+        \delta            &\eqdef f \comp \either{\idterm}{(1\comp[])}.
+    \end{align*}
+    We now verify the properties (2) and (3). The property (2) follows from \cref{lem:partial-prefix-multiplication} with some straightforward computation:
+    \begin{align*}
+        \text{Simon lift} \comp \gamma &= \why{by definition} \\ 
+        \rho^* \comp \prefterm \comp \lambda \comp g \comp \either{\left( \inv \rho \right)^*}{(1\comp[])} \equalbecause{the choice of $\lambda$ and $g$} \\ 
+        \rho^* \comp \prefterm \comp \checkterm_H \comp \unprefterm + \unprefterm \comp \either{\left( \inv \rho \right)^*}{(1\comp[])} \equalbecause{\cref{lem:functoriality-of-either-left}} \\ 
+        \rho^* \comp \prefterm \comp \checkterm_H \comp \either{\left( \unprefterm \comp \left( \inv \rho \right)^* \right)}{\left( \unprefterm \comp (1\comp []) \right)} \equalbecause{\cref{cor:aperiodic-completeness}} \\ 
+        \rho^* \comp \prefterm \comp \checkterm_H \comp \either{\left( \unprefterm \comp \left( \inv \rho \right)^* \right)}{\left( (1\comp []) \comp (\inv \rho)^* \right)} \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+        \rho^* \comp \prefterm \comp \checkterm_H \comp \either{\unprefterm}{(1\comp [])} \comp (\inv \rho)^* \equalbecause{\cref{lem:partial-prefix-multiplication}} \\ 
+        \idterm.
+    \end{align*}
+    For property (3), after multiplying on the left by $\lambda$ and on the right by $\unprefterm$ (both are isomorphisms), we obtain an equivalent equality to prove:
+    \[
+        \lambda \comp \gamma \comp \rho^* \equiv \lambda \comp \delta \comp \unprefterm.
+    \]
+    Both sides are already aperiodic, so their provable equivalence would follow from denotational equality by \cref{cor:aperiodic-completeness}. To see that they are denotationally equal, we rewrite both sides. For the left-hand side:
+    \begin{align*}
+        \lambda \comp \gamma \comp \rho^* &= \why{by definition of $\gamma$} \\ 
+        \lambda \comp g \comp \either{\left( \inv \rho \right)^*}{(1\comp[])} \comp \rho^* \equalbecause{the choice of $\lambda$ and $g$} \\
+        \checkterm_H \comp \unprefterm + \unprefterm \comp \either{\left( \inv \rho \right)^*}{(1\comp[])} \comp \rho^* \equalbecause{Lemmas \ref{lem:functoriality-of-either-left} and \ref{lem:functoriality-of-either}} \\
+        \checkterm_H \comp \either{\left( \unprefterm \comp (\inv \rho)^* \comp \rho^* \right)}{\left( \unprefterm \comp (1 \comp []) \comp \rho^* \right)} \equalbecause{\cref{cor:aperiodic-completeness}} \\ 
+        \checkterm_H \comp \either{\left( \unprefterm \comp (\inv \rho)^* \comp \rho^* \right)}{(1 \comp [])}.
+    \end{align*}
+    Similarly, the right-hand side can be rewritten as follows:
+    \begin{align*}
+        \lambda \comp \delta \comp \unprefterm &= \why{by definition of $\delta$} \\
+        \lambda \comp f \comp \either{\idterm}{(1\comp[])} \comp \unprefterm \equalbecause{the choice of $\lambda$ and $f$} \\
+        \checkterm_H \comp \either{\idterm}{(1\comp[])} \comp \unprefterm \equalbecause{\cref{lem:functoriality-of-either} and \cref{cor:aperiodic-completeness}} \\ 
+        \checkterm_H \comp \either{\unprefterm}{(1 \comp [])}.
+    \end{align*}
+    Therefore, we are left with proving that after applying $\checkterm_H$ and then $\unprefterm$ to the obtained left variant, we obtain a list on which $(\inv \rho)^* \comp \rho^*$ is the identity. This is exactly the intended purpose of $\checkterm_H$, which sends to the left variant the lists consisting of only elements in $H$ -- and these are exactly the lists that after unprefixing are fixed points of $(\inv \rho)^* \comp \rho^*$ (i.e.~they are in the image of $\rho^*$).
+
+    Therefore, both sides are denotationally equal, and since they are also aperiodic, their provable equivalence follows from \cref{cor:aperiodic-completeness}, and so follows property (3).
+\end{proof}
+
+Apart from the Simon lift, we also define \emph{group injections}, which lift the domain of a drop term with a group codomain into a sum annotated by a subset of the group.
+
+\begin{lemma}[Group injection]\label{lem:group-injection}
+    Consider a \kl{drop term} $f : A \dropmap \Sigma B$. There exists a term, called the \emph{group injection} associated to $f$ with codomain $\sum_H C$ for some \kl{type} $C$ and $H \subseteq G$, which satisfies the following properties:
+    \begin{enumerate}
+        \item it is aperiodic,
+        \item it is \kl{injective} and its one-sided inverse is a \kl{drop term} $\sigma$:
+        \[
+        \begin{tikzcd}[column sep=2.5cm]
+            A
+            \ar[r, "\text{group injection}"]
+            \ar[dr, "\idterm"'{xshift=-0.5ex}]
+            &\sum_H C
+            \ar[d, \dropar, "\sigma"]
+            \\
+            &A
+        \end{tikzcd}
+        \]
+        \item there exists a collection of \kl{drop terms} $\vec f$ indexed by $H$, such that the following diagram commutes provably ($\rho_h$ is the coprojection of $B$ into the $h$-th variant of $\Sigma B$):
+        \[
+        \begin{tikzcd}[column sep=2.5cm]
+            A
+            \ar[r, \dropar, "f"]
+            &\Sigma B
+            \\
+            \sum_H C
+            \ar[u, \dropar, "\sigma"{xshift=-0.5ex}]
+            \ar[ur, \dropar, "\eithermany{h}{(f_h \comp \rho_h)}"']
+        \end{tikzcd}
+        \]
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    By a repeated application of the normalisation of drop terms with sum codomains (\cref{lem:drops-with-sum-co-domain}), we obtain a lift $\alpha$ and collections of drop terms $\vec g, \vec \rho$ such that $f \equiv \alpha \comp \eithermany{i}{(g_i \comp \rho_i)}$, where every $g_i$ is of the type $D_i \dropmap B$ for some $D_i$, and $\rho_i : B \dropmap \Sigma B$ is a coprojection into some variant of the group coproduct. By grouping summands, we can assume that every $\rho_i$ sends its domain into a different group element. Let $H \subseteq G$ be the subset that $\vec \rho$ sends elements to, and label terms $\vec g, \vec \rho$ with corresponding elements of $H$. 
+
+    Now consider the following injective drop term, which sends every $D_h$ first into $\sum_H D_h$, and then labels it with $h$ again:
+    \[
+        \sum_{h \in H} D_h \drop{\varepsilon} \sum_H \left( \sum_{h \in H} D_h \right).
+    \]  
+    Define the \kl{group injection} associated to $f$ to be $\alpha \comp \varepsilon$. Note that (1) is satisfied. We now want to choose an inverse $\inv \varepsilon$ of $\varepsilon$, which composed with the unique inverse $\inv \alpha$ of $\alpha$ will give $\sigma$. 
+    
+    For every $h \in H$, we choose a \kl{value} $d_h \in D_h$. Then $\inv \varepsilon$ is defined as $\sum_{h \in H} \eithermany{k \in H}{(\inv \varepsilon_{h k})}$, where $\inv \varepsilon_{h k}$ is equal to $\idterm$ for $h = k$, and $(1\comp d_h)$ otherwise. It is clear that $\varepsilon \comp \inv \varepsilon \equiv \idterm$, and as a consequence $\sigma$ is a one-sided inverse of the group injection, hence (2) is satisfied.
+
+    For (3), we have to be careful with the choice of $\vec f$, so that it is compatible with $\sigma$. We define $f_h : \sum_{k \in H} D_k \dropmap B$ as $\eithermany{k}{(f_{h k})}$, where $f_{h k}$ is equal to $(\inv \varepsilon_{h k} \comp g_h)$. It remains to verify the condition (3):
+    \begin{align*}
+        \sigma \comp f &= \why{the choice of $\sigma$} \\ 
+        \inv \varepsilon \comp \inv \alpha \comp f \equalbecause{the choice of $\alpha$ by \cref{lem:drops-with-sum-co-domain}} \\ 
+        \inv \varepsilon \comp \eithermany{h}{(g_h \comp \rho_h)} &= \why{the definition of $\inv \varepsilon$} \\
+        \left( \sum_{h \in H} \eithermany{k \in H}{\left( \inv \varepsilon_{h k} \right)} \right) \comp \eithermany{h}{(g_h \comp \rho_h)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\ 
+        \eithermany{h \in H}{\left( \eithermany{k \in H}{(\inv \varepsilon_{h k})} \comp g_h \comp \rho_h \right)} \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+        \eithermany{h \in H}{\left( \eithermany{k \in H}{(\inv \varepsilon_{h k} \comp g_h)} \comp \rho_h \right)} &= \why{the choice of $f_{h k}$} \\ 
+        \eithermany{h \in H}{\left( \eithermany{k \in H}{(f_{h k})} \comp \rho_h \right)} &=  \why{the choice of $f_h$} \\ 
+        \eithermany{h}{\left( f_h \comp \rho_h \right)}.
+    \end{align*}
+\end{proof}
+
+We are now in position to define the corresponding notion of lift terms in the presence of groups, which we call \intro{group-lifts}.
+
+\begin{definition}[Group-lifts]\label{def:group-lifts}
+    \kl{Group-lifts} is the class of terms defined identically to \kl{lifts} (\cref{def:lift-drop}), except that we add the \kl{Simon lift} (\cref{lem:simon-lift}) and \kl{group injections} (\cref{lem:group-injection}) to the list of \kl{atomic lift terms}.
+\end{definition}
+
+\subsection{Proof of Completeness}
+
+It is sufficient to reduce the completeness proof to the case of equality of two \kl{drop terms}, similarly as in the aperiodic case in \cref{cor:aperiodic-completeness}, because introducing groups did not affect the definition of drop terms. To achieve this, we need an analogue of the \kl{lift-drop factorisation} (\cref{lem:lift-then-drop}), suitable for \kl{group-lifts}. However, we have to be careful: a verbatim ``\kl{group-lift--drop factorisation}'' statement would not suffice to prove completeness, since group-lifts are not \kl{surjective}, and hence cannot be cancelled on the left-hand side in equivalence proofs. Instead, we prove a strictly stronger version of a factorisation, which asserts that the diagram commutes after inverting the group-lift. 
+
+\begin{lemma}[Group-lift--drop factorisation]\label{lem:grouplift-then-drop}
+    Every term $f : A \to B$ decomposes as a \kl{group-lift} followed by a \kl{drop}, in the sense that the following diagram commutes provably:
+    \[ 
+    \begin{tikzcd}[column sep=huge]
+        A
+        \ar[r, "f"]
+        &B
+        \\ 
+        C 
+        \ar[u, \dropar, "\text{a group-lift inverse}"{xshift=-0.5ex}]
+        \ar[ur, \dropar, "\text{a drop}"']
+    \end{tikzcd}
+    \]
+\end{lemma}
+
+Note that the version of factorisation with the inverted group-lift is strictly stronger than the naive factorisation, precisely because group-lifts are not surjective. In particular, if we restrict \cref{lem:grouplift-then-drop} to \kl{aperiodic terms} $f$ and \kl{lifts}, it becomes equivalent to \cref{lem:lift-then-drop}.
+
+\cref{lem:grouplift-then-drop} is sufficient to reduce completeness of the equational axiomatisation for all terms to the case of drop terms. Similarly to the proof of \cref{cor:aperiodic-completeness}, given two denotationally equal terms, we find their joint group-lift--drop factorisation, and then we cancel the group-lift inverse on the left-hand side of the equivalence by \cref{lem:pre-postcompose-with-injective-surjective}, which can be done because the group-lift inverses are surjective.
+
+Therefore, we are left with proving \cref{lem:grouplift-then-drop}. Similarly to the proof of the aperiodic version (\cref{lem:lift-then-drop}), we proceed by structural induction on the term $f$. The only new \kl{atomic term} to consider is $\prefterm$, whose decomposition follows from property (3) of the definition of the \kl{Simon lift} (\cref{lem:simon-lift}) applied with $\rho = \idterm$. Again, the cases of product, coproduct and list combinators are purely functorial and the only interesting case is the composition, which requires an analogue of the exchange lemma (\cref{lem:exchange}) for group-lifts (with inverted group-lift arrows), which we now state and prove in the next section.
+
+\begin{lemma}[Group exchange]\label{lem:group-exchange}
+    For every composition of a \kl{drop term} $f$ with a \kl{group-lift} $\alpha$, there is a \kl{group-lift} and a \kl{drop} such that the following diagram commutes provably:
+    \[
+    \begin{tikzcd}[column sep=huge]
+        A
+        \ar[r, \dropar, "f"]
+        &B
+        \\
+        C
+        \ar[u, \dropar, "\text{a group-lift inverse}"{xshift=-0.5ex}]
+        \ar[r, \dropar, "\text{a drop}"']
+        &D
+        \ar[u, \dropar, "{\inv \alpha}"'{xshift=0.5ex}]
+    \end{tikzcd}
+    \]
+\end{lemma}
+
+\subsection{Proof of the Group Exchange Lemma}
+
+To prove \cref{lem:group-exchange}, it is enough to show that every \kl{drop} followed by an atomic \kl{group-lift} has a \kl{group-lift--drop factorisation}, and the rest follows functorially similarly to the aperiodic case (\cref{lem:exchange}). We only need to do this for the new atomic group-lifts, since the original \kl{atomic lifts} are already handled in \cref{lem:exchange}. 
+
+The exchange for \kl{group injections} is straightforward, because they are aperiodic. Note that every drop term $f : A \dropmap B$ composed with a group injection gives an \kl{aperiodic term}, which can be lift-drop factorised by \cref{lem:lift-then-drop}. Therefore, the construction is as on the following diagram:
+\[
+\begin{tikzcd}[row sep=1cm, column sep=3cm]
+    A 
+    \ar[r, \dropar, "f"]
+    \ar[dr, "{f \, \comp \, \text{group injection}}" description]
+    \ar[d, \liftar, shift right=1ex]
+    &B
+    \\ 
+    D
+    \ar[u, shift right=1ex, \dropar]
+    \ar[r, \dropar]
+    &\sum_H C 
+    \ar[u, \dropar, "\sigma"'{xshift=0.5ex}]
+\end{tikzcd}
+\]
+
+Therefore, we are left with the case of a drop followed by a \kl{Simon lift}. Before we tackle the case of general drop terms, we begin with a special case, where the drop is of the type $(\sum_H A)^* \dropmap (\sum_H B)^*$ and applies a collection of drops $A \dropmap B$ component-wise.
+
+\begin{lemma}\label{lem:simon-exchange-component-wise}
+    Consider a collection $\vec f$ of \kl{drop terms} $A \dropmap B$ indexed by a set $H \subseteq G$. There is a \kl{group-lift} and a \kl{drop} such that the following diagram commutes provably:
+    \[
+    \begin{tikzcd}[column sep=1.5cm]
+        \left( \sum_H A \right)^* 
+        \ar[r, \dropar, "{\left( \sum_{h \in H} f_h \right)^*}"{yshift=0.5ex}]
+        &\left( \sum_H B \right)^*
+        \ar[d, shift right=0.5ex, "\text{Simon lift}"'{xshift=-0.5ex}]
+        \\ 
+        C 
+        \ar[u, \dropar, "\text{a group-lift inverse}"{xshift=-0.5ex}]
+        \ar[r, \dropar, "\text{a drop}"']
+        &S
+        \ar[u, \dropar, shift right=0.5ex, "\gamma"'{xshift=0.5ex}]
+    \end{tikzcd}
+    \]
+\end{lemma}
+\begin{proof}
+    The first step of the construction is to apply a Simon lift to the input \kl{type} $(\sum_H A)^*$. Now, suppose that we found an aperiodic term $g$ such that the following diagram would commute provably:
+    \[
+    \begin{tikzcd}
+        \left( \sum_H A \right)^* 
+        \ar[r, \dropar, "{\left( \sum_{h \in H} f_h \right)^*}"{yshift=0.5ex}]
+        &\left( \sum_H B \right)^*
+        \\ 
+        (\Sigma A)^* + (\Sigma A)^*
+        \ar[u, \dropar, "{\either{\left( \inv \rho \right)^*}{(1 \comp [])}}"{xshift=-0.5ex}]
+        &(\Sigma B)^* + (\Sigma B)^*
+        \ar[u, \dropar, "{\either{\left( \inv \rho \right)^*}{(1 \comp [])}}"'{xshift=0.5ex}]
+        \\ 
+        (\Sigma A)^* + (\Sigma A)^*
+        \ar[u, \dropar, "\unprefterm + \unprefterm"{xshift=-0.5ex}]
+        &(\Sigma B)^* + (\Sigma B)^*
+        \ar[u, \dropar, "\unprefterm + \unprefterm"'{xshift=0.5ex}]
+        \\ 
+        (\Sigma A)^* 
+        \ar[u, "\checkterm_H"{xshift=-0.5ex}]
+        \ar[r, "g"]
+        &(\Sigma B)^* 
+        \ar[u, "\checkterm_H"'{xshift=0.5ex}]
+        \\ 
+        T 
+        \ar[u, \dropar, "\inv{\lambda_T}"{xshift=-0.5ex}]
+        \ar[r, "{\inv{\lambda_T} \comp g \comp \lambda_S}"']
+        &S 
+        \ar[u, \dropar, "\inv{\lambda_S}"'{xshift=0.5ex}]
+    \end{tikzcd}
+    \]
+    Then we would be done, because the left and right upward paths starting from $T$ and $S$ are inverses of the Simon lifts by the proof of \cref{lem:simon-lift}, and the bottom arrow is an aperiodic term that can be further lifted by \cref{lem:lift-then-drop}, which would complete the construction.
+
+    The bottom rectangle commutes trivially, independently of the choice of $g$. Therefore, we are left with the task of finding an aperiodic term $g$ such that the upper face commutes. It suffices to commute denotationally, because the diagram consists only of aperiodic terms, and hence it will commute provably by \cref{cor:aperiodic-completeness}.
+
+    The goal of $g$ is to apply some term $f_h$ to every element of the input list. For the diagram to commute, every element must be mapped by $f_h$, where $h \in H$ is the group element that the input element will be labelled with after applying $\unprefterm$. Similarly as in the case of $\checkterm_H$, inspecting which label it should be is an aperiodic operation. There is only one caveat: the input list may contain elements that after unprefixing are labelled by an element outside of $H$. In this case, we can apply any $f_h$ to it, because such an input list will be identified as ``invalid'' by $\checkterm_H$ and then discarded in the $(1\comp[])$ branch either way.
+\end{proof}
+
+We now proceed to the exchange of Simon lift for general drop terms. Since a Simon lift is a composition of a drop, $\prefterm$, and then a \kl{lift}, in light of the aperiodic exchange lemma (\cref{lem:exchange}), it is enough to show that a drop followed by $\prefterm$ has a group-lift--drop factorisation. This is exactly the content of the following lemma, which is the last piece of \cref{thm:main}.
+
+\begin{lemma}[Prefix exchange]
+    For every \kl{drop} $f : A \dropmap (\Sigma B)^*$, there is a \kl{group-lift} and a \kl{drop} such that the following diagram commutes provably:
+    \[
+    \begin{tikzcd}[column sep=huge]
+        A
+        \ar[r, \dropar, "f"]
+        &(\Sigma B)^*
+        \\
+        C
+        \ar[u, \dropar, "\text{a group-lift inverse}"{xshift=-0.5ex}]
+        \ar[r, \dropar, "\text{a drop}"']
+        &(\Sigma B)^*
+        \ar[u, "\unprefterm"'{xshift=0.5ex}]
+    \end{tikzcd}
+    \]
+\end{lemma}
+
+\begin{proof}
+    By \cref{lem:drops-with-list-co-domain}, it suffices to prove the statement for drops $f$ in \kl[normalised drop term]{normal form} $F(\vec f) \comp \concmap$. We proceed by induction on the structure of $F$.
+    \begin{description}
+        \item[Leaf node, $F = X_i$.] In this case, $\left(F(\vec f) \comp \concmap\right) = f_i$. We omit the index $i$ for simplicity. We consider three subcases depending on the shape of $f$.
+        \begin{description}
+        \item[Value, $f = (1 \comp v)$.] There is a \kl{value} $w$ such that $v \equiv w \comp \unprefterm$ by \cref{lem:value-completeness}. We get that $\idterm \comp (1 \comp v) \equiv (1 \comp w) \comp \unprefterm$.
+
+        \item[Singleton, $f = {[g]}$.] Here $g : A \dropmap \Sigma B$ is a drop term, and the exchange is $\idterm \comp [g] \equiv [g] \comp \unprefterm$ by \cref{cor:aperiodic-completeness}.
+
+        \item[List, $f = g^*$.] Here $g : A \dropmap \Sigma B$ is a drop term. The construction uses both a group injection and a Simon lift, as illustrated on the following diagram:
+        \[
+        \begin{tikzcd}[column sep=huge]
+            A^*
+            \ar[r, \dropar, "{g^*}"]
+            \ar[d, shift right=1ex, "\text{group injection}^*"'{xshift=-0.5ex}]
+            &(\Sigma B)^*
+            \\ 
+            \left(\sum_H C\right)^* 
+            \ar[u, shift right=1ex, \dropar, "{\sigma^*}"'{xshift=0.5ex}]
+            \ar[r, \dropar, "{\left(\sum_{h \in H} g_h\right)^*}"{yshift=0.5ex}]
+            &\left(\sum_H B\right)^*
+            \ar[u, \dropar, "\rho^*"'{xshift=0.5ex}]
+            \ar[d, shift right=1ex, "\text{Simon lift}"'{xshift=-0.5ex}]
+            &(\Sigma B)^*
+            \ar[ul, "\unprefterm"']
+            \\
+            T 
+            \ar[r, \dropar]
+            \ar[u, \dropar]
+            &S 
+            \ar[u, shift right=1ex, \dropar, "\gamma"'{xshift=0.5ex}]
+            \ar[ur, \dropar, "\delta"'{xshift=0.5ex}]
+        \end{tikzcd}
+        \]
+        The diagram commutes: the top-left rectangle commutes by the definition of the group injection, the bottom rectangle commutes by \cref{lem:simon-exchange-component-wise}, and the right face commutes by property (3) of the Simon lift (\cref{lem:simon-lift}). The group-lift inverse we need is the left upward path, and the drop is the bottom path.
+        \end{description}
+
+        \item[Sum node, $F = F_1 + F_2$.] In this case, we have $\left( F(\vec f) \comp \concmap \right) = \either{\left( F_1(\vec f) \comp \concmap \right)}{\left( F_2(\vec f) \comp \concmap \right)}$. The construction is straightforward: we apply the induction hypothesis to both $F_1$ and $F_2$, and then use the functoriality of $\mathtt{either}$ (Lemmas \ref{lem:functoriality-of-either-left} and \ref{lem:functoriality-of-either}) to obtain a group-lift--drop factorisation for the sum.
+        
+        \item[Product node, $F = F_1 \times F_2$.] In this case, we have $\left( F(\vec f) \comp \concmap \right) = \left( F_1(\vec f) \comp \concmap \right) \odot \left( F_2(\vec f) \comp \concmap \right)$. We first demonstrate the construction, which uses the induction hypothesis on both $F_1$ and $F_2$ together with \cref{lem:lift-then-drop}, and then explain why it works:
+        \[
+        \begin{tikzcd}[column sep=2.5cm]
+            F_1(\vec A) \times F_2(\vec A) 
+            \ar[r, \dropar, "{\left( F_1(\vec f) \comp \concmap \right) \times \left( F_2(\vec f) \comp \concmap \right)}"]
+            &(\Sigma B)^* \times (\Sigma B)^*
+            \ar[r, \dropar, "\binconcatterm"]
+            &(\Sigma B)^*
+            \\ 
+            C_1 \times C_2
+            \ar[u, \dropar]
+            \ar[d, \liftar, shift right=1ex]
+            \ar[r, \dropar]
+            &(\Sigma B)^* \times (\Sigma B)^*
+            \ar[u, "{\unprefterm^2}"{xshift=-0.5ex}]
+            \ar[d, "\text{aperiodic term}"'{xshift=-0.5ex}]
+            &(\Sigma B)^*
+            \ar[u, "\unprefterm"]
+            \\ 
+            D 
+            \ar[u, \dropar, shift right=1ex]
+            \ar[r, \dropar]
+            &\Sigma \left( (\Sigma B)^* \times (\Sigma B)^* \right)
+            \ar[ur, \dropar]
+        \end{tikzcd}
+        \]
+        The top rectangle commutes by induction hypothesis on $F_1$ and $F_2$. The aperiodic term denotationally works as follows: it checks the last element of the first list and annotates the whole input with its corresponding element in the group, or the group identity if the list is empty. Then the diagonal drop term consolidates the two lists by multiplying every element in the second list by the group element obtained from the first list, and then concatenates the two lists. Clearly, the right face commutes denotationally, and hence provably by \cref{cor:aperiodic-completeness}. Lastly, the bottom rectangle is obtained by the \kl{lift-drop factorisation} (\cref{lem:lift-then-drop}) of the aperiodic term precomposed with the drop $C_1 \times C_2 \dropmap (\Sigma B)^* \times (\Sigma B)^*$.
+
+        Therefore, the group-lift--drop factorisation for $F$ is obtained by taking the leftmost and bottom paths on the diagram.
+
+        \item[List node, $F = G^*$.] In this case, we have $\left( F(\vec f) \comp \concmap \right) = \hom \left( G(\vec f) \comp \concmap \right)$. This is the most involved case, which combines techniques used in the previous cases. We first demonstrate the construction, and then explain why it works:
+        \[
+        \begin{tikzcd}[column sep=2cm]
+            G(\vec A)^* 
+            \ar[r, \dropar, "{\left( G(\vec f) \comp \concmap \right)^*}"]
+            &(\Sigma B)^{**}
+            \ar[r, \dropar, "\concatterm"]
+            &(\Sigma B)^*
+            \\ 
+            C^* 
+            \ar[u, \dropar]
+            \ar[r, \dropar, "{g^*}"]
+            \ar[d, \liftar, shift right=1ex]
+            &(\Sigma B)^{**}
+            \ar[u, "\unprefterm^*"{xshift=-0.5ex}]
+            \ar[d, "\text{aperiodic term}^*"'{xshift=-0.5ex}]
+            &(\Sigma B)^*
+            \ar[u, "\unprefterm"'{xshift=0.5ex}]
+            \\ 
+            D^*
+            \ar[u, \dropar, shift right=1ex]
+            \ar[r, \dropar, "k^*"]
+            \ar[d, shift right=1ex, "\text{group injection}^*"'{xshift=-0.5ex}]
+            &\left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[dr, "\prefterm"]
+            \\ 
+            \left( \sum_H E \right)^*
+            \ar[u, shift right=1ex, \dropar, "\sigma^*"'{xshift=0.5ex}]
+            \ar[r, \dropar, "{\left( \sum_{h \in H} k_h \right)^*}"{yshift=0.5ex}]
+            &\left( \sum_H (\Sigma B)^* \right)^*
+            \ar[u, \dropar, "\rho^*"'{xshift=0.5ex}]
+            \ar[d, shift right=1ex, "\text{Simon lift}"'{xshift=-0.5ex}]
+            &\left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[uu, "\text{aperiodic term}"'{xshift=0.5ex}]
+            \\
+            T 
+            \ar[r, \dropar]
+            \ar[u, \dropar]
+            &S
+            \ar[u, shift right=1ex, \dropar, "\gamma"'{xshift=0.5ex}]
+            \ar[ur, \dropar, "\delta"'{xshift=0.5ex}]
+        \end{tikzcd}
+        \]
+        Regarding the top-right face, we will explain in a moment how to choose the aperiodic terms so that it commutes. The rest of the diagram is constructed similarly to the product and list cases: the top-left rectangle is obtained by induction on $G$, the second-to-top rectangle is obtained by the lift-drop factorisation (\cref{lem:lift-then-drop}) of $g$ composed with the aperiodic term, the second-to-bottom rectangle commutes by the definition of the group injection (\cref{lem:group-injection}), the bottom rectangle is obtained by \cref{lem:simon-exchange-component-wise}, and the bottom-right face commutes by property (3) of the Simon lift (\cref{lem:simon-lift}).
+
+        This almost yields a group-lift--drop factorisation for $F$ by taking paths starting from $T$, but the bottom path is not exactly a drop followed by $\unprefterm$. However, this can be fixed by factoring the first three arrows of the bottom path as lift-then-drop (\cref{lem:lift-then-drop}) -- this lifts $T$ one more time and gives the desired group-lift--drop factorisation. This step is omitted from the diagram for clarity.
+
+        It now remains to choose the aperiodic terms of the diagram in such a way that the top-right face commutes provably. The intention is straightforward: moving along the downwards path starting from $(\Sigma B)^{**}$, we want the first aperiodic term to annotate every sublist (i.e.~element of type $(\Sigma B)^*$) with the label of its last element, or the group identity if the list is empty. Then, $\prefterm$ is applied, which performs prefix multiplication on the outer labels that we have just added. After that, for every sublist, we want to multiply all of its elements by the product of labels of sublists strictly before it. The outer label contains the product of labels of all sublists up to this point inclusively, so it has to be first multiplied by the inverse of the last element of the sublist. After all elements of every sublist are multiplied, we concatenate $(\Sigma (\Sigma B)^*)^* \concmap (\Sigma B)^*$, and this is the second aperiodic term.
+
+        We can see that denotationally this procedure consolidates a list of prefix-multiplied lists into one concatenated prefix-multiplied list -- which is exactly the same as the upwards path (after equivalently reversing the $\unprefterm$ arrow): $\unprefterm^* \comp \concatterm \comp \prefterm^*$, and hence the diagram commutes denotationally. However, it is unclear how to directly prove it in the equational system. Instead, we will reduce it to an aperiodic equation by reversing some of the arrows in the top-right face, which will then be proved by \cref{cor:aperiodic-completeness}. Unfortunately, this will require us to reverse a nonsurjective arrow, and therefore we have to make a nonnatural choice: from now on we fix a value $b : \onetype \to B$.
+        
+        First, consider a term $\repairterm$ of the type:
+        \[
+            \Sigma \left( \Sigma B \right)^* \xrightarrow{\repairterm} \Sigma \left( \Sigma B \right)^*.
+        \]
+        Denotationally, the job of $\repairterm$ is to modify the input list, so that its last element has a label matching the outer label. Suppose that the outer label corresponds to $g \in G$. Then $\repairterm$ inspects the list $(\Sigma B)^*$: (1) if it is empty and $g$ is the group identity, then it does nothing, (2) if it is empty and $g$ is not the identity, then it replaces the list with a one-element list $[b\comp\rho_g]$, and (3) otherwise it changes the label of the last element to $g$. In particular, if the last element's label is already $g$, then it does nothing. 
+
+        Next, we define the term $\postrepairterm$, of the same type as $\repairterm^*$, whose job is to apply the same ``fix'' to the last element of every sublist, but after the outer labels have already been prefix-multiplied with $\prefterm$. In other words, we want to choose $\postrepairterm$ such that the following diagram commutes denotationally:
+        \[
+        \begin{tikzcd}
+            \left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[r, "\prefterm"]
+            &\left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \\ 
+            \left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[u, "{\repairterm^*}"]
+            \ar[r, "\prefterm"]
+            &\left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[u, "\postrepairterm"']
+        \end{tikzcd}
+        \]
+        At this point, it should be clear how $\postrepairterm$ should be constructed: the outer labels from before applying $\prefterm$ can be recovered by inspecting windows of width two, similarly as $\unprefterm$ does, and based on that the last elements of the sublists can be adjusted using the same value $b$ as in the $\repairterm$ procedure. Since both $\repairterm$ and $\postrepairterm$ are aperiodic, the diagram above is equivalent to the aperiodic rectangle obtained by inverting both $\prefterm$ arrows, and so is provably commutative by \cref{cor:aperiodic-completeness}.
+
+        Finally, we arrive at the following diagram:
+        \[
+        \begin{tikzcd}[column sep=1.5cm]
+            \left( \Sigma B \right)^{**}
+            \ar[r, \dropar, "\concatterm"]
+            &
+            \left( \Sigma B \right)^*
+            \\ 
+            \left( \Sigma B \right)^{**}
+            \ar[u, "{\unprefterm^*}"]
+            &\left( \Sigma B \right)^*
+            \ar[u, "\unprefterm"']
+            \\ 
+            \left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[u, "\text{forget outer label}^*"]
+            &\left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[u, "\text{multiply and concat}"']
+            \\ 
+            \left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[u, "{\repairterm^*}"]
+            \ar[r, "\prefterm"]
+            &\left( \Sigma \left( \Sigma B \right)^* \right)^*
+            \ar[u, "\postrepairterm"']
+        \end{tikzcd}
+        \]
+        where the ``multiply and concat'' term is the one described above, which multiplies every element of every sublist by the product of sublists strictly before it, and then concatenates everything into $(\Sigma B)^*$. With everything we established, we can see that the diagram commutes denotationally, and thus also provably by \cref{cor:aperiodic-completeness}, as it can be turned into an equivalent aperiodic diagram by reversing the bottom $\prefterm$ arrow. 
+        
+        Moreover, this diagram implies that the top-right face of the main diagram commutes if we choose the first aperiodic term to be as described above, of which $(\repairterm \comp \text{forget outer label})$ is a one-sided inverse (which again follows from \cref{cor:aperiodic-completeness}), and the second aperiodic term to be $(\postrepairterm \comp \text{multiply and concat})$.
+    \end{description}
+\end{proof}

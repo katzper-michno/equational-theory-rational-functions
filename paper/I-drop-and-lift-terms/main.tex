@@ -1,0 +1,47 @@
+\section{Properties of Drop and Lift Terms}\label{sec:appendix-reduction-to-simple}
+
+The ultimate goal of this section is to prove \cref{lem:exchange} and \cref{lem:joint-drops-normalisation}. In order to do that, we have to develop some technical results about drop and \kl{lift terms}. 
+
+First, we establish auxiliary notation. Throughout this section, we will mostly work with $n$-fold products and coproducts, which by default are right-associative. A big portion of our constructions will involve purely structural term-reshuffling expressible as lift terms: reassociation of products and coproducts, swapping the order of summands in a coproduct, distribution and appending units with $\unitlterm$ and $\unitrterm$. We will denote these transformations by $\lift{\cong}$. 
+
+By $\vec f, \vec A$ we will denote vectors, i.e.~$\vec f = (f_1, \dots, f_n)$ for some natural number $n \geq 1$. If $f_1, \dots, f_n$ all have the same codomain $B$, which is also the domain of a term $g$, then we write $\vec f \comp g$ to denote $(f_1 \comp g, \dots, f_n \comp g)$.
+
+We start with the notion of \intro{normalised drop term} (or \kl{drop terms} in normal form). The definition of normal form depends on the shape of a drop term's codomain.
+
+\begin{definition}[Normalised drop terms]
+	Suppose that $f : A \dropmap B$. We say that $f$ is in \emph{normal form} according to the shape of $B$, as follows.
+	\begin{description}
+		\item[Sum codomain.] If $B = B_1 + B_2$, then $f$ is equal to $\eithermany{i}{(f_i)}$, where each $f_i$ is equal to one of  
+		\[
+			g_i \comp \leftterm, \qquad g_i \comp \rightterm.
+		\]
+
+		\item[Product codomain.] If $B = B_1 \times B_2$, then $f$ is equal to
+		\[
+			\eithermany{i}{\left( x_i \times y_i \right)}.
+		\]
+
+		\item[List codomain.] If $B = C^*$, then $f$ is equal to
+		\[
+			F(\vec f) \comp \concmap,
+		\]
+		where $F$ is a \kl{list-polynomial functor} and $\vec f$ is a vector of \kl{drop terms} with codomain $C^*$, such that every $f_i$ is equal to one of
+		\[
+			(1 \comp v), \qquad [g_i], \qquad g_i^*.
+		\]
+	\end{description}
+\end{definition}
+
+In the following sections we will show that every drop term can be factored as a lift followed by a normalised drop (up to provable equality); we call this ``normalisation'' of drop terms. The cases of sum and product codomain are simpler and can be proved without dependency on any other results, which we do in the next section (\cref{sec:appendix:drops-with-sum-or-product-co-domain}). For the list codomain, we have to first establish some properties of drop terms composed with $\shiftterm$ (\cref{sec:appendix:shift-exchange}), and only then we are able to prove normalisation in \cref{sec:appendix:drops-with-list-co-domain}. 
+
+With the normalisation in hand, we will be in a position to prove \cref{lem:exchange}; we present the proof in \cref{sec:appendix:exchange-proof}. Finally, we present the proof of \cref{lem:joint-drops-normalisation} in \cref{sec:appendix:joint-drops-simplification}.
+
+\input{I-drop-and-lift-terms/sum-and-product-codomain}
+
+\input{I-drop-and-lift-terms/shift}
+
+\input{I-drop-and-lift-terms/list-codomain}
+
+\input{I-drop-and-lift-terms/exchange}
+
+\input{I-drop-and-lift-terms/joint-drop-simplification.tex}

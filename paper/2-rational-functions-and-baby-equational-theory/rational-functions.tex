@@ -1,0 +1,30 @@
+\section{Rational Functions and a Baby Version of Our Equational Axiomatisation}
+\label{sec:rational-functions}
+In this section, we define the \kl{rational functions} and extend them to more structured \kl{types} than strings. We also present a baby version of our equational axiomatisation, which contains some of the core ideas of the main result, such as canonical forms.
+
+
+\subsection{Definition of Rational Functions}
+\label{sec:definition-of-rational-functions}
+% lax begin Lax149335.RationalFunctions
+Given two \kl{finite alphabets} $A$ and $B$, we can consider a regular expression over their product, in which the atomic symbols are pairs in $A^* \times B^*$. Such an expression defines a binary relation $L \subseteq A^* \times B^*$, called a \intro{rational relation}. Here are some examples: 
+\begin{gather*}
+\myunderbrace{((a,a)+(b,b))^*}{identity function}
+\qquad
+\myunderbrace{((a,\varepsilon)+(b,b))^*}{delete every $a$}
+\qquad
+\myunderbrace{((a,aa)+(b,b))^*}{duplicate every $a$}
+\\[2pt]
+\myunderbrace{((a,a)+(b,b)+(\varepsilon,a)+(\varepsilon,b))^*}{scattered subsequence relation}
+\qquad \quad
+\myunderbrace{(aa,a)^*}{halve inputs of even length}.
+\end{gather*}
+We are interested in the case where the rational relation is a function, i.e.~for every input string there is exactly one output string, as in the identity, deletion and duplication examples above. (The halving example is not a function, since it is undefined on inputs of odd length.)
+
+\begin{definition}
+    [Rational function]
+    \label{def:rational-function}
+     A \intro{rational function} $f : A^* \to B^*$ is any function whose graph is a \kl{rational relation}.
+\end{definition}
+% lax end
+
+Equivalently, rational relations can be defined by nondeterministic finite automata whose transitions are labelled by pairs of (possibly empty) input and output strings. This definition is more convenient for proving closure properties, such as closure under composition, which follows from a standard product construction~\cite[Theorem 4.1]{Eilenberg1974}.

@@ -1,0 +1,514 @@
+\section{Derived Equalities}\label{sec:basic-facts-about-co-products}
+
+In this appendix, we derive auxiliary equivalences used throughout the paper.
+
+\subsection{Projections Coherence Laws}\label{sec:projections-coherence-laws}
+
+In this section, we prove the \kl{projections coherence laws}.
+
+\begin{lemma}\label{lem:projections-coherence-laws}
+    \begin{align*}
+        \begin{casesright}
+        \assoclterm \comp \fstterm \times \idterm \equiv \idterm \times \sndterm \\ 
+        \assoclterm \comp \sndterm \times \idterm \equiv \sndterm \\
+        \assoclterm \comp \fstterm \equiv \idterm \times \fstterm
+        \end{casesright}
+        \quad 
+        (\text{Projections coherence laws})
+    \end{align*}
+\end{lemma}
+The first equation of \cref{lem:projections-coherence-laws} is a direct strengthening of Mac Lane's triangle (\cref{ax:triangle}), where the unit in the middle is replaced with an arbitrary \kl{type}. Similarly, the second and third equations are analogous strengthenings of the ``unit on the left or right'' versions of the triangle, which we first derive using an argument similar to that of Kelly~\cite{Kelly1964}.
+
+\begin{lemma}[Unit on the left or right]\label{lem:triangle-left-or-right}
+    The following diagrams commute provably:
+    \[
+    \begin{tikzcd}[column sep=small]
+        \onetype \times \left( B \times C \right)
+        \ar[rr, "\assoclterm"]
+        \ar[dr, "\sndterm"']
+        && \left(\onetype \times B \right) \times C
+        \ar[dl, "{\sndterm \times \idterm}"]
+        \\
+        & B \times C
+    \end{tikzcd}
+    \quad 
+    \begin{tikzcd}[column sep=small]
+        A \times \left( B \times \onetype \right)
+        \ar[rr, "\assoclterm"]
+        \ar[dr, "{\idterm \times \fstterm}"']
+        && \left(A \times B \right) \times \onetype
+        \ar[dl, "\fstterm"]
+        \\
+        & A \times B
+    \end{tikzcd}
+    \]
+\end{lemma}
+\begin{proof}
+    We only derive the first diagram; the second one is derived using a symmetric argument. Consider the following diagram, where the outer face is an instance of the pentagon (\cref{ax:pentagon}) for $(\onetype, \onetype, B, C)$:
+    \[
+    \begin{tikzcd}
+        &[-3.2em]&[-3.2em]\onetype \times \left( \onetype \times \left( B \times C \right) \right)
+        \ar[dll, "{\idterm \times \assoclterm}"']
+        \ar[drr, "\assoclterm"]
+        \ar[dd, "{\idterm \times \sndterm}"]
+        \\ 
+        \onetype \times \left( \left( \onetype \times B \right) \times C \right)
+        \ar[dddr, "\assoclterm"']
+        \ar[drr, "{\idterm \times \left( \sndterm \times \idterm \right)}"']
+        &[-3.2em]&[-3.2em]&[-3.2em]&[-3.2em]\left( \onetype \times \onetype \right) \times \left( B \times C \right)
+        \ar[dll, "{\fstterm \times \idterm}"]
+        \ar[dddl, "\assoclterm"]
+        \\ 
+        &[-3.2em]&[-3.2em]\onetype \times \left( B \times C \right) 
+        \ar[d, "\assoclterm"]
+        \\ 
+        &[-3.2em]&[-3.2em]\left( \onetype \times B \right) \times C 
+        \\ 
+        &[-3.2em]\left( \onetype \times \left( \onetype \times B \right) \right) \times C 
+        \ar[rr, "{\assoclterm \times \idterm}"']
+        \ar[ur, "{\left( \idterm \times \sndterm \right) \times \idterm}"]
+        &[-3.2em]&[-3.2em]\left( \left( \onetype \times \onetype \right) \times B \right) \times C
+        \ar[ul, "{\left(\fstterm \times \idterm \right) \times \idterm}"']
+    \end{tikzcd}
+    \]
+    Both quadrilateral faces commute by naturality of $\assoclterm$ (\cref{ax:naturality}). The top-right and bottom triangles are the standard triangles (\cref{ax:triangle}). The outer face is the pentagon (\cref{ax:pentagon}). From this we can derive that the top-left triangle also commutes. Chasing around, we have:
+    \begin{align*}
+        \idterm \times \sndterm \comp \assoclterm \equalbecause{top-right triangle} \\ 
+        \assoclterm \comp \fstterm \times \idterm \comp \assoclterm \equalbecause{bottom-right face} \\ 
+        \assoclterm \comp \assoclterm \comp \left( \fstterm \times \idterm \right) \times \idterm \equalbecause{outer face} \\ 
+        \idterm \times \assoclterm \comp \assoclterm \comp \assoclterm \times \idterm \comp \left( \fstterm \times \idterm \right) \times \idterm \equalbecause{bottom triangle} \\ 
+        \idterm \times \assoclterm \comp \assoclterm \comp \left( \idterm \times \sndterm \right) \times \idterm \equalbecause{bottom-left face} \\ 
+        \idterm \times \assoclterm \comp \idterm \times \left( \sndterm \times \idterm \right) \comp \assoclterm.
+    \end{align*}
+    Cancel $\assoclterm$ on both sides by \cref{lem:pre-postcompose-with-injective-surjective} and apply functoriality of $\times$ (\cref{ax:functoriality-of-type-constructors}) to obtain:
+    \[
+        \idterm \times \sndterm \equiv \idterm \times \left( \assoclterm \comp \sndterm \times \idterm \right).
+    \]
+    The leading identity on both sides is on $\onetype$, so by precomposing with $\unitlterm$, we get:
+    \[
+        \unitlterm \comp \idterm \times \sndterm \equiv \unitlterm \comp \idterm \times \left( \assoclterm \comp \sndterm \times \idterm \right).
+    \]
+    Finally, we apply naturality of $\unitlterm$ (\cref{ax:naturality}) to both sides to obtain the desired equality:
+    \[
+        \sndterm \equiv \assoclterm \comp \sndterm \times \idterm.
+    \]
+\end{proof}
+
+To deduce \cref{lem:projections-coherence-laws}, we have to replace the discarded units in \cref{ax:triangle} and \cref{lem:triangle-left-or-right} with an arbitrary type. We achieve this using naturality of projections (\cref{ax:naturality}). Consider the following diagram:
+\[
+\begin{tikzcd}
+    A \times \left(B \times C \right) 
+    \ar[rrrr, "\assoclterm"]
+    \ar[dr, "{\idterm \times \left( 1 \times \idterm \right)}"']
+    &[-3.5em]&[-2em]&[-2em]&[-3.5em]\left( A \times B \right) \times C
+    \ar[dl, "{\left( \idterm \times 1 \right) \times \idterm}"] 
+    \\ 
+    &A \times \left( \onetype \times C \right) 
+    \ar[rr, "\assoclterm"]
+    \ar[dr, "{\idterm \times \sndterm}"']
+    &&\left( A \times \onetype \right) \times C 
+    \ar[dl, "{\fstterm \times \idterm}"]
+    \\ 
+    &&A \times C
+\end{tikzcd}
+\]
+The top face commutes by naturality of $\assoclterm$ (\cref{ax:naturality}), while the bottom triangle is exactly \cref{ax:triangle}. Therefore, the entire diagram commutes. Now, the composition obtained from the left path is:
+\begin{align*}
+    \idterm \times (1 \times \idterm) \comp \idterm \times \sndterm \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\ 
+    \idterm \times \left( \left(1 \times \idterm \right) \comp \sndterm \right) \equalbecause{naturality of $\sndterm$, \cref{ax:naturality}} \\ 
+    \idterm \times \sndterm.
+\end{align*}
+Similarly, the right path is equivalent to $\assoclterm \comp \fstterm \times \idterm$. This finishes the proof of the first equation in \cref{lem:projections-coherence-laws}. The remaining two laws are derived analogously from triangles in \cref{lem:triangle-left-or-right}.
+
+\subsection{Associativity}
+
+\begin{lemma}\label{lem:assocr-fst-mapped-coherence}
+    $\fstterm \comp (f \times g) \equiv \assocrterm \comp (f \times (\fstterm \comp g))$.
+\end{lemma}
+\begin{proof}
+    By \cref{ax:isomorphisms}, it suffices to show that $\assoclterm \comp \fstterm \comp (f \times g) \equiv f \times (\fstterm \comp g)$:
+    \begin{align*}
+        \assoclterm \comp \fstterm \comp (f \times g) \equalbecause{\cref{lem:projections-coherence-laws}} \\ 
+        (\idterm \times \fstterm) \comp (f \times g) \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\ 
+        f \times (\fstterm \comp g).
+    \end{align*}
+\end{proof}
+
+\begin{lemma}\label{lem:snd-snd-is-assocl-snd}
+    $\sndterm \comp \sndterm \equiv \assoclterm \comp \sndterm$.
+\end{lemma}
+\begin{proof}
+    By \cref{ax:isomorphisms}, it suffices to show that $\assocrterm \comp \sndterm \comp \sndterm \equiv \sndterm$:
+    \begin{align*}
+        \assocrterm \comp \sndterm \comp \sndterm \equalbecause{\cref{lem:projections-coherence-laws}} \\ 
+        (\sndterm \times \idterm) \comp \sndterm \equalbecause{naturality of $\sndterm$, \cref{ax:naturality}} \\
+        \sndterm \comp \idterm \equalbecause{\cref{ax:associativity-of-composition}} \\
+        \sndterm.
+    \end{align*}
+\end{proof}
+
+\subsection{Copairing}\label{sec:co-pairing-simple-facts}
+
+In this section, we prove some simple facts about the \kl{copairing} combinator $\mathtt{either}$. The following lemma essentially says how copairing is evaluated.
+
+\begin{lemma}\label{lem:case-equivalence}
+        $\leftterm\comp \either{f_1}{f_2} \equiv f_1$ and similarly for $\rightterm$.
+\end{lemma}
+    \begin{proof}
+        We only do the proof of the first equation:
+        \begin{align*}
+            \leftterm\comp \either{f_1}{f_2} &= \why{definition of $\either{f_1}{f_2}$}\\
+            \leftterm\comp \codiagterm\comp (f_1 + f_2) \equalbecause{\cref{ax:eval-codiag}}\\
+            f_1.
+        \end{align*}
+    \end{proof}
+
+The following lemma states that any term out of a coproduct is determined by its two restrictions.
+
+\begin{lemma}\label{lem:either-uniqueness}
+	$\either{\leftterm\comp{}h}{\rightterm\comp{}h} \equiv h$.
+\end{lemma}
+
+\begin{proof}
+    \begin{align*}
+        \either{\leftterm \comp h }{\rightterm \comp h} &= \why{definition of $\mathtt{either}$} \\ 
+        (\leftterm \comp h) + (\rightterm \comp h) \comp \codiagterm \equalbecause{functoriality of $+$, \cref{ax:functoriality-of-type-constructors}} \\ 
+        (\leftterm + \rightterm) \comp (h + h) \comp \codiagterm \equalbecause{naturality of $\codiagterm$} \\ 
+        (\leftterm + \rightterm) \comp \codiagterm \comp h \equalbecause{\cref{ax:eval-codiag}} \\ 
+        h
+    \end{align*}
+\end{proof}
+
+The following two lemmas show that copairing is functorial.
+\begin{lemma}\label{lem:functoriality-of-either}
+    $\either{f_1}{f_2}\comp g \equiv \either{(f_1\comp g)}{(f_2\comp g)}$.
+\end{lemma}
+    \begin{proof}
+        \begin{align*}
+            \either{f_1}{f_2}\comp g &= \why{definition of $\either{f_1}{f_2}$}\\
+             (f_1 + f_2)\comp\codiagterm\comp g \equalbecause{naturality of $\codiagterm$}\\
+             (f_1 + f_2)\comp(g+g)\comp\codiagterm \equalbecause{functoriality}\\
+             (f_1\comp g) + (f_2\comp g)\comp\codiagterm &= \why{definition of $\either{f_1\comp g}{f_2\comp g}$}\\
+            \either{(f_1\comp g)}{(f_2\comp g)}.
+        \end{align*}
+    \end{proof}
+
+\begin{lemma}\label{lem:functoriality-of-either-left}
+    $(g_1 + g_2) \comp \either{f_1}{f_2} \equiv \either{(g_1 \comp f_1)}{(g_2 \comp f_2)}$.
+\end{lemma}
+    \begin{proof}
+        \begin{align*}
+            (g_1 + g_2) \comp \either{f_1}{f_2} &= \why{definition of $\either{f_1}{f_2}$} \\ 
+            (g_1 + g_2) \comp (f_1 + f_2) \comp \codiagterm \equalbecause{functoriality of $+$, \cref{ax:functoriality-of-type-constructors}} \\ 
+            (g_1 \comp f_1) + (g_2 \comp f_2) \comp \codiagterm &= \why{definition of $\either{(g_1 \comp f_1)}{(g_2 \comp f_2)}$} \\ 
+            \either{(g_1 \comp f_1)}{(g_2 \comp f_2)}
+        \end{align*}
+    \end{proof}
+
+\begin{lemma}\label{lem:distributivity-of-either}
+    $(\either {f_1}  {f_2}) \times f \equiv \distlterm\comp (\either {f_1 \times f} {f_2 \times f})$ and similarly for $\distrterm$.
+\end{lemma}
+\begin{proof} We only prove the first equation, the second one is similar.
+Before proving the lemma, we prove the following observation about distributivity and the codiagonal.
+    \begin{align*}
+    \undistlterm\comp  \codiagterm \times \idterm &= \why{definition of $\undistlterm$}\\
+\either {(\leftterm \times \idterm)} {(\rightterm \times \idterm)}\comp  \codiagterm \times \idterm \equalbecause{\cref{lem:functoriality-of-either}}\\
+\either {((\leftterm\comp\codiagterm) \times \idterm)} {((\rightterm\comp\codiagterm) \times \idterm)} \equalbecause{\cref{ax:eval-codiag} and \cref{ax:functoriality-of-type-constructors}}\\ 
+\either{\idterm} {\idterm}  &= \why{definition of copairing}\\ 
+(\idterm + \idterm)\comp \codiagterm  \equalbecause{\cref{ax:functoriality-of-type-constructors}}\\
+\codiagterm
+    \end{align*}
+Equipped with the above observation, we can now prove the lemma:
+    \begin{align*}
+    (\either{f_1}{f_2}) \times f  \equalbecause{isomorphism} \\
+    \distlterm\comp \undistlterm\comp (\either{f_1}{f_2}) \times f &= \why{definition of $\either{ }{ }$}\\
+        \distlterm\comp \undistlterm\comp ((f_1 + f_2)\comp\codiagterm) \times f \equalbecause{functoriality}\\
+                \distlterm\comp \undistlterm\comp ((f_1 + f_2) \times f)\comp \codiagterm \times \idterm \equalbecause{naturality}\\
+                \distlterm\comp (f_1 \times f) + (f_2 \times f)\comp \undistlterm\comp  \codiagterm \times \idterm \equalbecause{as proved above}\\
+            \distlterm\comp (f_1 \times f) + (f_2 \times f)\comp \codiagterm &= \why{definition of copairing}\\ 
+            \distlterm\comp (\either {f_1 \times f} {f_2 \times f})
+            \end{align*}
+\end{proof}
+An immediate consequence of \cref{lem:distributivity-of-either} is the following lemma.
+\begin{lemma}\label{lem:distributivity-of-concatenation}
+        $(\either {f_1}  {f_2}) \fdot f \equiv \distlterm\comp (\either {f_1 \fdot f} {f_2 \fdot f})$ and similarly for $\distrterm$.
+\end{lemma}
+\begin{proof} We only prove the first equation, the second one is similar.
+        \begin{align*}
+    (\either{f_1}{f_2}) \fdot f  &= \why{definition of $\fdot$} \\
+    (\either{f_1}{f_2}) \times f\comp \binconcatterm  \equalbecause{\cref{lem:distributivity-of-either}} \\
+    \distlterm\comp (\either {f_1 \times f} {f_2 \times f})\comp \binconcatterm 
+     \equalbecause{\cref{lem:functoriality-of-either}} \\
+    \distlterm\comp (\either {f_1 \times f\comp\binconcatterm } {f_2 \times f\comp\binconcatterm})  
+     &= \why{definition of $\fdot$} \\
+    \distlterm\comp (\either {f_1 \fdot f} {f_2 \fdot f}).
+    \end{align*}
+\end{proof}
+
+\subsection{Distributivity}\label{sec:distributivity}
+
+In this section we describe basic properties of distributivity. Since the coproduct is associative and commutative, we can write a coproduct 
+\begin{align*}
+    \sum_{i \in I} A_i
+\end{align*}
+without specifying the order of the summands. Such a coproduct is formalised by giving some order on the summands and a bracketing, but all orders and bracketings admit \kl{isomorphisms} with each other. We will also talk about a coprojection
+\begin{align*}
+A_i 
+\xrightarrow {\text{coprojection}}
+\sum_{i \in I} A_i,
+\end{align*}
+which is formalised by using $\leftterm$ and $\rightterm$ a suitable number of times. Similarly, for terms $A_i \xrightarrow{f_i} B$ indexed by $i \in I$, we write
+\begin{align*}
+\sum_{i \in I} A_i \xrightarrow{\eithermany{i}{f_i}} B
+\end{align*}
+as an abbreviation for the $n$-fold \kl{copairing} $\eithermany{n}{f_{i_1} \cdots f_{i_n}}$ from \cref{sec:atomic-for-co-products}, where $i_1, \ldots, i_n$ is the order of the summands used to formalise $\sum_{i \in I} A_i$. When the index set is a product, such as $I \times J$, we also write $\eithermany{ij}{f_{ij}}$. Finally, we can extend distributivity and its inverse to arbitrary coproducts
+    \[
+\begin{tikzcd}
+    [column sep=3cm]
+\displaystyle{\left(\sum_{i \in I} A_i \right) \times \left(\sum_{j \in J} B_j \right) }
+\ar[r,shift left=0.6ex,"\text{distribute}"]
+&
+\displaystyle{\sum_{(i,j) \in I \times J} A_i \times B_j}
+\ar[l,shift left=0.6ex,"\text{undistribute}"],
+\end{tikzcd}
+\]
+which is formalised by using $\distrterm$ and $\distlterm$ a suitable number of times. The following lemma states that relevant properties of distributivity hold provably. The proof is a straightforward induction on the size of the coproducts, using the axioms for distributivity and its inverse.
+
+\begin{lemma}
+    \label{lem:distributivity}
+    The following diagram commutes provably
+    \[
+\begin{tikzcd}
+    [column sep=3cm]
+A_i \times B_j
+\ar[r,"{\text{coprojection} \times \text{coprojection}}"]
+\ar[dr,"\text{coprojection}"']
+&
+\displaystyle{\left(\sum_{i \in I} A_i \right) \times \left(\sum_{j \in J} B_j \right) }
+\ar[d,"\text{distribute}"]
+\\
+&
+\displaystyle{\sum_{(i,j) \in I \times J} A_i \times B_j}
+\end{tikzcd}
+\]
+\end{lemma}
+\begin{proof}
+    We first show the special case of the lemma where one index set has two elements and the other index set has one element. By repeatedly applying this special case, we get the general case. The diagram for the special case is as follows:
+ \[
+\begin{tikzcd}
+A_1 \times B
+\ar[r,"\leftterm \times \idterm"]
+\ar[dr,"\leftterm"']
+ & (A_1 + A_2) \times B 
+\ar[d,"\distlterm"]
+ \\
+& (A_1 \times B) + (A_2 \times B)
+\end{tikzcd}
+\]
+By the isomorphism axioms, it is enough to show that the diagram commutes after postcomposing with the inverse of distributivity, which gives the following diagram:
+ \[
+\begin{tikzcd}
+A_1 \times B
+\ar[r,"\leftterm \times \idterm"]
+\ar[dr,"\leftterm"']
+ & (A_1 + A_2) \times B 
+ \\
+& (A_1 \times B) + (A_2 \times B)
+\ar[u,"\undistlterm"']
+\end{tikzcd}
+\]
+The inverse of distributivity is defined by cases, and hence we can apply the reduction from \cref{lem:case-equivalence} to see that the diagram commutes.
+\end{proof}
+
+Another fact is the $\distlterm\text{-}\fstterm$ coherence law.
+
+\begin{lemma}\label{lem:distl-fst-coherence}
+    $\distlterm \comp (\fstterm + \fstterm) \equiv \fstterm$.
+\end{lemma}
+\begin{proof}
+    By \cref{ax:isomorphisms}, it suffices to show that $(\fstterm + \fstterm) \equiv \undistlterm \comp \fstterm$:
+    \begin{align*}
+        \undistlterm \comp \fstterm &= \why{definition of $\undistlterm$} \\
+        \either{(\leftterm \times \idterm)}{(\rightterm \times \idterm)} \comp \fstterm \equalbecause{\cref{lem:functoriality-of-either}} \\
+        \either{\left( \leftterm \times \idterm \right) \comp \fstterm}{\left( \rightterm \times \idterm \right) \comp \fstterm} \equalbecause{naturality of $\fstterm$} \\
+        \either{(\fstterm \comp \leftterm)}{(\fstterm \comp \rightterm)} \equalbecause{\cref{lem:functoriality-of-either-left}} \\
+        (\fstterm + \fstterm) \comp \either{\leftterm}{\rightterm} \equalbecause{\cref{lem:either-uniqueness}} \\
+        (\fstterm + \fstterm).
+    \end{align*}
+\end{proof}
+
+\subsection{List Facts}\label{sec:basic-facts-about-lists}
+
+In this section we record two basic facts about $\binconcatterm$ and the empty list, which are used when normalising drop terms with list codomain. Recall that $1$ denotes the unique up to equivalence term into $\onetype$ from any domain (\cref{ax:unit-type}), and $[] \eqdef \leftterm\comp\consterm$.
+
+\begin{lemma}\label{lem:binconcat-empty-is-fst}
+    $(\idterm \times []) \comp \binconcatterm \equiv \fstterm$.
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+        (\idterm \times []) \comp \binconcatterm \equalbecause{\cref{ax:associativity-of-composition}} \\
+        \idterm \comp (\idterm \times []) \comp \binconcatterm \equalbecause{$\fstterm$, $\appendoneterm$ mutual inverses, \cref{ax:isomorphisms}} \\
+        \fstterm \comp \appendoneterm \comp (\idterm \times []) \comp \binconcatterm \equalbecause{\cref{ax:concatenation-monoid}} \\
+        \fstterm \comp \idterm \equalbecause{\cref{ax:associativity-of-composition}} \\
+        \fstterm.
+    \end{align*}
+\end{proof}
+
+\begin{lemma}\label{lem:product-with-empty-list-fst-binconcat}
+    For every $f$, $f \times (1 \comp []) \comp \fstterm \equiv f \times (1 \comp []) \comp \binconcatterm$.
+\end{lemma}
+\begin{proof}
+    We compute both sides and show that they are equal to $\fstterm \comp f$. For the left-hand side, this follows directly from naturality of $\fstterm$:
+    \begin{align*}
+        f \times (1 \comp []) \comp \fstterm \equalbecause{naturality of $\fstterm$} \\
+        \fstterm \comp f.
+    \end{align*}
+    For the right-hand side, we first factor the product using functoriality (\cref{ax:functoriality-of-type-constructors}) and \cref{ax:associativity-of-composition}:
+    \begin{align*}
+        f \times (1 \comp []) \comp \binconcatterm \equalbecause{\cref{ax:functoriality-of-type-constructors}} \\
+        (f \times 1) \comp (\idterm \times []) \comp \binconcatterm \equalbecause{\cref{lem:binconcat-empty-is-fst}} \\
+        (f \times 1) \comp \fstterm \equalbecause{naturality of $\fstterm$} \\
+        \fstterm \comp f.
+    \end{align*}
+    Both sides equal $\fstterm \comp f$, which proves the lemma.
+\end{proof}
+
+Next, we prove that discarding a pair of inputs, turning them into empty lists and concatenating them, is equivalent to discarding the inputs and returning an empty list.
+
+\begin{lemma}\label{lem:discarding-pair-to-empty-list}
+    $(1 \comp []) \times (1 \comp []) \comp \binconcatterm \equiv 1 \comp []$.
+\end{lemma} 
+\begin{proof}
+    \begin{align*}
+        (1 \comp []) \times (1 \comp []) \comp \binconcatterm \equalbecause{\cref{lem:product-with-empty-list-fst-binconcat}} \\
+        (1 \comp []) \times (1 \comp []) \comp \fstterm \equalbecause{naturality of $\fstterm$, \cref{ax:naturality}} \\
+        \fstterm \comp (1 \comp []) \equalbecause{$\onetype$ is terminal, \cref{ax:unit-type}} \\
+        1 \comp [].
+    \end{align*}
+\end{proof}
+
+Recall that $\prependterm \eqdef \rightterm \comp \consterm$ and $[] \eqdef \leftterm \comp \consterm$ are both built from the \kl{atomic term} $\consterm$, and are therefore natural in the following sense.
+
+\begin{lemma}\label{lem:prepend-and-empty-naturality}
+    $\prependterm \comp h^* \equiv (h \times h^*) \comp \prependterm$ and $[] \comp h^* \equiv []$.
+\end{lemma}
+\begin{proof}
+    Both equations follow from naturality of $\consterm$ (\cref{ax:naturality}), i.e.~$(\idterm + (h \times h^*)) \comp \consterm \equiv \consterm \comp h^*$, precomposed with $\rightterm$ and $\leftterm$ respectively. For $\prependterm$:
+    \begin{align*}
+        \prependterm \comp h^* &= \why{definition of $\prependterm$} \\
+        \rightterm \comp \consterm \comp h^* \equalbecause{naturality of $\consterm$, \cref{ax:naturality}} \\
+        \rightterm \comp (\idterm + (h \times h^*)) \comp \consterm \equalbecause{naturality of $\rightterm$} \\
+        (h \times h^*) \comp \rightterm \comp \consterm &= \why{definition of $\prependterm$} \\
+        (h \times h^*) \comp \prependterm.
+    \end{align*}
+    For $[]$:
+    \begin{align*}
+        [] \comp h^* &= \why{definition of $[]$} \\
+        \leftterm \comp \consterm \comp h^* \equalbecause{naturality of $\consterm$, \cref{ax:naturality}} \\
+        \leftterm \comp (\idterm + (h \times h^*)) \comp \consterm \equalbecause{naturality of $\leftterm$} \\
+        \idterm \comp \leftterm \comp \consterm \equalbecause{\cref{ax:associativity-of-composition}} \\
+        \leftterm \comp \consterm &= \why{definition of $[]$} \\
+        [].
+    \end{align*}
+\end{proof}
+
+The following lemma states naturality of $\pureterm$, i.e.~that it is a natural transformation from the identity functor to the list functor.
+
+\begin{lemma}\label{lem:pure-naturality}
+    $\pureterm \comp g^* \equiv g \comp \pureterm$.
+\end{lemma}
+\begin{proof}
+    Recall $\pureterm \eqdef \appendoneterm \comp (\idterm \times []) \comp \prependterm$. We compute:
+    \begin{align*}
+        \pureterm \comp g^* &= \why{definition of $\pureterm$} \\
+        \appendoneterm \comp (\idterm \times []) \comp \prependterm \comp g^* \equalbecause{\cref{lem:prepend-and-empty-naturality}} \\
+        \appendoneterm \comp (\idterm \times []) \comp (g \times g^*) \comp \prependterm \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\
+        \appendoneterm \comp (g \times ([] \comp g^*)) \comp \prependterm \equalbecause{\cref{lem:prepend-and-empty-naturality}} \\
+        \appendoneterm \comp (g \times []) \comp \prependterm \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\
+        \appendoneterm \comp (g \times \idterm) \comp (\idterm \times []) \comp \prependterm \equalbecause{naturality of $\appendoneterm$, \cref{ax:naturality}} \\
+        g \comp \appendoneterm \comp (\idterm \times []) \comp \prependterm &= \why{definition of $\pureterm$} \\
+        g \comp \pureterm.
+    \end{align*}
+\end{proof}
+
+The following lemma states that \kl{concatenation maps} are functorial.
+
+\begin{lemma}\label{lem:functoriality-of-concat-maps}
+    Suppose that $\vec f$ is a vector of terms with codomain $A^*$ and $g : A \to B$. Then 
+    \[
+        \left( F(\vec f) \comp \concmap \right) \comp g^* \equiv F(\vec f \comp g^*) \comp \concmap.
+    \]
+\end{lemma}
+\begin{proof}
+    The proof proceeds by case analysis on the shape of functor $F$.
+    \begin{description}
+        \item[Unit node, $F = \onetype$.] In this case, we have $\left( F(\vec f) \comp \concmap \right) \equiv []$ and $[] \comp g^* \equiv []$ by \cref{lem:prepend-and-empty-naturality}.
+
+        \item[Leaf node, $F = X_i$.] In this case, we have $\left( F(\vec f) \comp \concmap \right) \equiv f_i$ and there is nothing to show. 
+        
+        \item[Sum node, $F = F_1 + F_2$.] In this case, we have 
+        \begin{align*}
+            \left( F(\vec f) \comp \concmap \right) \comp g^* = \either{\left( F_1(\vec f) \comp \concmap \right)}{\left( F_2(\vec f) \comp \concmap \right)} \comp g^* \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+            \either{\left( (F_1(\vec f) \comp \concmap) \comp g^* \right)}{\left( (F_2(\vec f) \comp \concmap) \comp g^*\right)} \equalbecause{induction} \\
+            \either{\left( F_1(\vec f \comp g^*) \comp \concmap \right)}{\left( F_2(\vec f \comp g^*) \comp \concmap \right)}.
+        \end{align*}
+
+        \item[Product node, $F = F_1 \times F_2$.] In this case, we have 
+        \begin{align*}
+            \left( F(\vec f) \comp \concmap \right) \comp g^* = \left( (F_1(\vec f) \comp \concmap) \odot (F_2(\vec f) \comp \concmap) \right) \comp g^* \equalbecause{naturality of $\binconcatterm$, \cref{ax:naturality}} \\ 
+            \left( (F_1(\vec f) \comp \concmap) \comp g^* \right) \odot \left( (F_2(\vec f) \comp \concmap) \comp g^* \right) \equalbecause{induction} \\
+            \left( F_1(\vec f \comp g^*) \comp \concmap \right) \odot \left( F_2(\vec f \comp g^*) \comp \concmap \right).
+        \end{align*}
+
+        \item[List node, $F = G^*$.] In this case, we have 
+        \begin{align*}
+            \left( F(\vec f) \comp \concmap \right) \comp g^* = \left( \hom \left( (G(\vec f) \comp \concmap) \right) \right) \comp g^* \equalbecause{naturality of $\concatterm$, \cref{ax:naturality}} \\
+            \hom \left( \left( (G(\vec f) \comp \concmap) \comp g^* \right) \right) \equalbecause{induction} \\
+            \hom \left( G(\vec f \comp g^*) \comp \concmap \right).
+        \end{align*}
+    \end{description}
+\end{proof}
+
+The next lemma is similar to \cref{lem:functoriality-of-concat-maps}, but for postcomposition with $\concatterm$.
+
+\begin{lemma}\label{lem:concat-map-concat}
+    Suppose that $\vec f$ is a vector of terms with codomain $A^{**}$. Then
+    \[
+        \left( F(\vec f) \comp \concmap \right) \comp \concatterm \equiv F(\vec f \comp \concatterm) \comp \concmap.
+    \]
+\end{lemma}
+\begin{proof}
+    The proof proceeds by case analysis on the shape of functor $F$.
+    \begin{description}
+        \item[Unit node, $F = \onetype$.] In this case, we have $\left( F(\vec f) \comp \concmap \right) \equiv []$ and $[] \comp \concatterm \equiv []$ by \cref{ax:concat-monoid-homomorphism}.
+
+        \item[Leaf node, $F = X_i$.] In this case, we have $\left( F(\vec f) \comp \concmap \right) \equiv f_i$ and there is nothing to show. 
+        
+        \item[Sum node, $F = F_1 + F_2$.] In this case, we have 
+        \begin{align*}
+            \left( F(\vec f) \comp \concmap \right) \comp \concatterm &= \why{definition of $\concmap$} \\ 
+            \either{\left( F_1(\vec f) \comp \concmap \right)}{\left( F_2(\vec f) \comp \concmap \right)} \comp \concatterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+            \either{\left( (F_1(\vec f) \comp \concmap) \comp \concatterm \right)}{\left( (F_2(\vec f) \comp \concmap) \comp \concatterm\right)} \equalbecause{induction} \\
+            \either{\left( F_1(\vec f \comp \concatterm) \comp \concmap \right)}{\left( F_2(\vec f \comp \concatterm) \comp \concmap \right)}.
+        \end{align*}
+
+        \item[Product node, $F = F_1 \times F_2$.] In this case, we have 
+        \begin{align*}
+            \left( F(\vec f) \comp \concmap \right) \comp \concatterm &= \why{definition of $\concmap$} \\ 
+            \left( (F_1(\vec f) \comp \concmap) \odot (F_2(\vec f) \comp \concmap) \right) \comp \concatterm \equalbecause{\cref{ax:concat-monoid-homomorphism}} \\ 
+            \left( (F_1(\vec f) \comp \concmap) \comp \concatterm \right) \odot \left( (F_2(\vec f) \comp \concmap) \comp \concatterm \right) \equalbecause{induction} \\
+            \left( F_1(\vec f \comp \concatterm) \comp \concmap \right) \odot \left( F_2(\vec f \comp \concatterm) \comp \concmap \right).
+        \end{align*}
+
+        \item[List node, $F = G^*$.] In this case, we have 
+        \begin{align*}
+            \left( F(\vec f) \comp \concmap \right) \comp \concatterm &= \why{definition of $\concmap$} \\ 
+            \hom \left( (G(\vec f) \comp \concmap) \right) \comp \concatterm &= \why{definition of $\hom$} \\ 
+            \left( (G(\vec f) \comp \concmap) \right)^* \comp \concatterm \comp \concatterm \equalbecause{\cref{ax:concatenation-unit}} \\
+            \left( (G(\vec f) \comp \concmap) \right)^* \comp \concatterm^* \comp \concatterm \equalbecause{functoriality of $*$, \cref{ax:functoriality-of-type-constructors}} \\ 
+            \left( \left( G(\vec f) \comp \concmap \right) \comp \concatterm \right)^* \comp \concatterm \equalbecause{induction} \\ 
+            \left( G(\vec f \comp \concatterm) \comp \concmap \right)^* \comp \concatterm &= \why{definition of $\hom$} \\
+            \hom \left( G(\vec f \comp \concatterm) \comp \concmap \right).
+        \end{align*}
+    \end{description}
+\end{proof}

@@ -1,0 +1,175 @@
+\subsection{Normalisation with List Codomain}\label{sec:appendix:drops-with-list-co-domain}
+
+In this section, we describe the remaining variant of \kl{drops} normalisation for a list codomain.
+
+\begin{lemma}[List normalisation]\label{lem:drops-with-list-co-domain}
+	Suppose that $f$ is a \kl{drop term} with list codomain $B^*$. There exists a \kl{lift} $\alpha$, a \kl{list-polynomial functor} $F$ and \kl{drop terms} $\vec f \preceq f$ with codomain $B^*$, such that 
+	\[
+		f \equiv \alpha \comp \left( F(\vec f) \comp \concmap \right),
+	\]
+	where every $f_i$ is equal to one of 
+	\[
+		(1 \comp v), \qquad [g_i], \qquad g_i^*.
+	\]
+\end{lemma}
+
+\begin{proof}[Proof of \cref{lem:drops-with-list-co-domain}]
+	We proceed by induction on $f$ with respect to $\preceq$. The easy cases are when $\rk(f) = 0$ or $f$ is a functorial map of another drop term. We leave these cases to the reader, as the remaining cases are strictly more involved. We are left with the case where $f$ is a composition of two drop terms, i.e.~$f \equiv f_1 \comp f_2$. Similarly to the proofs of \cref{lem:drops-with-sum-co-domain} and \cref{lem:drops-with-prod-co-domain}, we proceed by induction on $f_2$ with respect to $\preceq$. If $f_2$ is itself a composition, that is, $f_2 = g_1 \comp g_2$, then $f \equiv (f_1 \comp g_1) \comp g_2 \preceq f$ and $g_2 \prec f_2$, so we obtain the desired construction by induction. 
+
+	The remaining cases are when $f_2$ is a functorial map of a drop term, or when $f_2$ is an \kl{atomic drop term}. We consider these cases separately. In both of them we have $f_1 \prec f$, so we normalise all terms at most $f_1$ in $\preceq$.
+	
+	\begin{description}
+		\item[List, $f_2 = h^*$.] In this case, by induction there is a lift $\alpha$ and a \kl{normalised drop} $F(\vec f)$ with $\vec f \preceq f_1$, such that $f_1 \equiv \alpha \comp \left( F(\vec f) \comp \concmap \right)$. We obtain:
+		\begin{align*}
+			f = f_1 \comp f_2 \equalbecause{induction} \\ 
+			\alpha \comp \left( F(\vec f) \comp \concmap \right) \comp h^* \equalbecause{functoriality of $\concmap$, \cref{lem:functoriality-of-concat-maps}} \\
+			\alpha \comp \left( F(\vec f \comp h^*) \comp \concmap \right).
+		\end{align*}
+		For every $f_i \in \vec f$, there are three cases depending on its shape. If $f_i = (1\comp{}v)$ for some \kl{value} $v$, we have $(1\comp{}v)\comp{}h^* \equiv (1\comp{}w)$ for some value $w$ by \cref{lem:value-completeness}. If $f_i = [g_i]$, then $f_i \comp h^* \equiv [g_i \comp h]$ by \cref{lem:pure-naturality}. If $f_i = g_i^*$, then $f_i \comp h^* \equiv (g_i \comp h)^*$ by functoriality of $*$ (\cref{ax:functoriality-of-type-constructors}). In each case the \kl{rank} of resulting leaf term is at most $\rk(f_1) + \rk(h) + 1 = \rk(f)$.
+
+		\item[Atomic drops.] The atomic drop terms which produce a list output are values, $\idterm$, $\fstterm$, $\sndterm$, $\codiagterm$, $\pureterm$, $\binconcatterm$, $\concatterm$ and $\unshiftterm$. If $f_2$ is a value, then $\alpha = \idterm, \vec f = (1 \comp f_2)$. If $f_2 = \pureterm$, then $\alpha = \idterm$ and $\vec f = ([f_1])$. If $f_2 = \idterm$, then we obtain the construction by induction on $f_1$. The remaining cases are more involved, and we present them separately.
+
+		\begin{description}
+			\item[Projection, $f_2 = \fstterm$.] Suppose that $f_2 = \fstterm$ (the case where $f_2 = \sndterm$ is symmetric). The construction proceeds by applying \cref{lem:drops-with-prod-co-domain} to $f_1$ and then \cref{lem:drops-with-list-co-domain} to the obtained normalisation, which is illustrated on the following diagram:
+			\[
+			\begin{tikzcd}[column sep=5cm,row sep=1.5cm]
+				A
+				\ar[r, \dropar, "f_1"]
+				\ar[d, \liftar, "\text{Lemmas } \ref{lem:drops-with-prod-co-domain} \text{ and } \ref{lem:drops-with-list-co-domain}"']
+				&B^* \times C
+				\ar[d, \dropar, "\fstterm"]
+				\\
+				\sum_i F_i(\vec X_i) \times Y_i
+				\ar[ur, \dropar, "{\eithermany{i}{\left( \left( F_i\left( \vec x_i \right) \comp \concmap \right) \times y_i \right)}}"]
+				\ar[r, \dropar, "{\eithermany{i}{\left( \left( F_i\left( \vec x_i \right) \comp \concmap \right) \fdot \left( 1 \comp [] \right) \right)}}"]
+				&B^*
+			\end{tikzcd}
+			\]
+			The upper triangle commutes by induction. For the lower triangle, we write:
+			\begin{align*}
+				\eithermany{i}{\left( \left( F_i(\vec x_i) \comp \concmap \right) \times y_i \right)} \comp \fstterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+				\eithermany{i}{\left( \left( \left( F_i(\vec x_i) \comp \concmap \right) \times  y_i \right) \comp \fstterm \right)} \equalbecause{naturality of $\fstterm$, \cref{ax:naturality}} \\ 
+				\eithermany{i}{\left( \left( \fstterm \comp \left( F_i(\vec x_i) \comp \concmap \right) \right) \right)} \equalbecause{naturality of $\fstterm$, \cref{ax:naturality}} \\ 
+				\eithermany{i}{\left( \left( \left( F_i(\vec x_i) \comp \concmap \right) \times (1 \comp []) \right) \comp \fstterm \right)} \equalbecause{\cref{lem:product-with-empty-list-fst-binconcat}} \\ 
+				\eithermany{i}{\left( \left( F_i(\vec x_i) \comp \concmap \right) \fdot (1 \comp []) \right)}
+			\end{align*}
+
+			\item[Codiagonal, $f_2 = \codiagterm$.] Suppose that $f_2 = \codiagterm$. We first apply \cref{lem:drops-with-sum-co-domain} to $f_1$, and then we apply \cref{lem:drops-with-list-co-domain} to the obtained normalisation. This is illustrated on the following diagram (every $\rho_i$ is either $\leftterm$ or $\rightterm$):
+			\[
+			\begin{tikzcd}[column sep=5cm, row sep=1.5cm]
+				A
+				\ar[r, \dropar, "f_1"]
+				\ar[d, \liftar, "{\text{Lemmas } \ref{lem:drops-with-sum-co-domain} \text{ and } \ref{lem:drops-with-list-co-domain}}"']
+				&B^* + B^*
+				\ar[d, \dropar, "\codiagterm"]
+				\\
+				\sum_i F_i(\vec A_i)
+				\ar[ur, \dropar, "{\eithermany{i}{\left( \left( F_i(\vec f_i) \comp \concmap \right) \comp \rho_i \right) }}"]
+				\ar[r, \dropar, "{\eithermany{i}{\left( F_i(\vec f_i) \comp \concmap \right)}}"]
+				&B^*
+			\end{tikzcd}
+			\]
+			The upper triangle commutes by induction. The lower triangle commutes by \cref{lem:functoriality-of-either} and the fact that coprojections and $\codiagterm$ cancel each other out (\cref{ax:eval-codiag}).
+
+			\item[Binary concatenation, $f_2 = \binconcatterm$.] Suppose that $f_2 = \binconcatterm$. The construction proceeds by applying \cref{lem:drops-with-prod-co-domain} to $f_1$ and then \cref{lem:drops-with-list-co-domain} to the obtained normalisation. This is illustrated on the following diagram:
+			\[
+			\begin{tikzcd}[column sep=4cm, row sep=1cm]
+				A
+				\ar[r, \dropar, "f_1"]
+				\ar[d, \liftar, "\text{Lemmas } \ref{lem:drops-with-prod-co-domain} \text{ and } \ref{lem:drops-with-list-co-domain}"']
+				&B^* \times B^*
+				\ar[d, \dropar, "\binconcatterm"]
+				\\ 
+				\sum_i F_i(\vec X_i) \times G_i(\vec Y_i)
+				\ar[r, \dropar, "{\eithermany{i}{\left( \left( F_i(\vec x_i) \comp \concmap \right) \, \odot \, \left( G_i(\vec y_i) \comp \concmap \right) \right)}}"]
+				&B^*
+			\end{tikzcd}
+			\]
+			In this case, the diagram commutes purely by induction.
+
+			\item[Concatenation, $f_2 = \concatterm$.] Suppose that $f_2 = \concatterm$. Then $f_1 : A \dropmap B^{**}$ and by induction there is $F(\vec f)$ together with a lift $\alpha$ such that $f_1 \equiv \alpha \comp \left( F(\vec f)\comp \concmap \right)$. Again by induction, for every $f_i \in \vec f$ there is $G_i(\vec f_i)$ together with a lift $\alpha_i$ such that $f_i \equiv \alpha_i \comp \left( G_i(\vec f_i) \comp \concmap \right)$. With this in hand, we assemble the construction:
+			\[
+			\begin{tikzcd}[column sep=6cm]
+				A
+				\ar[r, \dropar, "f_1"]
+				\ar[d, \liftar, "\alpha"']
+				&B^{**}
+				\ar[dd, \dropar, "\concatterm"]
+				\\ 
+				F(\vec A)
+				\ar[d, \liftar, "{F(\vec \alpha)}"']
+				\\ 
+				F(G_1(\vec A_1), \dots, G_n(\vec A_n))
+				\ar[uur, \dropar, "{F\left((G_1(\vec f_1) \comp \concmap), \dots, (G_n(\vec f_n) \comp \concmap ) \right) \comp \concmap}"]
+				\ar[r, \dropar, "{F \left(G_1(\vec f_1 \comp \concatterm), \dots, G_n(\vec f_n \comp \concatterm) \right) \comp \concmap}"]
+				&B^*
+			\end{tikzcd}
+			\]
+			The upper triangle commutes by induction. The lower triangle commutes by \cref{lem:concat-map-concat} applied once for the outer \kl{concatenation map}, and then for each of the inner concatenation maps. Now, for every $f_{ij} \in \vec f_i$, there are three cases depending on its shape. If $f_{ij} = (1\comp{}v)$ for some value $v$, then $f_{ij} \comp \concatterm \equiv (1\comp{}w)$ for some value w by \cref{lem:value-completeness}. If $f_{ij} = [g_{ij}]$, then $f_{ij} \comp \concatterm \equiv g_{ij}$ by \cref{ax:concatenation-unit} and $g_{ij}$ can be further normalised since $g_{ij} \preceq f_1$. If $f_{ij} = g_{ij}^*$, then $f_{ij} \comp \concatterm = \hom g_{i j}$, so we can normalise $g_{i j}$ and wrap the resulting subfunctor with a star.
+
+			\item[Unshift, $f_2 = \unshiftterm$.] In this last case, we utilise the tools we developed in \cref{sec:appendix:shift-exchange}. The construction proceeds by first applying \cref{lem:drops-with-prod-co-domain} to $f_1$ to extract parts of the input which produce the leading $S$ and trailing $T$ and the inner list of pairs, and then applying \cref{lem:drops-with-list-co-domain} to normalise the term producing pairs. After that, we can apply \cref{lem:exchange-normal-shift} to push this term through the shift. This is presented on the following diagram (every $\rho_{i j}$ is either $\leftterm$ or $\rightterm$):
+			\[
+			\begin{tikzcd}
+				A
+				\ar[rr, \dropar, "f_1"]
+				\ar[d, \liftar, "{\text{Lemmas } \ref{lem:drops-with-prod-co-domain}  \text{ and } \ref{lem:drops-with-list-co-domain}}"]
+				&\hspace*{1cm}
+				&S \times (T \times S)^* \times T
+				\ar[r, \dropar, "\unshiftterm"]
+				\ar[dd, \liftar, "{\idterm \times \shiftterm \times \idterm}"']
+				&(S \times T)^*
+				\\ 
+				\sum_i L_i \times F_i(\vec A_i) \times R_i
+				\ar[d, \liftar, "{\cref{lem:exchange-normal-shift}}"]
+				\\ 
+				\sum_i L_i \times \left( \sum_j B_{ij} \right) \times R_i
+				\ar[rr, \dropar, "{\eithermany{i}{\left( l_i \times \left( \eithermany{j}{(h_{ij}) \comp \rho_{ij}} \right) \times r_i \right)}}"]
+				\ar[d, \liftar, "\cong"]
+				&&S \left( \onetype + T(ST)^*S \right) T
+				\ar[d, \liftar, "\cong"']
+				\\ 
+				\sum_{i j} L_i \times B_{ij} \times R_i
+				\ar[rr, \dropar, "{\eithermany{i j}{\left( l_i \times h_{ij} \times r_i \comp \rho_{ij} \right)}}"]
+				\ar[d, \liftar, "\cong"]
+				&&\left( S \onetype T \right) + \left( S \times (T(ST)^* S) \times T \right)
+				\ar[d, \liftar, "\cong"']
+				\\ 
+				\sum_{i j} D_{ij}
+				\ar[rr, \dropar, "\eithermany{ij}{(g_{ij})}"]
+				&&(S (\onetype T)) + ( (S T) \times (S T)^* \times (S T) )
+				\ar[uuuur, \dropar, bend right=40, "k"]
+			\end{tikzcd}
+			\]
+			The diagonal drop is the drop term which collects the input into $ST$ pairs: 
+			\[
+				k = \either{ [\idterm \times \sndterm]}{\left( [\idterm] \odot \idterm \odot [\idterm] \right)}.
+			\]
+			Before we describe what the \kl{types} $D_{ij}$ and terms $g_{ij}$ are, we note that the diagram commutes (except the bottom square which will commute by the choice of $g_{ij}$): the uppermost-left face commutes by induction, the middle-left face commutes by a straightforward application of \cref{lem:distributivity-of-either} and \cref{lem:distributivity}. The right-hand face commutes by \cref{lem:uniqueness-of-rebracketings}: both paths are \kl{rebracketings} (by \cref{lem:rebracketing-basic-facts} and the fact that the only use of projections removes $\onetype$) and the type $(S \times T)^*$ is \kl[injective type]{injective} (see the proof of \cref{lem:shift-type-is-injective}).
+
+			Now, the types $D_{ij}$ and $g_{ij}$ are defined based on which coprojection $\rho_{ij}$ is. If $\rho_{ij} = \leftterm$, then $h_{ij} = (1 \comp 1)$, which is equivalent to $1$ by \cref{ax:unit-type}. In this case, we simply set $D_{ij} = L_i \times B_{ij} \times R_i$ and $g_{ij} = l_i \times 1 \times r_i \comp \leftterm$. We obtain:
+			\begin{align*}
+				g_{i j} \comp k &= \why{unfold $g_{i j}$ and $k$} \\ 
+				l_i \times 1 \times r_i \comp \leftterm \comp \either{ [\idterm \times \sndterm]}{\left( [\idterm] \odot \idterm \odot [\idterm] \right)} \equalbecause{\cref{lem:case-equivalence}} \\ 
+				\left[ l_i \times 1 \times r_i \comp \idterm \times \sndterm \right] \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\
+				\left[ l_i \times \left( 1 \times r_i \comp \sndterm \right) \right] \equalbecause{naturality of $\sndterm$, \cref{ax:naturality}} \\
+				\left[ l_i \times \left( \sndterm \comp r_i \right) \right] &= \why{definition of $\concmap$} \\ 
+				l_i \times \left( \sndterm \comp r_i \right) \comp \concmap.
+			\end{align*} 
+			This complies with the rank requirements of the lemma because 
+			\[ 
+				\rk(l_i \times (\sndterm \comp r_i)) = \max(\rk(l_i), \rk(r_i) + 1) \leq \rk(f_1) + 1 = \rk(f).
+			\]
+
+			The remaining case is when $\rho_{ij} = \rightterm$, in which $h_{i j} = (\sndterm \comp x) \times \left( H(\vec h) \comp \concmap \right) \times (\fstterm \comp y)$. We cannot directly compose this form with $k$ -- we have to first perform some lift rebracketing. Given that $B_{i j} = X \times H(\vec A) \times Y$, we set $D_{i j} = (L_i \times X) \times H(\vec A) \times (Y \times R_i)$ and $g_{ij} = \left( l_i \times (\sndterm \comp x) \right) \times \left( H(\vec h) \comp \concmap \right) \times \left( (\fstterm \comp y) \times r_i \right) \comp \rightterm$. We obtain:
+			\begin{align*}
+				g_{i j} \comp k \equalbecause{\cref{lem:case-equivalence}} \\
+				\left( l_i \times (\sndterm \comp x) \right) \times \left( H(\vec h) \comp \concmap \right) \times \left( (\fstterm \comp y) \times r_i \right) \comp \left( [\idterm] \odot \idterm \odot [\idterm] \right) \equalbecause{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\ 
+				\left[ l_i \times (\sndterm \comp x) \right] \odot \left( H(\vec h) \comp \concmap \right) \odot \left[ (\fstterm \comp y) \times r_i \right] &= \why{definition of $\concmap$} \\ 
+				\left( l_i \times (\sndterm \comp x) \right) \times H(\vec h) \times \left( (\fstterm \comp y) \times r_i \right) \comp \concmap. 
+			\end{align*}
+			When it comes to ranks, we have $\vec h \preceq f_1 \preceq f$, $\rk(l_i \times (\sndterm \comp x)) \leq \rk(f_1) + 1 = \rk(f)$ and $\rk((\fstterm \comp y) \times r_i) \leq \rk(f_1) + 1 = \rk(f)$.
+
+			We showed that $g_{i j} \comp k$ is equivalent to a normalised drop term with proper rank bounds. Therefore, so is the entire composition $\eithermany{i j}{(g_{i j})} \comp k$ by \cref{lem:functoriality-of-either}.
+		\end{description}
+	\end{description}
+\end{proof}

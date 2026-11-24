@@ -1,0 +1,155 @@
+\section{Completeness for Simple Rational Terms}
+\label{sec:simple-rational-equationally}
+% lax begin Lax149335.SimpleRationalWithinSyntax
+In this section, we continue the completeness proof, by showing that our equational axiomatisation is complete for \kl{simple rational terms}. The definition of simple rational terms (\cref{def:simple-rational-terms}), which was presented before we developed our compositional syntax in \cref{sec:syntax}, is meaningful in this syntax. This is thanks to notation developed in the previous sections, which gave meaning to the combinators $\hom f$, $f_1 \fdot f_2$, $w \wdot f$ and $f \wdot w$.
+
+Our proof follows the same lines as the proof of \cref{thm:conjugacy-completeness}, where we showed that any two simple rational terms that define the same function can be proved equivalent using only a handful of simple rules. The difficulty is that two of these rules, case splitting and the conjugacy rule, are implications, so they are not available in our purely equational system. Instead, we need to derive their instances from the equational axioms. This is straightforward for case splitting, whereas deriving the conjugacy rule is the main difficulty of this section.
+
+We begin by introducing some notation. For two \kl{rational terms} $f$ and $g$ that have type $A \to B^*$ and a \kl{value} $w$ of type $\onetype \to B^*$, we  consider three kinds of conjugacy relation:
+\begin{enumerate}
+    \item $f$ and $g$ are \emph{denotationally $w$-conjugate} if $\sem{f \wdot w} = \sem{w \wdot g}$.
+    \item $f$ and $g$ are \emph{provably $w$-conjugate} if $f \wdot w  \equiv    w \wdot g$.
+    \item $f$ and $g$ are \emph{syntactically $w$-conjugate} if $f = w \wdot h$ and $g = h \wdot w$ for some term $h$.
+\end{enumerate}
+% lax end
+These three kinds  are listed in increasing order of strength, with the implication 3 $\Rightarrow 2$ following from \cref{lem:concatenation-monoidality}. Using this terminology, the conjugacy rule from \cref{thm:conjugacy-completeness} says that provable $w$-conjugacy can be lifted via homomorphism:
+\begin{align*}
+f \wdot w \equiv w \wdot g \quad \text{implies} \quad \hom f \wdot w \equiv w \wdot \hom g.
+\end{align*}
+If we could prove such an implication in our equational system, then we would be done, which will be demonstrated in the proof of \cref{lem:completeness-for-simple-rational-terms}. Alternatively, we could add the implication as an axiom. However, this would make the system not purely equational, which we want to avoid.
+
+We were unable to derive the conjugacy rule directly, but we are able to do this in mutual recursion with  completeness of the equational axiomatisation for simple rational terms, as stated in the following lemma.
+
+% lax begin Lax149335.SimpleCompleteness
+\begin{lemma}[Completeness for simple rational terms]\label{lem:completeness-for-simple-rational-terms}
+        For all \kl{simple rational terms} $A \xrightarrow {f,g} B^*$ and \kl{value} $\onetype \xrightarrow w B^*$,
+            \begin{align}
+            \sem{f} = \sem{g} & \quad \text{implies} \quad f \equiv g
+            \label{eq:completeness-for-simple-rational-terms} \\
+            f \wdot w \equiv w \wdot g & \quad \text{implies} \quad \hom f \wdot w \equiv w \wdot \hom g.
+            \label{eq:conjugacy-rule-for-simple-rational-terms}
+        \end{align}
+\end{lemma}
+% lax end
+
+
+\begin{proof}
+    We use the name \emph{completeness rule} for the first statement, and \emph{conjugacy rule} for the second statement. The rules are proved in parallel by  induction on the nesting depth of the list constructor in the input \kl{type} $A$.    At each step of the induction, we first prove the completeness rule, and then we prove the conjugacy rule. In particular, in presence of the completeness rule at this stage of the induction, the conjugacy rule can also be stated in the stronger form, where the assumption is weakened from provable conjugacy to denotational conjugacy.
+
+    For the completeness rule, we use the same argument as in \cref{thm:conjugacy-completeness}. This argument can be applied, since the reasoning rules \ref{item:congruence-rule}--\ref{item:conjugacy-rule} in the statement of \cref{thm:conjugacy-completeness} have already been proved to be admissible in our equational system, as we now explain. The congruence rule~\ref{item:congruence-rule} is one of the rules of equational reasoning. Rule~\ref{item:concatenation-monoidality-rule} for concatenation monoidality is \cref{lem:concatenation-monoidality}. Rules~\ref{item:constants-copairing} and~\ref{item:distributivity-rule} follow from the equivalence:
+        \begin{align*}
+    (\either {f_1}  {f_2}) \fdot f \equiv \distlterm \comp \either{(f_1 \fdot f)}{(f_2 \fdot f)}
+    \end{align*}
+    and a similar one for right distributivity $\distrterm$, which are proved in \appref{lem:distributivity-of-concatenation}. Finally, in the proof of \cref{thm:conjugacy-completeness}, the conjugacy rule from item~\ref{item:conjugacy-rule} is only applied for terms that have an input type with strictly smaller nesting of lists than $A$, and hence we use the induction hypothesis of the present lemma. Summing up, we can use \cref{thm:conjugacy-completeness} to prove the induction basis and induction step for the completeness rule.      We are left with doing this for  the conjugacy rule.  We assume that the length of the value $w$, which will be denoted by $k$, is nonzero. In the case of $k=0$, we have $w \equiv []$ by completeness for values (\cref{lem:value-completeness}), and hence the conjugacy rule follows from the unit laws of \cref{lem:concatenation-monoidality}, together with congruence.
+
+    \paragraph*{Induction Basis for the Conjugacy Rule (Illustration).} We only present a special case of the induction basis, where the input type is $A = \onetype$. This special case already illustrates the key ideas, while the general induction basis is proved in the same way as the induction step, which is presented below.
+
+    Already  in this case, the conjugacy rule is nontrivial. To prove this, we will use the following lemma, which shows a variant of the conjugacy rule, where the assumption is strengthened from provable conjugacy to syntactic conjugacy. The proof is deferred to \appref{sec:proof-of-lem:conjugacy-fixed-middle-equational}.
+% lax begin Lax149335.ConjugacyRule
+\begin{lemma}\label{lem:conjugacy-fixed-middle-equational}
+    Consider a \kl{simple rational term} $A \xrightarrow h  B^*$ and a \kl{value} $\onetype \xrightarrow w B^*$. Then
+    \begin{align*}
+        \hom(w \wdot h) \wdot w \equiv w \wdot \hom(h \wdot w).
+    \end{align*}
+\end{lemma}
+% lax end
+We can now prove the induction basis of the conjugacy rule. In this case, both $f \wdot w$ and $w \wdot g$ are values. If $f \equiv []$, then also $g \equiv []$ and the rule follows. Otherwise, by Levi's lemma from string combinatorics\footnote{Levi's lemma says that if $u_1 u_2 = v_1 v_2$ for strings $u_1, u_2, v_1, v_2$, then there is a string $t$ such that either $u_1 = v_1 t$ and $v_2 = t u_2$, or $v_1 = u_1 t$ and $u_2 = t v_2$. By induction on the length of $z$, it implies the following fact about conjugate strings, which is the form that we use here: if $u z = z v$ and $u$ is nonempty, then $u = xy$, $v = yx$ and $z = (xy)^\ell x$ for some strings $x, y$ and some $\ell \in \set{0,1,\ldots}$.} and completeness for values, we have
+    \begin{align*}
+    f \equiv x \wdot y \quad g \equiv y \wdot x \quad w \equiv \myunderbrace{(x \wdot y) \wdot \cdots \wdot (x \wdot y)}{$\ell$ times} \wdot x
+    \qquad \text{for some values $\onetype \xrightarrow{x,y} B^*$ and $\ell \in \set{0,1,\ldots}$}.
+    \end{align*}
+By \cref{lem:conjugacy-fixed-middle-equational}, we deduce that $\hom(x \wdot y) \wdot x \equiv x \wdot \hom(y \wdot x)$. By applying this rule $2\ell+1$ times, we derive $\hom f \wdot w \equiv w \wdot \hom g$, as required in the induction basis.
+
+\paragraph*{Induction Step for the Conjugacy Rule.}  Similarly to the argument above,  the  general idea behind the  induction step is to strengthen the assumption of the rule from provable conjugacy  to  syntactic conjugacy, so that we can apply \cref{lem:conjugacy-fixed-middle-equational}. However, this is not necessarily directly possible, because of short output strings. Indeed, syntactic conjugacy can only hold if all output strings have length at least $k$, and this might not be the case. To overcome this difficulty, we analyse the behaviour of $\sem{f}$ and $\sem{g}$ when the outputs are short. In this analysis, we will  decompose  the input domain  into a finite number of cases, such that in each case, the first and last $k$ letters of the output are syntactically fixed, as in the following definition.
+
+% lax begin Lax149335.GuardedTerms
+\begin{definition}
+    Let $k \in \set{1,2,\ldots}$. 
+    A term $A \xrightarrow f B^*$ is called \emph{$k$-guarded} if it is either:
+        \begin{enumerate}
+        \item \textbf{Constant:} \label{item:provable-constant} a composition of the unique up to equivalence term $A \to \onetype$ with some \kl{value}; or
+        \item \textbf{Long:} \label{item:guarded} $u \wdot h \wdot v$ for some \kl{values} $u,v$ of length $k$ and a  \kl{simple rational term} $h$.
+    \end{enumerate}
+\end{definition}
+% lax end
+
+The following lemma shows that, without loss of generality, we can assume that the terms $f$ and $g$ are obtained by \kl{copairing} $k$-guarded terms. The proof is deferred to \appref{sec:proof-of-lem:constants-and-guarded}.
+
+% lax begin Lax149335.GuardedReduction
+\begin{lemma}\label{lem:constants-and-guarded} Let $k$ be the length of $w$. 
+    Without loss of generality we can assume that $f$ and $g$ are 
+    \begin{align*}
+    \eithermany n {f_1 \cdots f_n} \quad \text{and} \quad 
+    \eithermany n {g_1 \cdots g_n} 
+    \qquad \text{for some $k$-guarded terms }A_i \xrightarrow{f_i, \, g_i} B^*.
+    \end{align*} 
+\end{lemma}
+% lax end
+
+From now on, we assume that $A$ and the terms $f$ and $g$ are as in the conclusion of \cref{lem:constants-and-guarded}. In each  case $i \in \set{1,\ldots,n}$, the functions $\sem{f_i}$ and $\sem{g_i}$ must have outputs of the same length on every input. Therefore, if one of the terms $f_i$ and $g_i$ is a constant, then the \kl{denotation} of the other one is a constant function as well, and the lengths of the two constant outputs agree. Empty constants will be inconvenient, so we begin by getting rid of them.
+% lax begin Lax149335.NonemptyReduction
+\begin{lemma}\label{lem:nonempty-summands}
+    We can assume without loss of generality that all $f_i$ and $g_i$ are nonempty.
+\end{lemma}
+% lax end
+\begin{proof}
+Decompose $A$ as $E+N$ where $E$ is the coproduct of all summands $A_i$ for which both $f_i$ and $g_i$ are empty,  and $N$ is the coproduct of the remaining summands. Let us write $f_E$ and $g_E$ for the corresponding cases of types $E \to B^*$ and $f_N$ and $g_N$ for the corresponding cases of types $N \to B^*$. The following claim, which is proved in \appref{sec:proof-of-claim:ignore-empty-lists} using the axioms about empty lists (Axioms \ref{ax:concatenation-monoid} and \ref{ax:concatenation-of-empty-lists})  shows that $\hom f$ factors through $\hom f_N$.
+
+% lax begin Lax149335.EmptySummands
+\begin{claim} 
+    \label{claim:ignore-empty-lists}
+    The term $\hom f$ is provably equivalent to the following composition:
+    \begin{align*}
+    (E+N)^*
+    \xrightarrow \blockterm
+    E^* \times (N \times E^*)^*
+    \xrightarrow {\sndterm\comp(\fstterm^*)}
+    N^*
+    \xrightarrow {\hom f_N}
+    B^*
+    \end{align*}
+\end{claim}
+% lax end
+By \cref{claim:ignore-empty-lists}, and an analogous one for $g$,  the conjugacy $\hom f \wdot w \equiv w \wdot \hom g$ reduces to the conjugacy $\hom f_N \wdot w \equiv w \wdot \hom g_N$, in which the nonemptiness assumption is satisfied.
+\end{proof}
+
+By \cref{lem:nonempty-summands}, we assume from now on that there are no empty summands. 
+Under this assumption, whenever we apply $\sem{f}$ or $\sem{g}$, at least one letter is produced, which is guaranteed syntactically by the form of the summands, and also if the output has unknown length, then it must begin and end with $w$. We will want to strengthen this guarantee so that at least $k$ letters are produced. To achieve this, we will group items into bundles of length $k$, as explained in the following lemma.  (In the lemma, we write $A^i$ for the $i$-fold product of $A$ with itself with $A^0 = \onetype$. Also, we write $A^{< k}$ for the coproduct of all $A^i$ with $0 \leq i <k$.)
+
+% lax begin Lax149335.BundleLemma
+\begin{lemma}
+    \label{lem:bundles}
+    For every \kl{type} $A$, there are arbitrarily large numbers $k$ such that the following \kl{concatenation map} is an \kl{isomorphism}:
+    \begin{align*}
+        (A^k)^* \times A^{< k} \concmap A^*.
+    \end{align*}
+\end{lemma}
+% lax end
+\begin{proof}[Proof sketch]
+    The proof is given in \appref{sec:proof-of-bundles}; here we only give a sketch.  For $A = (\onetype + \onetype)^*$ and $k=2$, we use the term $\bundleterm$ from \cref{ax:window} as the inverse. It uses the cyclic group $\mathbb{Z}_2$ to label each element of the input list by the generator, and then uses the $\prefterm$ \kl{atomic term} to compute the prefixes. As a result, the group elements will alternate in a cyclic pattern, and $\blockterm$ is used to split the list into bundles of length $2$. This is extended to arbitrary type $A$ using the \kl{binary alphabet} encodings from \cref{lem:provably-injective-string-representation}. By iterating this procedure, we can obtain $k = 2^i$ for every $i \geq 1$. Of course, this argument needs to be formalised in our equational axiomatisation, which requires a substantial amount of work.
+\end{proof}
+By \kl{surjectivity}, in order to prove the conclusion of the conjugacy rule, i.e.~that
+\begin{align*}
+\hom f \wdot w \equiv w \wdot \hom g,
+\end{align*}
+it is enough to prove that this conclusion holds when the two sides are precomposed with the \kl{isomorphism} from \cref{lem:bundles}. By using reasoning by cases, it is enough to show that
+\begin{align*}
+\hom(f^{\fdot k}) \fdot f^{\fdot i} \wdot w \equiv w \wdot \hom(g^{\fdot k}) \fdot g^{\fdot i}
+\qquad \text{for every $i \in \set{0,\ldots,k-1}$,}
+\end{align*}
+where $f^{\fdot i}$ represents the $i$-fold concatenation of $f$ with itself.
+By applying the assumption of the conjugacy rule, we know that  $f^{\fdot i}$ and $g^{\fdot i}$ are provably $w$-conjugate, that is, $f^{\fdot i} \wdot w \equiv w \wdot g^{\fdot i}$. We
+are left with proving that
+\begin{align*}
+\hom(f^{\fdot k}) \wdot w \equiv w  \wdot \hom(g^{\fdot k}).
+\end{align*}
+By having the list elements grouped into bundles of length $k$, we will achieve syntactic conjugacy, as we now explain.
+Up to distributivity on the domain, both $f^{\fdot k}$ and $g^{\fdot k}$ are copairings of $k$-guarded terms where all constants have length at least $k$, thanks to the assumption that there are no empty outputs.  Furthermore, by the assumption $f \wdot w \equiv w \wdot g$ of the conjugacy rule, we know that the outputs of each case in the copairing from  $f^{\fdot k}$ must  begin with $w$, and the outputs of each case in $g^{\fdot k}$ must end with $w$. This means that 
+\begin{align*}
+f^{\fdot k} \equiv w \wdot h_f 
+\quad \text{and} \quad 
+g^{\fdot k} \equiv h_g \wdot w
+\qquad \text{for some simple rational terms $h_f$ and $h_g$.}
+\end{align*}
+Since these two terms have the same nesting depth of the list constructor as $f$ and $g$, we can use the induction hypothesis to conclude that $h_f \equiv h_g$. Therefore, $f^{\fdot k}$ and  $g^{\fdot k}$ must be syntactically $w$-conjugate, and hence we can conclude the proof by \cref{lem:conjugacy-fixed-middle-equational}.
+\end{proof}

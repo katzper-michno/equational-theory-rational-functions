@@ -1,0 +1,308 @@
+\subsection{Proof of the Exchange Lemma}\label{sec:appendix:exchange-proof}
+
+In this section we prove \cref{lem:exchange}. We will use functorial notation for classes of morphisms: given classes of terms $\mathcal{C}_1, \mathcal{C}_2$, we write $\mathcal{C}_1 + \mathcal{C}_2$, $\mathcal{C}_1 \times \mathcal{C}_2$, $\mathcal{C}_1^*$ and $\mathcal{C}_1 \comp \mathcal{C}_2$ to denote the sets of terms constructed by sum, product, list or composition of elements of $\mathcal{C}_1$ and $\mathcal{C}_2$. Moreover, we will write $f$ instead of $\{ f\}$ for brevity, e.g. $\mathcal{C}_1 \comp f$ is the same as $\mathcal{C}_1 \comp \{ f \}$.
+
+\cref{lem:exchange} states that $\Drop \comp \Lift \subseteq \Lift \comp \Drop$, where by $\Lift$ ($\Drop$) we denote the set of all terms provably equivalent to \kl{lift} (drop) terms. We prove this by structural induction on the lift part, i.e.~our induction hypothesis is that if $\delta$ is a lift term, then $\Drop \comp \delta \subseteq \Lift \comp \Drop$. We will first show how to reduce the cases where $\delta$ is built with a combinator, and after that we will consider the cases where $\delta$ is an \kl{atomic lift term}, which are more involved.
+
+\begin{description} 
+
+\item[Composition, $\delta = \delta_1 \comp \delta_2$.] Suppose that $\delta = \delta_1 \comp \delta_2$. By induction, we get
+\begin{align*}
+	\Drop \comp \delta_1 \comp \delta_2 &\subseteq \why{induction} \\ 
+	\Lift \comp \Drop \comp \delta_2             &\subseteq \why{induction} \\ 
+	\Lift \comp \Lift \comp \Drop = \Lift \comp \Drop.
+\end{align*}
+
+\item[Sum, $\delta = \delta_1 + \delta_2$.] Suppose that $\delta = \delta_1 + \delta_2$. By \cref{lem:drops-with-sum-co-domain} we have that every \kl{drop term} which composes with $\delta$ is in $\Lift \comp (\Drop + \Drop)$. We get
+\begin{align*} 
+	\Lift \comp (\Drop + \Drop) \comp (\delta_1 + \delta_2) &\subseteq \why{functoriality of $+$, \cref{ax:functoriality-of-type-constructors}} \\ 
+	\Lift \comp ((\Drop \comp \delta_1) + (\Drop \comp \delta_2)) &\subseteq \why{induction} \\ 
+	\Lift \comp ((\Lift \comp \Drop) + (\Lift \comp \Drop)) &\subseteq \why{functoriality of $+$, \cref{ax:functoriality-of-type-constructors}} \\ 
+	\Lift \comp (\Lift + \Lift) \comp (\Drop + \Drop) \subseteq \Lift \comp \Drop.
+\end{align*}
+
+\item[Product, $\delta = \delta_1 \times \delta_2$.] Suppose that $\delta = \delta_1 \times \delta_2$. By \cref{lem:drops-with-prod-co-domain} we have that every drop term which composes with $\delta$ is in $\Lift \comp (\eithermany{i}{\left( \Drop \times \Drop \right)})$ for some $i \geq 1$. We get 
+\begin{align*}
+	\Lift \comp \left(\eithermany{i}{\left( \Drop \times \Drop \right)} \right) \comp (\delta_1 \times \delta_2) &\subseteq \why{\cref{lem:functoriality-of-either}} \\ 
+	\Lift \comp \left( \eithermany{i}{\left( \Drop \times \Drop \right) \comp (\delta_1 \times \delta_2)} \right) &\subseteq \why{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\ 
+	\Lift \comp \left( \eithermany{i}{\left( \left( \Drop \comp \delta_1 \right) \times \left( \Drop \comp \delta_2 \right) \right)} \right) &\subseteq \why{induction} \\
+	\Lift \comp \left( \eithermany{i}{\left( \left( \Lift \comp \Drop \right) \times \left( \Lift \comp \Drop \right) \right)} \right) &\subseteq \why{functoriality of $\times$, \cref{ax:functoriality-of-type-constructors}} \\ 
+	\Lift \comp \left( \eithermany{i}{\left( \left( \Lift \times \Lift \right) \comp \left( \Drop \times \Drop \right) \right)} \right) &\subseteq \why{\cref{lem:functoriality-of-either-left}} \\ 
+	\Lift \comp \left( (\Lift \times \Lift) + \dots + (\Lift \times \Lift) \right) \comp \eithermany{i}{\left( \Drop \times \Drop \right)} \subseteq \Lift \comp \Drop.
+\end{align*}
+
+\item[List, $\delta = \gamma^*$.] Suppose that $\delta = \gamma^*$. Let $\mathsf{S} = (1 \comp \Value) \cup [\Drop] \cup \Drop^*$. By \cref{lem:drops-with-list-co-domain} we have that every drop term which composes with $\delta$ is in $\Lift \comp \left( F(\mathsf{S}) \comp \concmap \right)$ for some \kl{list-polynomial functor} $F$. We proceed by nested induction on the shape of $F$.
+
+\begin{description}
+	\item[Leaf node, $F = X_i$.] In this case, $\left( F(\mathsf{S}) \comp \concmap \right) = F(\mathsf{S})$. Our goal is to show that $F(\mathsf{S}) \comp \delta \subseteq \Lift \comp \Drop$. We show three inclusions separately:
+	\begin{align*}
+		(1 \comp \Value) \comp \delta &\subseteq \why{value composed with $\delta$ is a value} \\ 
+		(1 \comp \Value) \subseteq \Lift \comp \Drop.
+	\end{align*}
+	\begin{align*}
+		[\Drop] \comp \gamma^* &\subseteq \why{naturality of $\pureterm$, \cref{lem:pure-naturality}} \\ 
+		[\Drop \comp \gamma] &\subseteq \why{induction} \\ 
+		[\Lift \comp \Drop] \subseteq \Lift \comp \Drop.
+	\end{align*}
+	\begin{align*}
+		\Drop^* \comp \gamma^* &\subseteq \why{functoriality of $*$, \cref{ax:functoriality-of-type-constructors}} \\ 
+		(\Drop \comp \gamma)^* &\subseteq \why{induction} \\ 
+		(\Lift \comp \Drop)^* &\subseteq \why{functoriality of $*$, \cref{ax:functoriality-of-type-constructors}} \\ 
+		\Lift^* \comp \Drop^* \subseteq \Lift \comp \Drop.
+	\end{align*}
+
+	\item[Sum node, $F = F_1 + F_2$.] In this case $\left( F(\mathsf{S}) \comp \concmap \right) = \either{\left( F_1(\mathsf{S}) \comp \concmap \right)}{\left( F_2(\mathsf{S}) \comp \concmap \right)}$. We get
+	\begin{align*}
+		\either{\left( F_1(\mathsf{S}) \comp \concmap \right)}{\left( F_2(\mathsf{S}) \comp \concmap \right)} \comp \delta &\subseteq \why{\cref{lem:functoriality-of-either}} \\ 
+		\either{\left( F_1(\mathsf{S}) \comp \concmap \comp \delta \right)}{\left( F_2(\mathsf{S}) \comp \concmap \comp \delta \right)} &\subseteq \why{induction} \\ 
+		\either{(\Lift \comp \Drop)}{(\Lift \comp \Drop)} &\subseteq \why{\cref{lem:functoriality-of-either-left}} \\ 
+		(\Lift + \Lift) \comp \either{\Drop}{\Drop} \subseteq \Lift \comp \Drop.
+	\end{align*}
+
+	\item[Product node, $F = F_1 \times F_2$.] In this case, $\left( F(\mathsf{S}) \comp \concmap \right) = \left( F_1(\mathsf{S}) \comp \concmap \right) \odot \left( F_2(\mathsf{S}) \comp \concmap \right)$. We have 
+	\begin{align*}
+		\left( F_1(\mathsf{S}) \comp \concmap \right) \odot \left( F_2(\mathsf{S}) \comp \concmap \right) \comp \gamma^* &\subseteq \why{naturality of $\binconcatterm$} \\ 
+		\left( F_1(\mathsf{S}) \comp \concmap \comp \gamma^* \right) \odot \left( F_2(\mathsf{S}) \comp \concmap \comp \gamma^* \right) &\subseteq \why{induction} \\ 
+		\left( \Lift \comp \Drop \right) \odot \left( \Lift \comp \Drop \right) &= \why{definition of $\odot$} \\
+		(\Lift \times \Lift) \comp (\Drop \times \Drop) \comp \binconcatterm \subseteq \Lift \comp \Drop.
+	\end{align*}
+
+	\item[List node, $F = G^*$.] In this case $\left( F(\mathsf{S}) \comp \concmap \right) = \left( G(\mathsf{S}) \comp \concmap \right)^* \comp \concatterm$. We get
+	\begin{align*}
+		\left( G(\mathsf{S}) \comp \concmap \right)^* \comp \concatterm \comp \gamma^* &\subseteq \why{naturality of $\concatterm$} \\ 
+		\left( G(\mathsf{S}) \comp \concmap \right)^* \comp \gamma^{**} \comp \concatterm &\subseteq \why{functoriality of $*$, \cref{ax:functoriality-of-type-constructors}} \\ 
+		\left( G(\mathsf{S}) \comp \concmap \comp \gamma^* \right)^* \comp \concatterm &\subseteq \why{induction} \\ 
+		\left( \Lift \comp \Drop \right)^* \comp \concatterm &\subseteq \why{functoriality of $*$, \cref{ax:functoriality-of-type-constructors}} \\ 
+		\Lift^* \comp \Drop^* \comp \concatterm \subseteq \Lift \comp \Drop.
+	\end{align*}
+\end{description}
+
+\item[Atomic lifts, easy cases.] It now remains to consider cases where $\delta$ is an atomic lift term. If $\delta$ is $\idterm$, $\assoclterm$, $\assocrterm$ or $\commterm$, then the statement holds trivially because $\delta \in \Drop$. If $\delta = \unitlterm$, then
+\begin{align*}
+	\Drop \comp \unitlterm &\subseteq \why{naturality of $\unitlterm$} \\ 
+	\unitlterm \comp (\idterm \times \Drop) \in \Lift \comp \Drop.
+\end{align*}
+The case $\delta = \unitrterm$ is analogous. 
+
+\item[Distribution, $\delta = \distrterm$.] Suppose that $\delta = \distrterm$ (the case $\delta = \distlterm$ is symmetric) and $f \in \Drop$. The construction is presented on the following diagram:
+\[
+\begin{tikzcd} 
+	A
+	\ar[r, \dropar, "f"]
+	\ar[d, \liftar, "\cref{lem:drops-with-prod-co-domain}"']
+	&B \times (C + D)
+	\ar[dd, \liftar, "\distrterm"]
+	\\ 
+	\sum X_i \times \left( \sum Y_{i,j} + \sum Z_{i,j} \right)
+	\ar[ur, \dropar]
+	\ar[d, \liftar, "\distrterm"']
+	\\ 
+	\left( \sum X_i \times \sum Y_{i,j} \right) + \left( \sum X_i \times \sum Z_{i,j} \right)
+	\ar[r, \dropar]
+	&(B \times C) + (B \times D)
+\end{tikzcd}
+\]
+The upper triangle commutes by \cref{lem:drops-with-prod-co-domain}. The lower rectangle commutes by naturality of $\distrterm$.
+
+\item[Shift, $\delta = \shiftterm$.] Suppose that $\delta = \shiftterm$. This case follows easily by the work we have done in \cref{sec:appendix:shift-exchange}. Let $f$ be a drop term. Then by \cref{lem:drops-with-list-co-domain}, it can be lifted to normal form. This normal form composed with $\delta$ is in $\Lift \comp \Drop$ by \cref{lem:exchange-normal-shift}. Therefore $f \comp \delta \subseteq \Lift \comp \Drop$.
+
+\item[Block, $\delta = \blockterm$.] Suppose that $\delta = \blockterm$. Let $f$ be a drop term. Similarly as in the case of $\shiftterm$, it suffices to show that $\left( F(\vec f) \comp \concmap \right)$ -- the normalised form of $f$ given by \cref{lem:drops-with-list-co-domain} -- postcomposed with $\delta$ is in $\Lift \comp \Drop$. We prove this by induction on the shape of $F$.
+\begin{description}
+	\item[Leaf node, $F = X_i$.] We omit the index $i$ and write $f := f_i$. We consider three subcases depending on the shape of $f$.
+	\begin{description}
+	\item[Value, $f = (1 \comp v)$.] There is a \kl{value} $w \equiv v \comp \blockterm$, and therefore $f \comp \blockterm \equiv (1 \comp w) \in \Drop$. 
+
+	\item[Singleton, $f = {[g]}$.] In this case, we lift $g$ to normal form by \cref{lem:drops-with-sum-co-domain}. The construction is illustrated on the diagram:
+	\[
+	\begin{tikzcd}
+		A 
+		\ar[r, \dropar, "{g}"]
+		\ar[d, \liftar, "\cref{lem:drops-with-sum-co-domain}"'] 
+		&S + T 
+		\ar[rr, \dropar, "\pureterm"]
+		\ar[dd, \liftar, "\cong"]
+		&\hspace*{1.5cm}&(S+T)^*
+		\ar[dd, \liftar, "\blockterm"] \\ 
+		A_1 + A_2
+		\ar[ur, \dropar, "{g_1 + g_2}"]
+		\ar[d, \liftar, "\cong"']
+		\\
+		A_1 \onetype + \onetype A_2 \onetype 
+		\ar[r, \dropar]
+		&S \onetype + \onetype T \onetype 
+		\ar[rr, \dropar, "{\left( \pureterm \times [] \right) + \left( [] \times \idterm \times [] \right)}"]
+		&&S^* \times (T \times S^*)^*
+	\end{tikzcd}
+	\]
+	The upper triangle commutes by \cref{lem:drops-with-sum-co-domain}. The bottom-left rectangle follows by naturality of $\unitrterm$ and $\unitlterm$. The right-hand rectangle commutes by \cref{lem:uniqueness-of-rebracketings}, because both paths are \kl{rebracketings} by \cref{lem:rebracketing-basic-facts} and the target \kl{type} is \kl[injective type]{injective}.
+
+	\item[List, $f = g^*$.] We further lift $g$ to normal form by \cref{lem:drops-with-sum-co-domain}. The construction is presented on the following diagram:
+	\[
+	\begin{tikzcd} 
+		C_i^*
+		\ar[r, \dropar, "g^*"]
+		\ar[d, \liftar, "\cref{lem:drops-with-sum-co-domain}"']
+		&(S + T)^*
+		\ar[dd, \liftar, "\blockterm"]
+		\\ 
+		\left( A_1 + A_2 \right)^*
+		\ar[ur, \dropar]
+		\ar[d, \liftar, "\blockterm"']
+		\\ 
+		A_1^* \times (A_2 \times A_1^*)^*
+		\ar[r, \dropar]
+		&S^* \times (T \times S^*)^*
+	\end{tikzcd}
+	\]
+	The upper triangle commutes by \cref{lem:drops-with-sum-co-domain}. The lower rectangle commutes by naturality of $\blockterm$.
+	\end{description}
+
+	\item[Sum node, $F = F_1 + F_2$.] By induction on $F_1$ and $F_2$ we get
+	\begin{align*}
+		\left( F(\vec f) \comp \concmap \right) \comp \blockterm = \either{F_1(\vec f)}{F_2(\vec f)} \comp \blockterm \equalbecause{\cref{lem:functoriality-of-either}} \\ 
+		\either{\left( F_1(\vec f) \comp \blockterm \right)}{\left( F_2(\vec f) \comp \blockterm \right)} &\subseteq \why{induction} \\ 
+		\either{(\Lift \comp \Drop)}{\Lift \comp \Drop} &\subseteq \why{\cref{lem:functoriality-of-either-left}} \\ 
+		(\Lift + \Lift) \comp \either{\Drop}{\Drop} \subseteq \Lift \comp \Drop.
+	\end{align*}
+
+	\item[Product node, $F = F_1 \times F_2$.] We have 
+	\[
+		\left( F(\vec f) \comp \concmap \right) = (F_1(\vec f) \comp \concmap) \times (F_2(\vec f) \comp \concmap) \comp \binconcatterm.
+	\] 
+	The construction uses induction on $F_1,F_2$ and the instances of \cref{lem:exchange} for lifts which we have already handled: $\unitrterm$, $\shiftterm$ and distribution. The construction is illustrated on the following diagram, where $Z := T \times S^*$:
+	\[
+	\begin{tikzcd} 
+		\bullet
+		\ar[r, \dropar, "{(F_1(\vec f)\comp\concmap) \times (F_2(\vec f)\comp\concmap)}"]
+		\ar[d, \liftar, "\text{induction}"]
+		&\left((S + T)^*\right)^2
+		\ar[r, \dropar, "\binconcatterm"]
+		\ar[d, \liftar, "{\blockterm^2}"]
+		&[-5em](S+T)^*
+		\ar[d, \liftar, "\blockterm"]
+		\\ 
+		\bullet
+		\ar[dd, \liftar, "\cref{lem:exchange}"]
+		\ar[r, \dropar]
+		&(S^* \times Z^*)^2 
+		\ar[d, \liftar, "{(\idterm \times (\unitrterm^* \comp \shiftterm))^2}"]
+		&S^* \times Z^* 
+		\\ 
+		&\left( S^* \left( \onetype + Z(\onetype Z)^* \onetype \right) \right)^2
+		\ar[d, \liftar, "\cong"]
+		\\ 
+		\bullet
+		\ar[r, \dropar]
+		&(S^*\onetype)^2 + S^*\onetype S^* Z(\onetype Z)^*\onetype + S^* Z (\onetype Z)^* \onetype S^* \onetype + (S^* Z (\onetype Z)^* \onetype)^2
+		\ar[uur, \dropar, start anchor={[xshift=40pt, yshift=0pt]}]
+	\end{tikzcd}
+	\]
+	The top-left square commutes from induction. The bottom-left square commutes by \cref{lem:exchange} for $\shiftterm$, $\unitrterm$, distribution, and their functorial combinations. The right face of the diagram commutes by \cref{lem:uniqueness-of-rebracketings}, because both paths are rebracketings by \cref{lem:rebracketing-basic-facts} and the type $S^* \times (T \times S^*)^*$ is injective.
+
+	\item[List node, $F = G^*$.] We have $\left( F(\vec f) \comp \concmap \right) = \hom (G(\vec f) \comp \concmap)$. First, consider the following diagram, where $Z := T \times S^*$:
+	\[
+	\begin{tikzcd}
+		(S + T)^{**}
+		\ar[r, \dropar, "\concatterm"]
+		\ar[d, \liftar, "{\blockterm^*}"]
+		&(S + T)^*
+		\ar[ddddddd, \liftar, "\blockterm"]
+		\\ 
+		(S^* Z^*)^*
+		\ar[d, blue, \liftar, "{(\idterm \times \unitlterm^*)^*}"]
+		\\ 
+		(S^* \times (\onetype Z)^*)^*
+		\ar[d, blue, \liftar, "(\idterm \times \shiftterm)^*"] 
+		\\ 
+		(S^* \times (\onetype + \onetype(Z \onetype)^* Z))^*
+		\ar[d, blue, \liftar, "{\distrterm^*}"] 
+		\\ 
+		(S^* \onetype + S^* \onetype(Z \onetype)^* Z)^*
+		\ar[d, blue, \liftar, "\blockterm"] 
+		\\ 
+		(S^* \onetype)^* \times (S^* \onetype(Z \onetype)^* Z (S^* \onetype)^*)^* 
+		\ar[d, \liftar, "{\idterm \times \shiftterm}"] 
+		\\
+		(S^* \onetype)^* \times (\onetype + S^* (\onetype(Z \onetype)^* Z (S^* \onetype)^* S^*)^* \onetype(Z \onetype)^* Z (S^* \onetype)^*)
+		\ar[d, \liftar, "\distrterm"]
+		\\ 
+		(S^* \onetype)^*\onetype + (S^* \onetype)^* S^* (\onetype(Z \onetype)^* Z (S^* \onetype)^* S^*)^* \onetype(Z \onetype)^* Z (S^* \onetype)^*
+		\ar[r, \dropar]
+		&S^* Z^*
+	\end{tikzcd}
+	\]
+	The diagram above commutes by \cref{lem:rebracketing-basic-facts} and \cref{lem:uniqueness-of-rebracketings}: both paths are rebracketings and $S^* Z^*$ is an injective type.
+
+	Let $\gamma$ be the lift obtained by composing 4 consecutive lifts on the above diagram, starting from the second from the top (the lifts highlighted with blue colour). First, we claim that $\gamma$ admits exchange for every drop constructed with list combinator.
+
+	\begin{claim}\label{claim:exchange-for-split-aux}
+		Suppose that $g^*$ is a \kl{drop term}. Then $g^* \comp \gamma \in \Lift\comp \Drop$.
+	\end{claim}
+	\begin{proof}[Proof of \cref{claim:exchange-for-split-aux}]
+		We write
+		\[
+			\gamma \equiv \left( \myunderbrace{\left( \idterm \times \unitlterm^* \right) \comp \left( \idterm \times \shiftterm \right) \comp \distrterm}{$\zeta$} \right)^* \comp \blockterm.
+		\]
+		The lift $\zeta$ is composed from terms for which we have already proved \cref{lem:exchange}, therefore there is a lift $\alpha$ and drop $h$ such that $g \comp \zeta \equiv \alpha \comp h$. We obtain the following diagram:
+		\[
+		\begin{tikzcd}
+			\bullet 
+			\ar[r, \dropar, "{g^*}"]
+			\ar[d, \liftar, "{\alpha^*}"']
+			&(S^*Z^*)^*
+			\ar[d, \liftar, "{\zeta^*}"]
+			\\ 
+			\bullet
+			\ar[r, \dropar, "h^*"]
+			\ar[d, \liftar, "\cref{lem:drops-with-sum-co-domain}"']
+			&(S^* \onetype + S^* \onetype(Z \onetype)^*Z)^*
+			\ar[dd, \liftar, "\blockterm"]
+			\\ 
+			(A + B)^*
+			\ar[ur, \dropar] 
+			\ar[d, \liftar, "\blockterm"']
+			\\
+			A^* \times (B \times A^*)^* 
+			\ar[r, \dropar] 
+			&(S^* \onetype)^* \times (S^* \onetype(Z \onetype)^* Z (S^* \onetype)^*)^*
+		\end{tikzcd}
+		\]
+		The upper rectangle commutes as we discussed. The triangle commutes by \cref{lem:drops-with-sum-co-domain}. The lower rectangle commutes by naturality of $\blockterm$.
+	\end{proof}
+	We are now in position to assemble the entire construction, which consists of inductive exchange of $G(\vec f)\comp\concmap \comp \blockterm$, \cref{claim:exchange-for-split-aux}, and exchange for lifts that we have already handled. We illustrate it on the following diagram:
+	\[
+	\begin{tikzcd}
+		\bullet
+		\ar[rr, \dropar, "{\left( G(\vec f) \comp \concmap \right)^*}"]
+		\ar[d, \liftar, "\text{induction}"']
+		&\hspace{1.5cm}&(S + T)^{**}
+		\ar[r, \dropar, "\concatterm"]
+		\ar[d, \liftar, "{\blockterm^*}"']
+		&(S + T)^*
+		\ar[d, \liftar, "\blockterm"]
+		\\ 
+		\bullet
+		\ar[rr, \dropar, "g^*"]
+		\ar[d, \liftar, "\cref{claim:exchange-for-split-aux}"']
+		&&(S^* \times (T \times S^*)^*)^*
+		\ar[d, \liftar, "\gamma"']
+		&S^* \times (T \times S^*)^*
+		\\ 
+		\bullet
+		\ar[rr, \dropar] 
+		\ar[d, \liftar, "\cref{lem:exchange}"']
+		&&\bullet
+		\ar[d, \liftar, "\idterm \times \shiftterm \comp \distrterm"']
+		\\ 
+		\bullet 
+		\ar[rr, \dropar]
+		&&\bullet 
+		\ar[uur, \dropar]
+	\end{tikzcd}
+	\]
+	On the left side of the diagram, the rectangles commute by induction, \cref{claim:exchange-for-split-aux} and \cref{lem:exchange} for a lift constructed out of lifts for which we have already proved it. The right face of the diagram is exactly the diagram presented at the beginning of this case. 
+\end{description}
+
+
+
+\end{description}

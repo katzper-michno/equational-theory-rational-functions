@@ -1,0 +1,86 @@
+
+\begin{figure}
+% lax begin Lax149335.Terms
+            \begin{gather*}
+\begin{array}{c}
+\text{Identity (atomic term \ref{atomic:identity})} \\[2pt]
+\describeterm{\idterm}{A}{A}
+\end{array}
+\qquad\qquad
+\begin{array}{c}
+\text{Projections (atomic term \ref{atomic:projections})} \\[2pt]
+\describeterm{\fstterm} {A \times B}{A}
+\qquad 
+\describeterm{\sndterm} {A \times B}{B}
+\end{array}
+\\[10pt]
+\text{Coprojections and the codiagonal map (atomic terms \ref{atomic:coprojections} and \ref{atomic:co-diagonal})} \\[2pt]
+\describeterm{\leftterm} {A}{A + B} 
+\qquad 
+\describeterm{\rightterm} {B}{A + B} 
+\qquad 
+\describeterm{\codiagterm} {A + A}{A}\\[10pt]
+\text{Monoidal structure of products (atomic term \ref{atomic:monoidal})} \\[2pt]
+\describeterm{\appendoneterm} {A}{A \times \onetype } \qquad 
+\describeterm{\prependoneterm} {A}{\onetype  \times A}
+\qquad
+ \begin{tikzcd}[ampersand replacement=\&, column sep=large]
+A \times (B \times C)
+\ar[r,"\assoclterm", shift left=0.6ex]
+\&
+\ar[l,"\assocrterm", shift left=0.6ex]
+(A \times B) \times C
+\end{tikzcd}
+\\[10pt]
+\text{Distributivity (atomic terms \ref{atomic:distributivity})} \\[2pt]
+\begin{array}{c}
+\describeterm{\distrterm} {A \times (B + C)}{(A \times B) + (A \times C)} \qquad 
+\describeterm{\distlterm} {(A + B) \times C}{(A \times C) + (B \times C)}  
+\end{array}
+\\[10pt]
+\text{List constructors and destructors (atomic terms \ref{atomic:cons-snoc})} \\[2pt]
+    \begin{tikzcd}[ampersand replacement=\&, column sep=large]
+\onetype  + A \times A^* 
+\ar[r,"\consterm", shift left=0.6ex]
+\&
+\ar[l,"\unconsterm", shift left=0.6ex]
+A^*
+\ar[r,"\unsnocterm", shift left=0.6ex]
+\&
+\ar[l,"\snocterm", shift left=0.6ex]
+\onetype  + A^* \times A
+\end{tikzcd}
+\\[10pt]
+\text{List operations (atomic terms  \ref{atomic:concat}, \ref{atomic:split} and \ref{atomic:shift})} \\[2pt]
+ \describeterm{\concatterm} {A^{**}}{A^*} 
+\qquad
+\describeterm{\blockterm} {(A+B)^*}{A^* \times (B \times A^*)^*}  
+\qquad 
+    \begin{tikzcd}[ampersand replacement=\&, column sep=large]
+(A \times B)^* \times A
+\ar[r,"\shiftrterm", shift left=0.6ex]
+\&
+\ar[l,"\shiftlterm", shift left=0.6ex]
+A \times (B \times A)^*.
+    \end{tikzcd}
+\\[10pt]
+\text{Finite groups (atomic term \ref{atomic:group-cut})} \\[2pt]
+    (A \times G)^* \xrightarrow{\prefterm} (A \times G)^*
+\\[6pt] \hline \\[-6pt]
+\text{Combinators (composition and functoriality of $+$, $\times$ and $*$)} \\[4pt]
+\combinator{A \xrightarrow f B \quad B \xrightarrow g C}{A \xrightarrow {f \, \comp \, g} C}{}
+\qquad
+\combinator{A_1 \xrightarrow {f_1} B_1 \quad A_2 \xrightarrow {f_2} B_2}{A_1 + A_2 \xrightarrow {f_1 + f_2} B_1 + B_2}{}
+%\\[8pt]
+\qquad
+\combinator{A_1 \xrightarrow {f_1} B_1 \quad A_2 \xrightarrow {f_2} B_2}{A_1 \times A_2 \xrightarrow {f_1 \times f_2} B_1 \times B_2}{}
+\qquad
+\combinator{A \xrightarrow f B}{A^* \xrightarrow {f^*} B^*}{}
+\end{gather*}
+\Description[The atomic terms and combinators of the syntax]{A list of the atomic terms, each shown as an arrow from its domain type to its codomain type: identity; coprojections and the codiagonal map; projections; the monoidal structure of products; distributivity; list constructors and destructors; list operations (concatenation, block and shift); and prefix multiplication for finite groups. Below a horizontal line, four inference rules give the combinators: composition, and functoriality of coproducts, products and lists.}
+\caption{\label{fig:atomic-rational-terms} The atomic terms and combinators. Observe that the family of atomic terms is infinite, since each term is parameterised by types, and there are infinitely many types. Therefore, in order to be completely formal, we should annotate each term with its types, writing e.g.~$\leftterm_{A,B}$ instead of $\leftterm$. However, we will omit these annotations, since they can be easily inferred from the context.}
+% lax end
+\end{figure}
+
+
+

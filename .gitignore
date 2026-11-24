@@ -3,3 +3,19 @@ paper.pdf
 paper-web.tar
 lake-manifest.json
 .lake/
+
+# LaTeX build files of the paper (the archive compiles paper/ itself)
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/*.diagnose
+paper/*.kaux
+paper/*.cut
+paper/main.pdf
+# arXiv bundle made by paper/make-arxiv.py
+arxiv/

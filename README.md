@@ -32,6 +32,27 @@ The repository root is the Lax submission folder.
   them derives its statement from the statements of the results that the paper's proof
   uses, so the proof network on the Lax website follows the structure of the paper.
 - `manifest.yaml`, `abstract.md`, `LICENSE` — the submission metadata.
+- `paper/` — the LaTeX sources of the full version of the paper, which the archive compiles
+  and shows beside the formalisation (see below).
+
+## The paper
+
+`paper/` holds the full version of the paper, with all appendices; the main file is
+`paper/main.tex` (`latexmk -pdf main.tex`). Every definition and result of the main part
+that has a concept is marked with comment lines
+
+```
+% lax begin Lax149335.Cancellation
+...
+% lax end
+```
+
+which the archive turns into links between the paper and the concepts. They are comments,
+so they do not change the PDF.
+
+The same sources are used for arXiv: `python3 paper/make-arxiv.py` compiles the paper,
+removes all comments (including the Lax markers) from its sources, and writes
+`arxiv/arxiv-source.zip`, which contains the generated `main.bbl` instead of the `.bib` file.
 
 ## Building
 
@@ -56,7 +77,7 @@ is proved except **Theorem 3.2** (expressive completeness: every rational functi
 defined by a rational term). It concerns the transducer model rather than the equational
 theory, and nothing else depends on it, so it is recorded as an open statement.
 
-The table refers to the numbering of the current version of the paper. The last column lists
+The table refers to the numbering of the paper in `paper/`. The last column lists
 the results whose statements the annotated proof uses.
 
 | Paper | Concept (`concepts/Lax149335/`) | Proof uses |
